@@ -1,0 +1,35 @@
+﻿using BenchmarkingPortal.Dal.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace BenchmarkingPortal.Dal.EntityConfigurations;
+
+public class ExecutableEntityConfiguration : IEntityTypeConfiguration<Executable>
+{
+    public void Configure(EntityTypeBuilder<Executable> builder)
+    {
+        builder.ToTable("Executable");
+
+        builder.HasKey(e => e.Id);
+
+        builder.Property(e => e.Id).ValueGeneratedOnAdd();
+        builder.Property(e => e.Name).HasMaxLength(50).IsRequired();
+        builder.Property(e => e.OwnerTool).HasMaxLength(50).IsRequired();
+        builder.Property(e => e.Path).HasMaxLength(50).IsRequired();
+        builder.Property(e => e.ToolVersion).HasMaxLength(50).IsRequired();
+        builder.Property(e => e.UploadedDate).HasColumnType("datetime").IsRequired();
+        builder.Property(e => e.Version).HasMaxLength(50).IsRequired();
+
+        builder.HasOne(d => d.User).WithMany(p => p.Executables)
+            .HasForeignKey(d => d.UserId)
+            .OnDelete(DeleteBehavior.ClientSetNull)
+            .HasConstraintName("FK_Executable_User");
+
+        SampleData(builder);
+    }
+
+    private void SampleData(EntityTypeBuilder<Executable> builder)
+    {
+        // Load test data here
+    }
+}
