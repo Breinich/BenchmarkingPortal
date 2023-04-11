@@ -59,6 +59,8 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         // The other values will be checked by the scheduler
         // ---------------------------------------------------------
 
+        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
         // Delegating the benchmark to the scheduler and starting it on one or more VMs
 
         // The scheduler sends back the assigned ComputerGroup's Id and the start time
@@ -67,6 +69,8 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         // in this case, no benchmark will be started
 
         // TODO
+
+        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
         // Creating new Benchmark entity and writing it to the DB
         // At this point, the benchmark has been successfully configured and started

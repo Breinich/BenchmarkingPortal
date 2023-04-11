@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
+	<ItemGroup>
     <Folder Include="Features\User\CommandHandlers\" />
     <Folder Include="Features\User\Commands\" />
     <Folder Include="Features\User\Queries\" />

@@ -1,6 +1,7 @@
 ﻿using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
+using BenchmarkingPortal.Dal.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,24 +39,35 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
 
         if (bAsync != null)
         {
-            bAsync.Priority = request.Priority;
-            bAsync.Status = request.Status;
-
-            // Ask the scheduler to modify the selected benchmark
-            // TODO
-
-            // If succeeded, the modified Benchmark will be written into the DB
-            var benchmarkEntity = _context.Benchmarks.FindAsync(request.Id, cancellationToken).Result;
-            if (benchmarkEntity != null)
+            if (bAsync.Status != Status.Finished)
             {
-                benchmarkEntity.Priority = request.Priority;
-                benchmarkEntity.Status = request.Status;
+                bAsync.Priority = request.Priority;
+                bAsync.Status = request.Status;
 
-                await _context.SaveChangesAsync(cancellationToken);
+                // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+                // Ask the scheduler to modify the selected benchmark
+                // TODO
+
+                // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+                // If succeeded, the modified Benchmark will be written into the DB
+                var benchmarkEntity = _context.Benchmarks.FindAsync(request.Id, cancellationToken).Result;
+                if (benchmarkEntity != null)
+                {
+                    benchmarkEntity.Priority = request.Priority;
+                    benchmarkEntity.Status = request.Status;
+
+                    await _context.SaveChangesAsync(cancellationToken);
+                }
+                else
+                {
+                    throw new ApplicationException("Database error, couldn't find the appropriate Benchmark twice.");
+                }
             }
             else
             {
-                throw new ApplicationException("Database error, couldn't find the appropriate Benchmark twice.");
+                throw new ArgumentException("The benchmark, that wanted to be modified, has been already finished.");
             }
         }
         else
