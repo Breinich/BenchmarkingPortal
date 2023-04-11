@@ -1,5 +1,7 @@
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Entities;
+using BenchmarkingPortal.Dal.SeedInterfaces;
+using BenchmarkingPortal.Dal.SeedService;
 using BenchmarkingPortal.Web.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,14 +18,15 @@ builder.Services.AddIdentity<User, IdentityRole<int>>()
     .AddEntityFrameworkStores<BenchmarkingDbContext>()
     .AddDefaultTokenProviders();
 
-
+builder.Services.AddScoped<IRoleSeedService, RoleSeedService>();
+builder.Services.AddScoped<IUserSeedService, UserSeedService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerDocument(o => o.Title = "Benchmarking API");
 
 var app = builder.Build();
 
-app.MigrateDatabase<BenchmarkingDbContext>();
+await app.MigrateDatabaseAsync<BenchmarkingDbContext>();
 
 
 app.UseHttpsRedirection();

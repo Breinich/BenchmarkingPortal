@@ -11,7 +11,7 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable("Users");
 
         builder.Property(e => e.Subscription).IsRequired();
-        builder.Property(e => e.GitHubUserName).IsRequired().HasMaxLength(50);
+        builder.Property(e => e.GitHubUserName).HasMaxLength(50);
 
         SampleData(builder);
     }
