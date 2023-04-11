@@ -15,7 +15,7 @@ public class RoleSeedService :IRoleSeedService
 
     public async Task SeedRoleAsync()
     {
-        if (!await _roleManager.RoleExistsAsync(Roles.Adminsitrators))
-            await _roleManager.CreateAsync(new IdentityRole<int> { Name = Roles.Adminsitrators });
+        if (!await _roleManager.RoleExistsAsync(Roles.Admin))
+            await _roleManager.CreateAsync(new IdentityRole<int> { Name = Roles.Admin });
     }
 }

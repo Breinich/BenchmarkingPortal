@@ -15,7 +15,7 @@ public class UserSeedService : IUserSeedService
 
     public async Task SeedUserAsync()
     {
-        if (!(await _userManager.GetUsersInRoleAsync(Roles.Adminsitrators)).Any())
+        if (!(await _userManager.GetUsersInRoleAsync(Roles.Admin)).Any())
         {
             var user = new User
             {
@@ -25,7 +25,7 @@ public class UserSeedService : IUserSeedService
             };
 
             var createResult = await _userManager.CreateAsync(user, "$AdministratorMaxiBear");
-            var addToRoleReuslt = await _userManager.AddToRoleAsync(user, Roles.Adminsitrators);
+            var addToRoleReuslt = await _userManager.AddToRoleAsync(user, Roles.Admin);
 
             if (!createResult.Succeeded || !addToRoleReuslt.Succeeded)
             {
