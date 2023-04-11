@@ -23,10 +23,10 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         // Value validations first:
         
         // Checking whether the name of the new benchmark is unique
-        int namCountAsync = await _context.Benchmarks.Where(b => b.Name.Equals(request.Name)).Select(b => b.Id)
+        int nameCountAsync = await _context.Benchmarks.Where(b => b.Name.Equals(request.Name)).Select(b => b.Id)
             .CountAsync(cancellationToken);
 
-        if (namCountAsync > 0)
+        if (nameCountAsync > 0)
         {
             throw new ArgumentOutOfRangeException("Name",request.Name,"A benchmark with the same name already exists.");
         }
@@ -55,6 +55,23 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         {
             request.HardTimeLimit = 960;
         }
+
+        var newBenchmark = new BenchmarkHeader()
+        {
+            Name = request.Name,
+            Priority = request.Priority,
+            Status = Status.Running,
+            Ram = request.Ram,
+            Cpu = request.Cpu,
+            TimeLimit = request.TimeLimit,
+            HardTimeLimit = request.HardTimeLimit,
+            ExecutableId = request.ExecutableId,
+            SourceSetId = request.SourceSetId,
+            SetFilePath = request.SetFilePath,
+            PropertyFilePath = request.PropertyFilePath,
+            ConfigurationId = request.ConfigurationId,
+            UserId = request.UserId,
+        };
 
         // The other values will be checked by the scheduler
         // ---------------------------------------------------------
