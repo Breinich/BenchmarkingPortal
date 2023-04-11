@@ -5,7 +5,7 @@ namespace BenchmarkingPortal.Dal.Entities;
 public partial class User : IdentityUser<int>
 {
     public bool Subscription { get; set; } = true;
-    [PersonalData]
+    
     public string? GitHubUserName { get; set; }
 
     public virtual  ICollection<Benchmark> Benchmarks { get; set; } = new List<Benchmark>();

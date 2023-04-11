@@ -25,13 +25,13 @@ public class UserSeedService : IUserSeedService
             };
 
             var createResult = await _userManager.CreateAsync(user, "$AdministratorMaxiBear");
-            var addToRoleReuslt = await _userManager.AddToRoleAsync(user, Roles.Admin);
+            var addToRoleResult = await _userManager.AddToRoleAsync(user, Roles.Admin);
 
-            if (!createResult.Succeeded || !addToRoleReuslt.Succeeded)
+            if (!createResult.Succeeded || !addToRoleResult.Succeeded)
             {
                 throw new ApplicationException("Administrator could not be created: " +
                                                string.Join(", ",
-                                                   createResult.Errors.Concat(addToRoleReuslt.Errors)
+                                                   createResult.Errors.Concat(addToRoleResult.Errors)
                                                        .Select(e => e.Description)));
             }
         }

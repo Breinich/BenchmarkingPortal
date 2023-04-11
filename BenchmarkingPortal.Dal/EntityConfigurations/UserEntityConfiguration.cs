@@ -12,12 +12,5 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(e => e.Subscription).IsRequired();
         builder.Property(e => e.GitHubUserName).HasMaxLength(50);
-
-        SampleData(builder);
-    }
-
-    private void SampleData(EntityTypeBuilder<User> builder)
-    {
-        // Load test data here
     }
 }
