@@ -25,15 +25,6 @@ public class UserSeedService : IUserSeedService
             };
 
             var createResult = await _userManager.CreateAsync(user, "$Administrator007MaxiBear");
-            //var addToRoleResult = await _userManager.AddToRoleAsync(user, Roles.Admin);
-
-            //if (!createResult.Succeeded || !addToRoleResult.Succeeded)
-            //{
-            //    throw new ApplicationException("Administrator could not be created: " +
-            //                                   string.Join(", ",
-            //                                       createResult.Errors.Concat(addToRoleResult.Errors)
-            //                                           .Select(e => e.Description)));
-            //}
 
             if (!createResult.Succeeded)
             {
