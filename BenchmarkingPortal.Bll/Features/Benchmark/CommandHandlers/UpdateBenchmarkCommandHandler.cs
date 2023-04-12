@@ -21,13 +21,15 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
 
     public async Task<BenchmarkHeader> Handle(UpdateBenchmarkCommand request, CancellationToken cancellationToken)
     {
-        var benchmarkHeader = await _context.Benchmarks.Where(b => b.Id == request.Id).Select(b => new BenchmarkHeader(b))
-            .FirstOrDefaultAsync(cancellationToken);
+        var benchmarkEntity = await _context.Benchmarks.FindAsync(request.Id, cancellationToken);
 
-        if (benchmarkHeader == null)
+        if (benchmarkEntity == null)
         {
             throw new ArgumentException("The benchmark, that wanted to be modified, doesn't exist.");
         }
+
+
+        var benchmarkHeader = new BenchmarkHeader(benchmarkEntity);
 
         // Only the owner or the administrators have the permission to modify a specific benchmark
         if (benchmarkHeader.UserId != request.UserId)
@@ -62,18 +64,13 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
 
 
             // If succeeded, the modified Benchmark will be written into the DB
-            var benchmarkEntity = await _context.Benchmarks.FindAsync(request.Id, cancellationToken);
-            if (benchmarkEntity != null)
-            {
-                benchmarkEntity.Priority = request.Priority;
-                benchmarkEntity.Status = request.Status;
+           
+           
+            benchmarkEntity.Priority = request.Priority;
+            benchmarkEntity.Status = request.Status;
 
-                await _context.SaveChangesAsync(cancellationToken);
-            }
-            else
-            {
-                throw new ApplicationException("Database error, couldn't find the appropriate Benchmark twice.");
-            }
+            await _context.SaveChangesAsync(cancellationToken);
+            
         }
         else
         {
