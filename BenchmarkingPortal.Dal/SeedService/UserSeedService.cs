@@ -24,14 +24,33 @@ public class UserSeedService : IUserSeedService
                 SecurityStamp = Guid.NewGuid().ToString(),
             };
 
-            var createResult = await _userManager.CreateAsync(user, "$AdministratorMaxiBear");
-            var addToRoleResult = await _userManager.AddToRoleAsync(user, Roles.Admin);
+            var createResult = await _userManager.CreateAsync(user, "$Administrator007MaxiBear");
+            //var addToRoleResult = await _userManager.AddToRoleAsync(user, Roles.Admin);
 
-            if (!createResult.Succeeded || !addToRoleResult.Succeeded)
+            //if (!createResult.Succeeded || !addToRoleResult.Succeeded)
+            //{
+            //    throw new ApplicationException("Administrator could not be created: " +
+            //                                   string.Join(", ",
+            //                                       createResult.Errors.Concat(addToRoleResult.Errors)
+            //                                           .Select(e => e.Description)));
+            //}
+
+            if (!createResult.Succeeded)
             {
                 throw new ApplicationException("Administrator could not be created: " +
+                                                   string.Join(", ",
+                                                       createResult.Errors
+                                                          .Select(e => e.Description)));
+                
+            }
+
+            var addToRoleResult = await _userManager.AddToRoleAsync(user, Roles.Admin);
+
+            if (!addToRoleResult.Succeeded)
+            {
+                throw new ApplicationException("Administrator could not be added to role: " +
                                                string.Join(", ",
-                                                   createResult.Errors.Concat(addToRoleResult.Errors)
+                                                   addToRoleResult.Errors
                                                        .Select(e => e.Description)));
             }
         }
