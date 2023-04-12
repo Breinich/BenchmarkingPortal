@@ -3,7 +3,4 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.Benchmark.Queries;
 
-public class GetNotFinishedBenchmarksQuery : IRequest<IEnumerable<BenchmarkHeader>>
-{
-    public int UserId { get; set; }
-}
+public class GetNotFinishedBenchmarksQuery : IRequest<IEnumerable<BenchmarkHeader>> { }

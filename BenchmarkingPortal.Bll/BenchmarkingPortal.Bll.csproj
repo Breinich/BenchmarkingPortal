@@ -37,7 +37,6 @@
     <Folder Include="Features\ConfigurationItem\QueryHandlers\" />
     <Folder Include="Features\ComputerGroup\CommandHandlers\" />
     <Folder Include="Features\ComputerGroup\Commands\" />
-    <Folder Include="Features\ComputerGroup\Queries\" />
     <Folder Include="Features\ComputerGroup\QueryHandlers\" />
     <Folder Include="Features\Benchmark\CommandHandlers\" />
   </ItemGroup>
