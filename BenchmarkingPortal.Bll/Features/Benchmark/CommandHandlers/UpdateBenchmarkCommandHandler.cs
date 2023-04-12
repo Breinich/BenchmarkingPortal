@@ -3,6 +3,7 @@ using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.Benchmark.CommandHandlers;
@@ -10,72 +11,75 @@ namespace BenchmarkingPortal.Bll.Features.Benchmark.CommandHandlers;
 public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkCommand, BenchmarkHeader>
 {
     private readonly BenchmarkingDbContext _context;
+    private readonly UserManager<User> _userManager;
 
-    public UpdateBenchmarkCommandHandler(BenchmarkingDbContext context)
+    public UpdateBenchmarkCommandHandler(BenchmarkingDbContext context, UserManager<User> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
     public async Task<BenchmarkHeader> Handle(UpdateBenchmarkCommand request, CancellationToken cancellationToken)
     {
-        var bAsync = await _context.Benchmarks.Where(b => b.Id.Equals(request.Id)).Select(b => new BenchmarkHeader()
-        {
-            Id = b.Id,
-            Name = b.Name,
-            Priority = b.Priority,
-            Status = b.Status,
-            Result = b.Result,
-            Ram = b.Ram,
-            Cpu = b.Cpu,
-            TimeLimit = b.TimeLimit,
-            HardTimeLimit = b.HardTimeLimit,
-            ComputerGroupId = b.ComputerGroupId,
-            ExecutableId = b.ExecutableId,
-            SourceSetId = b.SourceSetId,
-            StartedDate = b.StartedDate,
-            ConfigurationId = b.ConfigurationId,
-            UserId = b.UserId,
-        }).FirstOrDefaultAsync(cancellationToken);
+        var benchmarkHeader = await _context.Benchmarks.Where(b => b.Id == request.Id).Select(b => new BenchmarkHeader(b))
+            .FirstOrDefaultAsync(cancellationToken);
 
-        if (bAsync != null)
+        if (benchmarkHeader == null)
         {
-            if (bAsync.Status != Status.Finished)
+            throw new ArgumentException("The benchmark, that wanted to be modified, doesn't exist.");
+        }
+
+        // Only the owner or the administrators have the permission to modify a specific benchmark
+        if (benchmarkHeader.UserId != request.UserId)
+        {
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+            if (user == null)
             {
-                bAsync.Priority = request.Priority;
-                bAsync.Status = request.Status;
+                throw new ArgumentException("The provided userId is not in the database.");
+            }
 
-                // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);
 
-                // Ask the scheduler to modify the selected benchmark
-                // TODO
+            if (!admin)
+            {
+                throw new ArgumentException(
+                    "The user is neither the owner of the benchmark, nor an admin.");
+            }
+        }
 
-                // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        
+        if (benchmarkHeader.Status != Status.Finished)
+        {
+            benchmarkHeader.Priority = request.Priority;
+            benchmarkHeader.Status = request.Status;
 
-                // If succeeded, the modified Benchmark will be written into the DB
-                var benchmarkEntity = _context.Benchmarks.FindAsync(request.Id, cancellationToken).Result;
-                if (benchmarkEntity != null)
-                {
-                    benchmarkEntity.Priority = request.Priority;
-                    benchmarkEntity.Status = request.Status;
+            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-                    await _context.SaveChangesAsync(cancellationToken);
-                }
-                else
-                {
-                    throw new ApplicationException("Database error, couldn't find the appropriate Benchmark twice.");
-                }
+            // Ask the scheduler to modify the selected benchmark
+            // TODO
+
+            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+            // If succeeded, the modified Benchmark will be written into the DB
+            var benchmarkEntity = await _context.Benchmarks.FindAsync(request.Id, cancellationToken);
+            if (benchmarkEntity != null)
+            {
+                benchmarkEntity.Priority = request.Priority;
+                benchmarkEntity.Status = request.Status;
+
+                await _context.SaveChangesAsync(cancellationToken);
             }
             else
             {
-                throw new ArgumentException("The benchmark, that wanted to be modified, has been already finished.");
+                throw new ApplicationException("Database error, couldn't find the appropriate Benchmark twice.");
             }
         }
         else
         {
-            throw new ArgumentOutOfRangeException("request", request.Id,
-                "There isn't any benchmark with the given Id.");
+            throw new ArgumentException("The benchmark, that wanted to be modified, has already been finished.");
         }
 
-        return bAsync;
+
+        return benchmarkHeader;
     }
 }

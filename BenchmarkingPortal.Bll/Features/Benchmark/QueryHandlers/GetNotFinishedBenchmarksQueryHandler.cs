@@ -18,22 +18,6 @@ public class GetNotFinishedBenchmarksQueryHandler : IRequestHandler<GetNotFinish
     
     public async Task<IEnumerable<BenchmarkHeader>> Handle(GetNotFinishedBenchmarksQuery request, CancellationToken cancellationToken) =>
     
-        await _context.Benchmarks.Where(b => !b.Status.Equals(Status.Finished)).Select(b => new BenchmarkHeader() 
-        {
-            Id = b.Id,
-            Name = b.Name,
-            Priority = b.Priority,
-            Status = b.Status,
-            Ram = b.Ram,
-            Cpu = b.Cpu,
-            TimeLimit = b.TimeLimit,
-            HardTimeLimit = b.HardTimeLimit,
-            ComputerGroupId = b.ComputerGroupId,
-            ExecutableId = b.ExecutableId,
-            SourceSetId = b.SourceSetId,
-            StartedDate = b.StartedDate,
-            ConfigurationId = b.ConfigurationId,
-            UserId = b.UserId,
-        }).ToListAsync(cancellationToken);
+        await _context.Benchmarks.Where(b => !b.Status.Equals(Status.Finished)).Select(b => new BenchmarkHeader(b)).ToListAsync(cancellationToken);
     
 }

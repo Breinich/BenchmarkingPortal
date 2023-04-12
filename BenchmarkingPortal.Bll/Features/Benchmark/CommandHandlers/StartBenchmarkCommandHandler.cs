@@ -114,23 +114,6 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         await _context.SaveChangesAsync(cancellationToken);
 
         // Returning the benchmark with the generated Id from the DB
-        return await _context.Benchmarks.Where(b => b.Name.Equals(request.Name)).Select(b => new BenchmarkHeader()
-        {
-            Id = b.Id,
-            Name = b.Name,
-            Priority = b.Priority,
-            Status = b.Status,
-            Result = b.Result,
-            Ram = b.Ram,
-            Cpu = b.Cpu,
-            TimeLimit = b.TimeLimit,
-            HardTimeLimit = b.HardTimeLimit,
-            ComputerGroupId = b.ComputerGroupId,
-            ExecutableId = b.ExecutableId,
-            SourceSetId = b.SourceSetId,
-            StartedDate = b.StartedDate,
-            ConfigurationId = b.ConfigurationId,
-            UserId = b.UserId,
-        }).FirstAsync(cancellationToken);
+        return await _context.Benchmarks.Where(b => b.Name.Equals(request.Name)).Select(b => new BenchmarkHeader(b)).FirstAsync(cancellationToken);
     }
 }
