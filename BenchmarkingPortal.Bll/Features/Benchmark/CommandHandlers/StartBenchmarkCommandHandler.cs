@@ -114,6 +114,6 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         await _context.SaveChangesAsync(cancellationToken);
 
         // Returning the benchmark with the generated Id from the DB
-        return await _context.Benchmarks.Where(b => b.Name.Equals(request.Name)).Select(b => new BenchmarkHeader(b)).FirstAsync(cancellationToken);
+        return new BenchmarkHeader(benchmark);
     }
 }

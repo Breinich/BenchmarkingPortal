@@ -21,10 +21,12 @@ public class DeleteBenchmarkCommandHandler : IRequestHandler<DeleteBenchmarkComm
 
     public async Task Handle(DeleteBenchmarkCommand request, CancellationToken cancellationToken)
     {
-        var benchmarkHeader = await _context.Benchmarks.Where(b => b.Id == request.BenchmarkId).Select(b => new BenchmarkHeader(b))
-            .FirstOrDefaultAsync(cancellationToken);
+        var benchmark = await _context.Benchmarks.Where(b => b.Id == request.BenchmarkId).Select(b => b)
+            .FirstAsync(cancellationToken);
 
-        if (benchmarkHeader == null)
+        var benchmarkHeader = new BenchmarkHeader(benchmark);
+
+        if (benchmark == null)
         {
             throw new ArgumentException("The benchmark, that wanted to be deleted, doesn't exist.");
         }
@@ -59,9 +61,6 @@ public class DeleteBenchmarkCommandHandler : IRequestHandler<DeleteBenchmarkComm
         // If this uses the whole object, BenchmarkHeader should be used
 
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-        var benchmark = await _context.Benchmarks.Where(b => b.Id == request.BenchmarkId).Select(b => b)
-            .FirstAsync(cancellationToken);
 
         _context.Benchmarks.Remove(benchmark);
         await _context.SaveChangesAsync(cancellationToken);

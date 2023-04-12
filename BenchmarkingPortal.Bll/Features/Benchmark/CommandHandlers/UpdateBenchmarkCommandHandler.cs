@@ -60,6 +60,7 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
 
             // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
+
             // If succeeded, the modified Benchmark will be written into the DB
             var benchmarkEntity = await _context.Benchmarks.FindAsync(request.Id, cancellationToken);
             if (benchmarkEntity != null)
