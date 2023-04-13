@@ -1,4 +1,6 @@
-﻿namespace BenchmarkingPortal.Dal.Dtos;
+﻿using BenchmarkingPortal.Dal.Entities;
+
+namespace BenchmarkingPortal.Dal.Dtos;
 
 public class ExecutableHeader
 {
@@ -21,4 +23,16 @@ public class ExecutableHeader
     public ICollection<BenchmarkHeader>? Benchmarks { get; set; }
 
     public UserHeader? User { get; set; }
+
+    public ExecutableHeader(Executable e)
+    {
+        Id = e.Id;
+        OwnerTool = e.OwnerTool;
+        ToolVersion = e.ToolVersion;
+        Path = e.Path;
+        Name = e.Name;
+        Version = e.Version;
+        UploadedDate = e.UploadedDate;
+        UserId = e.UserId;
+    }
 }
