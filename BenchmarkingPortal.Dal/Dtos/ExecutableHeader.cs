@@ -20,6 +20,8 @@ public class ExecutableHeader
 
     public int UserId { get; set; }
 
+    public ExecutableHeader() { }
+
     public ExecutableHeader(Executable e)
     {
         Id = e.Id;
