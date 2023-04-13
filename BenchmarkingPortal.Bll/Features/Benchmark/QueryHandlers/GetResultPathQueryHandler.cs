@@ -1,8 +1,10 @@
-﻿using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
+﻿using BenchmarkingPortal.Bll.Exceptions;
+using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace BenchmarkingPortal.Bll.Features.Benchmark.QueryHandlers;
 
@@ -17,15 +19,16 @@ public class GetResultPathQueryHandler : IRequestHandler<GetResultPathQuery, str
 
     public async Task<string> Handle(GetResultPathQuery request, CancellationToken cancellationToken)
     {
-        var path = await _context.Benchmarks.Where(b => b.Id == request.BenchmarkId && b.Status == Status.Finished)
-            .Select(b => b.Result).FirstOrDefaultAsync(cancellationToken);
+        var benchmark = await _context.Benchmarks.Where(b => b.Id == request.BenchmarkId)
+                            .Select(b => b).FirstOrDefaultAsync(cancellationToken) ??
+                        throw new ArgumentException(new ExceptionMessage<Dal.Entities.Benchmark>().ObjectNotFound);
 
-        if (path == null)
-        {
+
+        if(benchmark.Status != Status.Finished)
             throw new ArgumentException(
-                "Either the benchmark doesn't exist, or the benchmark hasn't been finished yet.");
-        }
+                "The benchmark hasn't been finished yet.");
+        
 
-        return path;
+        return benchmark.Result ?? throw new ApplicationException("Somehow this finished benchmark doesn't store the results' path.");
     }
 }

@@ -28,19 +28,19 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
 
         if (nameCountAsync > 0)
         {
-            throw new ArgumentOutOfRangeException("Name",request.Name,"A benchmark with the same name already exists.");
+            throw new ArgumentOutOfRangeException(nameof(request),request.Name,"A benchmark with the same name already exists.");
         }
 
         // Maximum available RAM amount is 16 GB
         if (request.Ram is <= 0 or > 16)
         {
-            throw new ArgumentOutOfRangeException("Ram",request.Ram,"The benchmark must use minimum 1 GB and maximum 16 GB amount of RAM.");
+            throw new ArgumentOutOfRangeException(nameof(request), request.Ram,"The benchmark must use minimum 1 GB and maximum 16 GB amount of RAM.");
         }
 
         // Maximum available CPU core count is 8
         if (request.Cpu is <= 0 or > 8)
         {
-            throw new ArgumentOutOfRangeException("Cpu", request.Cpu,
+            throw new ArgumentOutOfRangeException(nameof(request), request.Cpu,
                 "The benchmark must run on at least 1 CPU core and at most on 8 CPU cores.");
         }
 

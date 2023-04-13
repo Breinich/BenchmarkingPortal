@@ -1,4 +1,5 @@
-﻿using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
+﻿using BenchmarkingPortal.Bll.Exceptions;
+using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
@@ -22,30 +23,25 @@ public class DeleteBenchmarkCommandHandler : IRequestHandler<DeleteBenchmarkComm
     public async Task Handle(DeleteBenchmarkCommand request, CancellationToken cancellationToken)
     {
         var benchmark = await _context.Benchmarks.Where(b => b.Id == request.BenchmarkId).Select(b => b)
-            .FirstAsync(cancellationToken);
+                            .FirstAsync(cancellationToken) ??
+                        throw new ArgumentException(new ExceptionMessage<Dal.Entities.Benchmark>().ObjectNotFound);
 
         var benchmarkHeader = new BenchmarkHeader(benchmark);
 
-        if (benchmark == null)
-        {
-            throw new ArgumentException("The benchmark, that wanted to be deleted, doesn't exist.");
-        }
 
         // Only the owner or the administrators have the permission to delete a specific benchmark
         if (benchmarkHeader.UserId != request.UserId)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
-            if (user == null)
-            {
-                throw new ArgumentException("The provided userId is not in the database.");
-            }
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString()) ??
+                       throw new ArgumentException(new ExceptionMessage<User>().ObjectNotFound);
+
 
             var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);
 
             if (!admin)
             {
                 throw new ArgumentException(
-                    "The user is neither the owner of the benchmark, nor an admin.");
+                    new ExceptionMessage<Dal.Entities.Benchmark>().NoPrivilege);
             }
         }
 

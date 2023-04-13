@@ -1,4 +1,5 @@
-﻿using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
+﻿using BenchmarkingPortal.Bll.Exceptions;
+using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
@@ -21,12 +22,9 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
 
     public async Task<BenchmarkHeader> Handle(UpdateBenchmarkCommand request, CancellationToken cancellationToken)
     {
-        var benchmarkEntity = await _context.Benchmarks.FindAsync(request.Id, cancellationToken);
-
-        if (benchmarkEntity == null)
-        {
-            throw new ArgumentException("The benchmark, that wanted to be modified, doesn't exist.");
-        }
+        var benchmarkEntity = await _context.Benchmarks.FindAsync(request.Id, cancellationToken) ??
+                              throw new ArgumentException(new ExceptionMessage<Dal.Entities.Benchmark>()
+                                  .ObjectNotFound);
 
 
         var benchmarkHeader = new BenchmarkHeader(benchmarkEntity);
@@ -34,18 +32,16 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
         // Only the owner or the administrators have the permission to modify a specific benchmark
         if (benchmarkHeader.UserId != request.UserId)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
-            if (user == null)
-            {
-                throw new ArgumentException("The provided userId is not in the database.");
-            }
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString()) ??
+                       throw new ArgumentException(new ExceptionMessage<User>().ObjectNotFound);
+
 
             var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);
 
             if (!admin)
             {
                 throw new ArgumentException(
-                    "The user is neither the owner of the benchmark, nor an admin.");
+                    new ExceptionMessage<Dal.Entities.Benchmark>().NoPrivilege);
             }
         }
 
