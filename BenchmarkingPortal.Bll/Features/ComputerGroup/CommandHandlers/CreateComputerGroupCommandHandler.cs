@@ -23,7 +23,7 @@ public class CreateComputerGroupCommandHandler : IRequestHandler<CreateComputerG
             computerGroup.Description = request.Description;
         }
 
-        _context.ComputerGroups.Add(computerGroup);
+        await _context.ComputerGroups.AddAsync(computerGroup, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return new ComputerGroupHeader()
