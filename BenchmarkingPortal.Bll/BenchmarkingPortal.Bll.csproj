@@ -37,6 +37,7 @@
     <Folder Include="Features\ComputerGroup\Commands\" />
     <Folder Include="Features\ComputerGroup\QueryHandlers\" />
     <Folder Include="Features\Benchmark\CommandHandlers\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 
   <ItemGroup>
