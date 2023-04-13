@@ -27,7 +27,7 @@ public class UploadNewExecutableCommandHandler : IRequestHandler<UploadNewExecut
             Path = request.Path,
             Version = request.Version,
             UploadedDate = request.UploadedDate,
-            UserId = request.UserId
+            UserId = request.UserId,
         };
 
         await _context.Executables.AddAsync(exe, cancellationToken);
