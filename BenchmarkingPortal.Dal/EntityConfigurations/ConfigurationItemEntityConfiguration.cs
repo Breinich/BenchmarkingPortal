@@ -14,7 +14,8 @@ public class ConfigurationItemEntityConfiguration : IEntityTypeConfiguration<Con
 
         builder.Property(e => e.Key).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Value).HasMaxLength(50).IsRequired();
-        builder.Property(e => e.Scope).IsRequired();
+        builder.Property(e => e.Scope).HasConversion(s => s.ToString(),
+            v => (Scope)Enum.Parse(typeof(Scope), v)).IsRequired();
 
         SampleData(builder);
     }

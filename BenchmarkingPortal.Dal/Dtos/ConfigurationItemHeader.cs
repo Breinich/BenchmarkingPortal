@@ -1,4 +1,6 @@
-﻿namespace BenchmarkingPortal.Dal.Dtos;
+﻿using BenchmarkingPortal.Dal.Entities;
+
+namespace BenchmarkingPortal.Dal.Dtos;
 
 public class ConfigurationItemHeader
 {
@@ -6,7 +8,7 @@ public class ConfigurationItemHeader
 
     public string? Value { get; set; }
 
-    public int Scope { get; set; }
+    public Scope Scope { get; set; }
 
     public int ConfigurationId { get; set; }
 }

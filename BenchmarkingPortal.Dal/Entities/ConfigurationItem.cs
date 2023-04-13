@@ -6,7 +6,7 @@ public partial class ConfigurationItem
 
     public string Value { get; set; } = null!;
 
-    public int Scope { get; set; }
+    public Scope Scope { get; set; }
 
     public int ConfigurationId { get; set; }
 }
