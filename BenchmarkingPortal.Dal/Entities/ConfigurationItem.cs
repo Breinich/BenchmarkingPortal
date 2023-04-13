@@ -6,7 +6,7 @@ public partial class ConfigurationItem
 
     public string Value { get; set; } = null!;
 
-    public Scope Scope { get; set; }
+    public Scope Scope { get; set; } = Scope.Local;
 
     public int ConfigurationId { get; set; }
 }

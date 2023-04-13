@@ -11,7 +11,7 @@ public static class HostDataExtensions
         {
             var serviceProvider = scope.ServiceProvider; 
             var context = serviceProvider.GetRequiredService<TContext>(); 
-            context.Database.Migrate();
+            await context.Database.MigrateAsync();
 
             var roleSeeder = serviceProvider.GetRequiredService<IRoleSeedService>();
             await roleSeeder.SeedRoleAsync();

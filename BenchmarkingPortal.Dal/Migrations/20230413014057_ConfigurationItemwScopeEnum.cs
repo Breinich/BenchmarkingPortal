@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using BenchmarkingPortal.Dal.Entities;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -10,6 +11,8 @@ namespace BenchmarkingPortal.Dal.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropPrimaryKey("PK_ConfigurationItem", "ConfigurationItem");
+
             migrationBuilder.AlterColumn<string>(
                 name: "Scope",
                 table: "ConfigurationItem",
@@ -17,6 +20,9 @@ namespace BenchmarkingPortal.Dal.Migrations
                 nullable: false,
                 oldClrType: typeof(int),
                 oldType: "int");
+
+            migrationBuilder.AddPrimaryKey("PK_ConfigurationItem", "ConfigurationItem",
+                new string[] { "Key", "Scope", "ConfigurationId" });
         }
 
         /// <inheritdoc />
