@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using BenchmarkingPortal.Dal.SeedInterfaces;
+﻿using BenchmarkingPortal.Dal.SeedInterfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace BenchmarkingPortal.Dal.SeedService;

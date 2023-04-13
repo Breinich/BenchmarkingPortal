@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BenchmarkingPortal.Dal.Entities;
+﻿namespace BenchmarkingPortal.Dal.Entities;
 
 public partial class Executable
 {

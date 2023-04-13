@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Headers;
-using BenchmarkingPortal.Bll.Exceptions;
+﻿using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Worker.Commands;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;

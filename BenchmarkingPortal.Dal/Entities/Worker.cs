@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BenchmarkingPortal.Dal.Entities;
+﻿namespace BenchmarkingPortal.Dal.Entities;
 
 public partial class Worker
 {

@@ -4,7 +4,6 @@ using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 
 namespace BenchmarkingPortal.Bll.Features.Benchmark.QueryHandlers;
 

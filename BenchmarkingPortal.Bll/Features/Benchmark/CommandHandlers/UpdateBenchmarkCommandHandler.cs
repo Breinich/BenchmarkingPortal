@@ -5,7 +5,6 @@ using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.Benchmark.CommandHandlers;
 
