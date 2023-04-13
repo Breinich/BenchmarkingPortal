@@ -1,4 +1,6 @@
-﻿namespace BenchmarkingPortal.Dal.Dtos;
+﻿using BenchmarkingPortal.Dal.Entities;
+
+namespace BenchmarkingPortal.Dal.Dtos;
 
 public class WorkerHeader
 {
@@ -23,4 +25,21 @@ public class WorkerHeader
     public int ComputerGroupId { get; set; }
 
     public DateTime AddedDate { get; set; }
+
+    public WorkerHeader() { }
+
+    public WorkerHeader(Worker worker)
+    {
+
+        AddedDate = worker.AddedDate;
+        Address = worker.Address;
+        Port = worker.Port;
+        ComputerGroupId = worker.ComputerGroupId;
+        Cpu = worker.Cpu;
+        Ram = worker.Ram;
+        Storage = worker.Storage;
+        Name = worker.Name;
+        Username = worker.Username;
+        Password = worker.Password;
+    }
 }
