@@ -21,8 +21,6 @@
   <ItemGroup>
     <Folder Include="Areas\" />
     <Folder Include="Hosting\" />
-    <Folder Include="Commands\" />
-    <Folder Include="Queries\" />
   </ItemGroup>
 
   <ItemGroup>
