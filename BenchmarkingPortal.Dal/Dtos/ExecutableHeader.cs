@@ -20,10 +20,6 @@ public class ExecutableHeader
 
     public int UserId { get; set; }
 
-    public ICollection<BenchmarkHeader>? Benchmarks { get; set; }
-
-    public UserHeader? User { get; set; }
-
     public ExecutableHeader(Executable e)
     {
         Id = e.Id;

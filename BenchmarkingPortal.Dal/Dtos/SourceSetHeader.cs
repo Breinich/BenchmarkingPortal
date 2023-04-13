@@ -12,7 +12,4 @@ public class SourceSetHeader
 
     public DateTime UploadedDate { get; set; }
     public int UserId { get; set; }
-
-
-    public UserHeader? User { get; set; }
 }
