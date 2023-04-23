@@ -1,16 +1,19 @@
 ﻿using BenchmarkingPortal.Dal.Entities;
 using BenchmarkingPortal.Dal.SeedInterfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace BenchmarkingPortal.Dal.SeedService;
 
 public class UserSeedService : IUserSeedService
 {
     private readonly UserManager<User> _userManager;
+    private readonly IConfiguration _configuration;
 
-    public UserSeedService(UserManager<User> userManager)
+    public UserSeedService(UserManager<User> userManager, IConfiguration configuration)
     {
         _userManager = userManager;
+        _configuration = configuration;
     }
 
     public async Task SeedUserAsync()
@@ -24,7 +27,8 @@ public class UserSeedService : IUserSeedService
                 SecurityStamp = Guid.NewGuid().ToString(),
             };
 
-            var createResult = await _userManager.CreateAsync(user, "$Administrator007MaxiBear");
+            var pass = _configuration["User:AdminPassword"] ?? throw new ApplicationException("Admin password not set in configuration.");
+            var createResult = await _userManager.CreateAsync(user,  pass);
 
             if (!createResult.Succeeded)
             {
