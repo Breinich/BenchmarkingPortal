@@ -1,3 +1,4 @@
+using System.Reflection;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Entities;
 using BenchmarkingPortal.Dal.SeedInterfaces;
@@ -9,17 +10,19 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<BenchmarkingDbContext>(
-    o => o.UseSqlServer(builder.Configuration.GetConnectionString(nameof(BenchmarkingDbContext))));
-
 builder.Services.AddRazorPages();
 
-builder.Services.AddIdentity<User, IdentityRole<int>>()
+builder.Services.AddIdentity<User, IdentityRole<int>>( options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<BenchmarkingDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddDbContext<BenchmarkingDbContext>(
+    o => o.UseSqlServer(builder.Configuration.GetConnectionString(nameof(BenchmarkingDbContext))));
+
 builder.Services.AddScoped<IRoleSeedService, RoleSeedService>();
 builder.Services.AddScoped<IUserSeedService, UserSeedService>();
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerDocument(o => o.Title = "Benchmarking API");
