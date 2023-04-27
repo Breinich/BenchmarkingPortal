@@ -79,8 +79,9 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
 
         // Delegating the benchmark to the scheduler and starting it on one or more VMs
 
-        // The scheduler sends back the assigned ComputerGroup's Id and the start time
-
+        // The scheduler sends back the assigned ComputerGroup's Id and the start time, these are ONLY TEMPORARY
+        var startedDate = DateTime.Now;
+        var computerGroupId = 1;
         // If the starting of the benchmark would be compromised, de scheduler must throw an exception and
         // in this case, no benchmark will be started
 
@@ -99,12 +100,14 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             Cpu = request.Cpu,
             TimeLimit = request.TimeLimit,
             HardTimeLimit = request.HardTimeLimit,
-            // ComputerGroupId = something,
+            // TODO need to be fixed
+            ComputerGroupId = computerGroupId,
             ExecutableId = request.ExecutableId,
             SourceSetId = request.SourceSetId,
             SetFilePath = request.SetFilePath,
             PropertyFilePath = request.PropertyFilePath,
-            // StartedDate = something
+            // TODO need to be fixed
+            StartedDate = startedDate,
             ConfigurationId = request.ConfigurationId,
             UserId = request.UserId,
         };
