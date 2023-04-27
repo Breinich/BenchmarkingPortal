@@ -1,4 +1,3 @@
-using System.Reflection;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Entities;
 using BenchmarkingPortal.Dal.SeedInterfaces;
@@ -17,7 +16,8 @@ builder.Services.AddIdentity<User, IdentityRole<int>>( options => options.SignIn
     .AddDefaultTokenProviders();
 
 builder.Services.AddDbContext<BenchmarkingDbContext>(
-    o => o.UseSqlServer(builder.Configuration.GetConnectionString(nameof(BenchmarkingDbContext))));
+    o => o.UseSqlServer(builder.Configuration.GetConnectionString(nameof(BenchmarkingDbContext)),
+        x => x.MigrationsAssembly("BenchmarkingPortal.Migrations.Base")));
 
 builder.Services.AddScoped<IRoleSeedService, RoleSeedService>();
 builder.Services.AddScoped<IUserSeedService, UserSeedService>();

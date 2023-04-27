@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BenchmarkingPortal.Dal\BenchmarkingPortal.Dal.csproj" />
+    <ProjectReference Include="..\BenchmarkingPortal.Migrations.Base\BenchmarkingPortal.Migrations.Base.csproj" />
   </ItemGroup>
 
 </Project>

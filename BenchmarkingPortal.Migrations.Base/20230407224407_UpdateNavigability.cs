@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿#nullable disable
 
-#nullable disable
+using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace BenchmarkingPortal.Dal.Migrations
+namespace BenchmarkingPortal.Migrations.Base
 {
     /// <inheritdoc />
-    public partial class InitialwConfigurations : Migration
+    public partial class UpdateNavigability : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

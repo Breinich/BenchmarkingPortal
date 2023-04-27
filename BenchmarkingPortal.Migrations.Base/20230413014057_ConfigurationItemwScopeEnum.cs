@@ -1,9 +1,8 @@
-﻿using BenchmarkingPortal.Dal.Entities;
+﻿#nullable disable
+
 using Microsoft.EntityFrameworkCore.Migrations;
 
-#nullable disable
-
-namespace BenchmarkingPortal.Dal.Migrations
+namespace BenchmarkingPortal.Migrations.Base
 {
     /// <inheritdoc />
     public partial class ConfigurationItemwScopeEnum : Migration
