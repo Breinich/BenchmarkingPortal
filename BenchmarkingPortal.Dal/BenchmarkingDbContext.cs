@@ -30,31 +30,31 @@ public partial class BenchmarkingDbContext : IdentityDbContext<User, IdentityRol
 
     public virtual DbSet<Worker> Workers => Set<Worker>();
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        base.OnModelCreating(modelBuilder);
+        base.OnModelCreating(builder);
 
         
-        modelBuilder.ApplyConfiguration(new BenchmarkEntityConfiguration());
+        builder.ApplyConfiguration(new BenchmarkEntityConfiguration());
 
-        modelBuilder.ApplyConfiguration(new ComputerGroupEntityConfiguration());
+        builder.ApplyConfiguration(new ComputerGroupEntityConfiguration());
 
-        modelBuilder.ApplyConfiguration(new ConfigurationEntityConfiguration());
+        builder.ApplyConfiguration(new ConfigurationEntityConfiguration());
 
-        modelBuilder.ApplyConfiguration(new ConfigurationItemEntityConfiguration());
+        builder.ApplyConfiguration(new ConfigurationItemEntityConfiguration());
 
-        modelBuilder.ApplyConfiguration(new ConstraintEntityConfiguration());
+        builder.ApplyConfiguration(new ConstraintEntityConfiguration());
 
-        modelBuilder.ApplyConfiguration(new ExecutableEntityConfiguration());
+        builder.ApplyConfiguration(new ExecutableEntityConfiguration());
 
-        modelBuilder.ApplyConfiguration(new SourceSetEntityConfiguration());
+        builder.ApplyConfiguration(new SourceSetEntityConfiguration());
 
-        modelBuilder.ApplyConfiguration(new WorkerEntityConfiguration());
+        builder.ApplyConfiguration(new WorkerEntityConfiguration());
 
-        modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
+        builder.ApplyConfiguration(new UserEntityConfiguration());
 
 
-        SeedData(modelBuilder);
+        SeedData(builder);
     }
 
     private void SeedData(ModelBuilder modelBuilder)

@@ -22,12 +22,12 @@ public class UserSeedService : IUserSeedService
         {
             var user = new User
             {
-                UserName = "admin",
-                Email = "bajnokvencel@edu.bme.hu",
+                UserName = _configuration["Users:AdminUserName"] ?? throw new ApplicationException("Admin username not set in configuration."),
+                Email = _configuration["Users:AdminEmail"] ?? throw new ApplicationException("Admin email not set in configuration."),
                 SecurityStamp = Guid.NewGuid().ToString(),
             };
 
-            var pass = _configuration["User:AdminPassword"] ?? throw new ApplicationException("Admin password not set in configuration.");
+            var pass = _configuration["Users:AdminPassword"] ?? throw new ApplicationException("Admin password not set in configuration.");
             var createResult = await _userManager.CreateAsync(user,  pass);
 
             if (!createResult.Succeeded)
