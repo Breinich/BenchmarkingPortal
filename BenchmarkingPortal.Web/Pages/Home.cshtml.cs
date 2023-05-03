@@ -1,25 +1,19 @@
 ﻿using BenchmarkingPortal.Dal.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BenchmarkingPortal.Web.Pages;
 
+[Authorize(Policy = "RequireApprovedUser")]
 public class Home : PageModel
 {
-    private readonly SignInManager<User> _signInManager;
-    public Home(SignInManager<User> signInManager)
+
+    public Home()
     {
-        _signInManager = signInManager;
     }
+
     public void OnGet()
     {
-        if(!_signInManager.IsSignedIn(User))
-        {
-            Response.Redirect("/Identity/Account/Login");
-        }
-        else if(User.IsInRole(Roles.Guest))
-        {
-            Response.Redirect("/Identity/Account/AccessDenied");
-        }
     }
 }

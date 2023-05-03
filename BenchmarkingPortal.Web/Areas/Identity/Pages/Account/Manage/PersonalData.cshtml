@@ -1,4 +1,7 @@
 ﻿@page
+@inject IAuthorizationService AuthorizationService
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model PersonalDataModel
 @{
     ViewData["Title"] = "Personal Data";
@@ -16,9 +19,12 @@
         <form id="download-data" asp-page="DownloadPersonalData" method="post">
             <button class="btn btn-primary mb-3" type="submit">Download</button>
         </form>
-        <p>
-            <a id="delete" asp-page="DeletePersonalData" class="btn btn-danger mb-3">Delete</a>
-        </p>
+        @if (!(await AuthorizationService.AuthorizeAsync(User, "RequireAdministratorRole")).Succeeded)
+        {
+            <p>
+                <a id="delete" asp-page="DeletePersonalData" class="btn btn-danger mb-3">Delete</a>
+            </p>
+        }
     </div>
 </div>
 

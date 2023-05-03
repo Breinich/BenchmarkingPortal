@@ -31,6 +31,8 @@ namespace BenchmarkingPortal.Web.Areas.Identity.Pages.Account.Manage
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public string Username { get; set; }
+        
+        public string Roles { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -68,8 +70,13 @@ namespace BenchmarkingPortal.Web.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
 
             Username = userName;
+            foreach (var role in roles)
+            {
+                Roles += $"{role} ";
+            }
 
             Input = new InputModel
             {
