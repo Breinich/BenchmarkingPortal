@@ -98,10 +98,8 @@ namespace BenchmarkingPortal.Web.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                var user = new User { UserName = Input.UserName, Email = Input.Email };
 
-                await _userManager.SetUserNameAsync(user, Input.UserName);
-                await _userManager.SetEmailAsync(user, Input.Email);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)

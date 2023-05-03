@@ -4,11 +4,12 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using BenchmarkingPortal.Dal.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+// using Octokit;
+using User = BenchmarkingPortal.Dal.Entities.User;
 
 namespace BenchmarkingPortal.Web.Areas.Identity.Pages.Account
 {
@@ -58,6 +59,8 @@ namespace BenchmarkingPortal.Web.Areas.Identity.Pages.Account
         
         public string Email { get; set; }
         public string Name { get; set; }
+        
+        public bool FtsrgMember { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -127,6 +130,11 @@ namespace BenchmarkingPortal.Web.Areas.Identity.Pages.Account
                 if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Name))
                 {
                     Name = info.Principal.FindFirstValue(ClaimTypes.Name);
+                    /* with Ocktokit NuGet package
+                    var github = new GitHubClient(new ProductHeaderValue("BenchmarkingPortal"));
+                    var ftsrgOrg = await github.Organization.Get("ftsrg");
+                    var user = await github.User.Get(Name);
+                    FtsrgMember = user.Company == ftsrgOrg.Name;*/
                 }
                 Input = new InputModel
                 {
@@ -150,14 +158,8 @@ namespace BenchmarkingPortal.Web.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                var user = new User { UserName = Input.UserName, Email = Input.Email };
                 
-                await _userManager.SetUserNameAsync(user, Input.UserName);
-                if (Email != "")
-                {
-                    await _userManager.SetEmailAsync(user, Email);
-                }
-
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
@@ -181,20 +183,6 @@ namespace BenchmarkingPortal.Web.Areas.Identity.Pages.Account
             ProviderDisplayName = info.ProviderDisplayName;
             ReturnUrl = returnUrl;
             return Page();
-        }
-
-        private User CreateUser()
-        {
-            try
-            {
-                return Activator.CreateInstance<User>();
-            }
-            catch
-            {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(User)}'. " +
-                    $"Ensure that '{nameof(User)}' is not an abstract class and has a parameterless constructor, or alternatively " +
-                    $"override the external login page in /Areas/Identity/Pages/Account/ExternalLogin.cshtml");
-            }
         }
     }
 }
