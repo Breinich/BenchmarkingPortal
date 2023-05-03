@@ -77,4 +77,8 @@
     <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewStart.cshtml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\images\GitHub.png" />
+  </ItemGroup>
+
 </Project>
