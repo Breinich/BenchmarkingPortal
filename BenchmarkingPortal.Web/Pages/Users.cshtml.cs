@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BenchmarkingPortal.Web.Pages;
 
-[Authorize(Policy = "RequireAdminRole")]
+[Authorize(Policy = Policies.RequireAdministratorRole)]
 public class Users : PageModel
 {
     public void OnGet()

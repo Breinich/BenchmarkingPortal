@@ -59,9 +59,9 @@ builder.Services.AddAuthentication().AddCookie()
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("RequireAdministratorRole",
+    options.AddPolicy(Policies.RequireAdministratorRole,
         policy => policy.RequireRole(Roles.Admin));
-    options.AddPolicy("RequireApprovedUser",
+    options.AddPolicy(Policies.RequireApprovedUser,
         policy => policy.RequireRole(Roles.User, Roles.Admin));
 });
 

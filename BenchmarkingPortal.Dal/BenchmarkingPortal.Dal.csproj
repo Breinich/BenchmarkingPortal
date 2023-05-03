@@ -20,7 +20,6 @@
     <Folder Include="EntityConfigurations\" />
     <Folder Include="SeedService\" />
     <Folder Include="SeedInterfaces\" />
-    <Folder Include="Users\" />
   </ItemGroup>
 
 </Project>
