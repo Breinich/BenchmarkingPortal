@@ -1,6 +1,4 @@
-﻿using BenchmarkingPortal.Dal.Entities;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BenchmarkingPortal.Web.Pages;
