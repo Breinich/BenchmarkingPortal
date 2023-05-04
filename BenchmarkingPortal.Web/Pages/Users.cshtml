@@ -1,6 +1,141 @@
 ﻿@page
-@model BenchmarkingPortal.Web.Pages.Users
+@model BenchmarkingPortal.Web.Pages.UsersModel
 
 @{
     ViewData["Title"] = "Users";
 }
+<partial name="~/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" for="StatusMessage"/>
+<div class="d-flex justify-content-center">
+    <h3>Users waiting for approval</h3>
+</div>
+<div style="overflow: auto; height: 30%;">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>
+                Username
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Actual Subscription
+            </th>
+            <th>
+                New Subscription
+            </th>
+            <th>
+                Actual Role
+            </th>
+            <th>
+                New Role
+            </th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < Model.UserList.Count(); i++)
+        {
+            var item = Model.UserList[i];
+            if (item.Roles.Contains(Roles.Guest) && item.UserName != User.Identity.Name)
+            {
+                <tr>
+                    <form class="form" method="post">
+                        <td>
+                            <input asp-for="@item.UserName" disabled/>
+                        </td>
+                        <td>
+                            <input asp-for="@item.Email" disabled/>
+                        </td>
+                        <td>
+                            <input asp-for="@item.Subscription" disabled/>
+                        </td>
+                        <td>
+                            <input type="checkbox" asp-for="Input.Subscribed"/>
+                        </td>
+                        <td>
+                            <select asp-for="@item.Roles[0]" asp-items="Model.Roles" disabled></select>
+                        </td>
+                        <td>
+                            <select asp-for="Input.Role" asp-items="Model.Roles"></select>
+                        </td>
+                        <td>
+                            <input type="submit" value="Save" class="btn btn-primary"
+                                   asp-page-handler="Save" asp-route-name="@item.UserName"/>
+                            <input type="submit" value="Delete" class="btn btn-danger"
+                                   asp-page-handler="Delete" asp-route-name="@item.UserName"/>
+                        </td>
+                    </form>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+</div>
+<div class="d-flex justify-content-center">
+    <h3>The approved users</h3>
+</div>
+<div style="overflow: auto; height: 30%;">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>
+                Username
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Actual Subscription
+            </th>
+            <th>
+                New Subscription
+            </th>
+            <th>
+                Actual Role
+            </th>
+            <th>
+                New Role
+            </th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < Model.UserList.Count(); i++)
+        {
+            var item = Model.UserList[i];
+            if (item.Roles.Contains(Roles.Guest) == false && item.UserName != User.Identity.Name)
+            {
+                <tr>
+                    <form class="form" method="post">
+                        <td>
+                            <input asp-for="@item.UserName" disabled/>
+                        </td>
+                        <td>
+                            <input asp-for="@item.Email" disabled/>
+                        </td>
+                        <td>
+                            <input asp-for="@item.Subscription" disabled/>
+                        </td>
+                        <td>
+                            <input type="checkbox" asp-for="Input.Subscribed"/>
+                        </td>
+                        <td>
+                            <select asp-for="@item.Roles[0]" asp-items="Model.Roles" disabled></select>
+                        </td>
+                        <td>
+                            <select asp-for="Input.Role" asp-items="Model.Roles"></select>
+                        </td>
+                        <td>
+                            <input type="submit" value="Save" class="btn btn-primary"
+                                   asp-page-handler="Save" asp-route-name="@item.UserName"/>
+                            <input type="submit" value="Delete" class="btn btn-danger"
+                                   asp-page-handler="Delete" asp-route-name="@item.UserName"/>
+                        </td>
+                    </form>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+</div>

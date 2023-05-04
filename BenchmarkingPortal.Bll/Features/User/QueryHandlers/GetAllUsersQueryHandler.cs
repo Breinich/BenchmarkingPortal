@@ -33,7 +33,7 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, IEnumer
             var u = await _userManager.FindByIdAsync(userHeader.Id.ToString());
             if(u == null) continue;
             
-            userHeader.Role = (await _userManager.GetRolesAsync(u)).FirstOrDefault();
+            userHeader.Roles = (await _userManager.GetRolesAsync(u)).ToList();
         }
 
         return list;
