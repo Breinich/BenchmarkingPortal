@@ -11,9 +11,9 @@ namespace BenchmarkingPortal.Bll.Features.Benchmark.CommandHandlers;
 public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkCommand, BenchmarkHeader>
 {
     private readonly BenchmarkingDbContext _context;
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<Dal.Entities.User> _userManager;
 
-    public UpdateBenchmarkCommandHandler(BenchmarkingDbContext context, UserManager<User> userManager)
+    public UpdateBenchmarkCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager)
     {
         _context = context;
         _userManager = userManager;
@@ -32,7 +32,7 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
         if (benchmarkHeader.UserId != request.UserId)
         {
             var user = await _userManager.FindByIdAsync(request.UserId.ToString()) ??
-                       throw new ArgumentException(new ExceptionMessage<User>().ObjectNotFound);
+                       throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().ObjectNotFound);
 
 
             var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);

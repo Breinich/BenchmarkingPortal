@@ -9,8 +9,6 @@
 	<ItemGroup>
     <Folder Include="Features\User\CommandHandlers\" />
     <Folder Include="Features\User\Commands\" />
-    <Folder Include="Features\User\Queries\" />
-    <Folder Include="Features\User\QueryHandlers\" />
     <Folder Include="Features\Worker\CommandHandlers\" />
     <Folder Include="Features\Worker\Commands\" />
     <Folder Include="Features\Worker\Queries\" />
