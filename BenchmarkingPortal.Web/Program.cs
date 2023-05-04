@@ -1,12 +1,22 @@
 using BenchmarkingPortal;
+using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
+using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
+using BenchmarkingPortal.Bll.Features.ComputerGroup.Commands;
+using BenchmarkingPortal.Bll.Features.ComputerGroup.Queries;
+using BenchmarkingPortal.Bll.Features.Configuration.Commands;
+using BenchmarkingPortal.Bll.Features.Executable.Commands;
+using BenchmarkingPortal.Bll.Features.Executable.Queries;
+using BenchmarkingPortal.Bll.Features.SourceSet.Commands;
+using BenchmarkingPortal.Bll.Features.SourceSet.Queries;
+using BenchmarkingPortal.Bll.Features.User.Queries;
+using BenchmarkingPortal.Bll.Features.Worker.Commands;
+using BenchmarkingPortal.Bll.Features.Worker.Queries;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Entities;
 using BenchmarkingPortal.Dal.SeedInterfaces;
 using BenchmarkingPortal.Dal.SeedService;
 using BenchmarkingPortal.Web.Hosting;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Build.Execution;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,8 +54,6 @@ builder.Services.AddDbContext<BenchmarkingDbContext>(
 builder.Services.AddScoped<IRoleSeedService, RoleSeedService>();
 builder.Services.AddScoped<IUserSeedService, UserSeedService>();
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
-
 builder.Services.AddAuthentication().AddCookie()
     .AddGitHub(options =>
     {
@@ -76,6 +84,30 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(DeleteBenchmarkCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(StartBenchmarkCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(UpdateBenchmarkCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(GetAllBenchmarksQuery).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(GetResultPathQuery).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(CreateComputerGroupCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(GetAllComputerGroupsQuery).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(CreateConfigurationCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(DeleteExecutableCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(UploadNewExecutableCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(GetAllExecutablesQuery).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(DeleteSourceSetCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(UploadNewSourceSetCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(GetAllSourceSetsQuery).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(AddWorkerCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(RemoveWorkerCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(UpdateWorkerCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(GetAllWorkersQuery).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(GetAllUsersQuery).Assembly);
+});
 
 var app = builder.Build();
 
