@@ -1,6 +1,6 @@
-﻿using BenchmarkingPortal.Bll.Features.User.Queries;
+﻿using BenchmarkingPortal.Bll.Features.User.Commands;
+using BenchmarkingPortal.Bll.Features.User.Queries;
 using BenchmarkingPortal.Dal.Dtos;
-using BenchmarkingPortal.Dal.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -27,13 +27,11 @@ public class UsersModel : PageModel
         public string? Role { get; set; }
     }
 
-    private readonly UserManager<User> _userManager;
     private readonly IMediator _mediator;
     public readonly RoleManager<IdentityRole<int>> RoleManager;
 
-    public UsersModel(UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager, IMediator mediator)
+    public UsersModel(RoleManager<IdentityRole<int>> roleManager, IMediator mediator)
     {
-        _userManager = userManager;
         UserList = new List<UserHeader>();
         Roles = new List<SelectListItem>();
         _mediator = mediator;
@@ -56,42 +54,55 @@ public class UsersModel : PageModel
     
     public async Task<IActionResult> OnPostSaveAsync(string name)
     {
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+        
         var subscribed = Input.Subscribed;
         var role = Input.Role;
-        
-        var user = await _userManager.FindByNameAsync(name);
-        if (user == null)
+
+        try
         {
-            StatusMessage = "Error: User not found";
+            var updatedUser = await _mediator.Send(new UpdateUserCommand()
+            {
+                UserName = name,
+                Subscription = subscribed,
+                Role = role,
+                InvokerName = User.Identity?.Name ?? throw new ApplicationException("Authenticated user not found")
+            });
+            
+            StatusMessage = "User updated";
             return RedirectToPage();
         }
-        
-        user.Subscription = subscribed;
-        await _userManager.UpdateAsync(user);
-        
-        var currentRoles = await _userManager.GetRolesAsync(user);
-        if (!currentRoles.Contains(role))
+        catch (AggregateException e)
         {
-            await _userManager.RemoveFromRolesAsync(user, currentRoles);
-            await _userManager.AddToRoleAsync(user, role);
+            Console.WriteLine(e);
+            StatusMessage = e.InnerException?.Message ?? e.Message;
+            
+            return RedirectToPage();
         }
-        
-        StatusMessage = "User updated";
-        return RedirectToPage();
     }
     
     public async Task<IActionResult> OnPostDeleteAsync(string name)
     {
-        var user = await _userManager.FindByNameAsync(name);
-        if (user == null)
+        try
         {
-            StatusMessage = "Error: User not found";
+            await _mediator.Send(new DeleteUserCommand()
+            {
+                UserName = name,
+                InvokerName = User.Identity?.Name ?? throw new ApplicationException("Authenticated user not found")
+            });
+            
+            StatusMessage = "User deleted";
             return RedirectToPage();
         }
-        
-        await _userManager.DeleteAsync(user);
-        
-        StatusMessage = "User deleted";
-        return RedirectToPage();
+        catch (AggregateException e)
+        {
+            Console.WriteLine(e);
+            StatusMessage = e.InnerException?.Message ?? e.Message;
+            
+            return RedirectToPage();
+        }
     }
 }

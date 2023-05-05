@@ -10,6 +10,7 @@
 </div>
 <div class="tableFixHead">
     <table class="table table-striped align-middle">
+        <caption hidden>Table for users waiting for approval</caption>
         <thead class="table-dark">
         <tr>
             <th>
@@ -24,22 +25,23 @@
             <th>
                 <div class="d-flex justify-content-center">Role</div>
             </th>
-            <th></th>
+            <th>
+                <div class="d-flex justify-content-center">Operations</div>
+            </th>
         </tr>
         </thead>
         <tbody>
-        @for (int i = 0; i < Model.UserList.Count(); i++)
+        @foreach(var item in Model.UserList)
         {
-            var item = Model.UserList[i];
             if (item.Roles.Contains(Roles.Guest))
             {
                 <tr>
                     <form class="form" method="post">
                         <td>
-                            <div class="d-flex justify-content-center">@item.UserName"</div>
+                            <div class="d-flex justify-content-center">@item.UserName</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.Email"</div>
+                            <div class="d-flex justify-content-center">@item.Email</div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">
@@ -63,8 +65,12 @@
                             <div class="d-flex justify-content-center">
                                 <input type="submit" value="Save" class="btn btn-primary m-1"
                                        asp-page-handler="Save" asp-route-name="@item.UserName"/>
-                                <input type="submit" value="Delete" class="btn btn-danger m-1"
-                                       asp-page-handler="Delete" asp-route-name="@item.UserName"/>
+                                <button type="submit" class="btn btn-danger m-1"
+                                        asp-page-handler="Delete" asp-route-name="@item.UserName">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                    </svg>
+                                </button>
                             </div>
                         </td>
                     </form>
@@ -79,6 +85,7 @@
 </div>
 <div class="tableFixHead">
     <table class="table table-striped align-middle">
+        <caption hidden>Table for the already approved users</caption>
         <thead class="table-dark">
         <tr>
             <th>
@@ -93,22 +100,23 @@
             <th>
                 <div class="d-flex justify-content-center">Role</div>
             </th>
-            <th></th>
+            <th>
+                <div class="d-flex justify-content-center">Operations</div>
+            </th>
         </tr>
         </thead>
         <tbody>
-        @for (int i = 0; i < Model.UserList.Count(); i++)
+        @foreach(var item in Model.UserList)
         {
-            var item = Model.UserList[i];
-            if (item.Roles.Contains(Roles.Guest) == false && item.UserName != User.Identity.Name)
+            if (item.Roles.Contains(Roles.Guest) == false && item.UserName != User.Identity?.Name)
             {
                 <tr>
                     <form class="form" method="post">
                         <td>
-                            <div class="d-flex justify-content-center">@item.UserName"</div>
+                            <div class="d-flex justify-content-center">@item.UserName</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.Email"</div>
+                            <div class="d-flex justify-content-center">@item.Email</div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">
@@ -132,8 +140,12 @@
                             <div class="d-flex justify-content-center">
                                 <input type="submit" value="Save" class="btn btn-primary m-1"
                                        asp-page-handler="Save" asp-route-name="@item.UserName"/>
-                                <input type="submit" value="Delete" class="btn btn-danger m-1"
-                                       asp-page-handler="Delete" asp-route-name="@item.UserName"/>
+                                <button type="submit" class="btn btn-danger m-1"
+                                        asp-page-handler="Delete" asp-route-name="@item.UserName">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                    </svg>
+                                </button>
                             </div>
                         </td>
                     </form>
