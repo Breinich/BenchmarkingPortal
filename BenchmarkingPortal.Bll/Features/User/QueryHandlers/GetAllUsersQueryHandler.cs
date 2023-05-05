@@ -21,19 +21,16 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, IEnumer
 
     public async Task<IEnumerable<UserHeader>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
     {
-        var list = await _context.Users.Select(u => new UserHeader()
+        var users = await _context.Users.ToListAsync(cancellationToken);
+
+        var list = new List<UserHeader>();
+        
+        foreach (var u in users)
         {
-            Id = u.Id,
-            UserName = u.UserName,
-            Email = u.Email,
-            Subscription = u.Subscription
-        }).ToListAsync(cancellationToken);
-        foreach (var userHeader in list)
-        {
-            var u = await _userManager.FindByIdAsync(userHeader.Id.ToString());
-            if(u == null) continue;
-            
-            userHeader.Roles = (await _userManager.GetRolesAsync(u)).ToList();
+            list.Add(new UserHeader(u)
+            {
+                Roles = (await _userManager.GetRolesAsync(u)).ToList()
+            });
         }
 
         return list;
