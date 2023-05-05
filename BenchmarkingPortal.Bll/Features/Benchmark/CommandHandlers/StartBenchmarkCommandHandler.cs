@@ -1,4 +1,5 @@
-﻿using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
+﻿using BenchmarkingPortal.Bll.Exceptions;
+using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
@@ -64,12 +65,12 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             Cpu = request.Cpu,
             TimeLimit = request.TimeLimit,
             HardTimeLimit = request.HardTimeLimit,
-            ExecutableId = request.ExecutableId,
-            SourceSetId = request.SourceSetId,
+            Executable = new ExecutableHeader(await _context.Executables.FindAsync(request.ExecutableId) ?? throw new ArgumentException(nameof(request), new ExceptionMessage<Dal.Entities.Executable>().ObjectNotFound)),
+            SourceSet = new SourceSetHeader(await _context.SourceSets.FindAsync(request.SourceSetId) ?? throw new ArgumentException(nameof(request), new ExceptionMessage<Dal.Entities.SourceSet>().ObjectNotFound)),
             SetFilePath = request.SetFilePath,
             PropertyFilePath = request.PropertyFilePath,
             ConfigurationId = request.ConfigurationId,
-            UserId = request.UserId,
+            User = new UserHeader(await _context.Users.FindAsync(request.UserId) ?? throw new ArgumentException(nameof(request), new ExceptionMessage<Dal.Entities.User>().ObjectNotFound)),
         };
 
         // The other values will be checked by the scheduler

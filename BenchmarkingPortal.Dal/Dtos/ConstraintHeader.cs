@@ -6,6 +6,6 @@ public class ConstraintHeader
 
     public string? Consequence { get; set; }
 
-    public int ConfigurationId { get; set; }
+    public ConfigurationHeader? Configuration { get; set; }
 
 }
