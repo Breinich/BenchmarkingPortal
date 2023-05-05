@@ -1,6 +1,8 @@
-﻿using BenchmarkingPortal.Bll.Features.User.Commands;
+﻿using BenchmarkingPortal.Bll.Exceptions;
+using BenchmarkingPortal.Bll.Features.User.Commands;
 using BenchmarkingPortal.Bll.Features.User.Queries;
 using BenchmarkingPortal.Dal.Dtos;
+using BenchmarkingPortal.Dal.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -42,14 +44,25 @@ public class UsersModel : PageModel
     
     public async Task<IActionResult> OnGet()
     {
-        Roles = await RoleManager.Roles.Select(x => new SelectListItem()
+        try
         {
-            Text = x.ToString(),
-            Value = x.ToString()
-        }).ToListAsync();
+            Roles = await RoleManager.Roles.Select(x => new SelectListItem() 
+            {
+                Text = x.ToString(),
+                Value = x.ToString()
+            }).ToListAsync();
+
+            UserList = (await _mediator.Send(new GetAllUsersQuery())).ToList();
+            return Page();
+        }
+        catch (AggregateException e)
+        {
+            Console.WriteLine(e);
+            StatusMessage = "Error: " + e.InnerException?.Message ?? e.Message;
+            
+            return RedirectToPage();
+        }
         
-        UserList = (await _mediator.Send(new GetAllUsersQuery())).ToList();
-        return Page();
     }
     
     public async Task<IActionResult> OnPostSaveAsync(string name)
@@ -69,7 +82,7 @@ public class UsersModel : PageModel
                 UserName = name,
                 Subscription = subscribed,
                 Role = role,
-                InvokerName = User.Identity?.Name ?? throw new ApplicationException("Authenticated user not found")
+                InvokerName = User.Identity?.Name ?? throw new ApplicationException(new ExceptionMessage<User>().NoPrivilege)
             });
             
             StatusMessage = "User updated";
@@ -78,7 +91,7 @@ public class UsersModel : PageModel
         catch (AggregateException e)
         {
             Console.WriteLine(e);
-            StatusMessage = e.InnerException?.Message ?? e.Message;
+            StatusMessage = "Error: " + e.InnerException?.Message ?? e.Message;
             
             return RedirectToPage();
         }
@@ -100,7 +113,7 @@ public class UsersModel : PageModel
         catch (AggregateException e)
         {
             Console.WriteLine(e);
-            StatusMessage = e.InnerException?.Message ?? e.Message;
+            StatusMessage = "Error: " + e.InnerException?.Message ?? e.Message;
             
             return RedirectToPage();
         }
