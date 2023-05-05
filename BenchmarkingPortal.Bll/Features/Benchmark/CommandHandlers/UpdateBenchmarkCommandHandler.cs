@@ -29,9 +29,9 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
         var benchmarkHeader = new BenchmarkHeader(benchmarkEntity);
 
         // Only the owner or the administrators have the permission to modify a specific benchmark
-        if (benchmarkHeader.User.Id != request.UserId)
+        if (benchmarkHeader.User.UserName != request.InvokerName)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString()) ??
+            var user = await _userManager.FindByNameAsync(request.InvokerName) ??
                        throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().ObjectNotFound);
 
 

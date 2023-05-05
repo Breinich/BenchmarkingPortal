@@ -12,5 +12,5 @@ public class UpdateBenchmarkCommand : IRequest<BenchmarkHeader>
 
     public Status Status { get; set; }
 
-    public int UserId { get; set; }
+    public string InvokerName { get; set; } = null!;
 }
