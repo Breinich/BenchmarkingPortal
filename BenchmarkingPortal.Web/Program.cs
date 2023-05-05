@@ -8,6 +8,7 @@ using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
 using BenchmarkingPortal.Bll.Features.SourceSet.Commands;
 using BenchmarkingPortal.Bll.Features.SourceSet.Queries;
+using BenchmarkingPortal.Bll.Features.User.Commands;
 using BenchmarkingPortal.Bll.Features.User.Queries;
 using BenchmarkingPortal.Bll.Features.Worker.Commands;
 using BenchmarkingPortal.Bll.Features.Worker.Queries;
@@ -107,6 +108,8 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(UpdateWorkerCommand).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(GetAllWorkersQuery).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(GetAllUsersQuery).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(UpdateUserCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(DeleteUserCommand).Assembly);
 });
 
 var app = builder.Build();
