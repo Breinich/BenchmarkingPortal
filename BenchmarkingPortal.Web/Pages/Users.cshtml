@@ -5,30 +5,24 @@
     ViewData["Title"] = "Users";
 }
 <partial name="~/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" for="StatusMessage"/>
-<div class="d-flex justify-content-center">
+<div class="d-flex justify-content-center m-3">
     <h3>Users waiting for approval</h3>
 </div>
-<div style="overflow: auto; height: 30%;">
-    <table class="table">
-        <thead>
+<div class="tableFixHead">
+    <table class="table table-striped align-middle">
+        <thead class="table-dark">
         <tr>
             <th>
-                Username
+                <div class="d-flex justify-content-center">Username</div>
             </th>
             <th>
-                Email
+                <div class="d-flex justify-content-center">Email</div>
             </th>
             <th>
-                Actual Subscription
+                <div class="d-flex justify-content-center">Subscription</div>
             </th>
             <th>
-                New Subscription
-            </th>
-            <th>
-                Actual Role
-            </th>
-            <th>
-                New Role
+                <div class="d-flex justify-content-center">Role</div>
             </th>
             <th></th>
         </tr>
@@ -37,33 +31,41 @@
         @for (int i = 0; i < Model.UserList.Count(); i++)
         {
             var item = Model.UserList[i];
-            if (item.Roles.Contains(Roles.Guest) && item.UserName != User.Identity.Name)
+            if (item.Roles.Contains(Roles.Guest))
             {
                 <tr>
                     <form class="form" method="post">
                         <td>
-                            <input asp-for="@item.UserName" disabled/>
+                            <div class="d-flex justify-content-center">@item.UserName"</div>
                         </td>
                         <td>
-                            <input asp-for="@item.Email" disabled/>
+                            <div class="d-flex justify-content-center">@item.Email"</div>
                         </td>
                         <td>
-                            <input asp-for="@item.Subscription" disabled/>
+                            <div class="d-flex justify-content-center">
+                                <input asp-for="@item.Subscription" disabled/>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+                                </svg>
+                                <input asp-for="Input.Subscribed"/>
+                            </div>
                         </td>
                         <td>
-                            <input type="checkbox" asp-for="Input.Subscribed"/>
+                            <div class="d-flex justify-content-center">
+                                <select class="rounded-3" asp-for="@item.Roles[0]" asp-items="Model.Roles" disabled></select>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+                                </svg>
+                                <select class="rounded-3" asp-for="Input.Role" asp-items="Model.Roles"></select>
+                            </div>
                         </td>
                         <td>
-                            <select asp-for="@item.Roles[0]" asp-items="Model.Roles" disabled></select>
-                        </td>
-                        <td>
-                            <select asp-for="Input.Role" asp-items="Model.Roles"></select>
-                        </td>
-                        <td>
-                            <input type="submit" value="Save" class="btn btn-primary"
-                                   asp-page-handler="Save" asp-route-name="@item.UserName"/>
-                            <input type="submit" value="Delete" class="btn btn-danger"
-                                   asp-page-handler="Delete" asp-route-name="@item.UserName"/>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" value="Save" class="btn btn-primary m-1"
+                                       asp-page-handler="Save" asp-route-name="@item.UserName"/>
+                                <input type="submit" value="Delete" class="btn btn-danger m-1"
+                                       asp-page-handler="Delete" asp-route-name="@item.UserName"/>
+                            </div>
                         </td>
                     </form>
                 </tr>
@@ -72,30 +74,24 @@
         </tbody>
     </table>
 </div>
-<div class="d-flex justify-content-center">
+<div class="d-flex justify-content-center m-3">
     <h3>The approved users</h3>
 </div>
-<div style="overflow: auto; height: 30%;">
-    <table class="table">
-        <thead>
+<div class="tableFixHead">
+    <table class="table table-striped align-middle">
+        <thead class="table-dark">
         <tr>
             <th>
-                Username
+                <div class="d-flex justify-content-center">Username</div>
             </th>
             <th>
-                Email
+                <div class="d-flex justify-content-center">Email</div>
             </th>
             <th>
-                Actual Subscription
+                <div class="d-flex justify-content-center">Subscription</div>
             </th>
             <th>
-                New Subscription
-            </th>
-            <th>
-                Actual Role
-            </th>
-            <th>
-                New Role
+                <div class="d-flex justify-content-center">Role</div>
             </th>
             <th></th>
         </tr>
@@ -109,28 +105,36 @@
                 <tr>
                     <form class="form" method="post">
                         <td>
-                            <input asp-for="@item.UserName" disabled/>
+                            <div class="d-flex justify-content-center">@item.UserName"</div>
                         </td>
                         <td>
-                            <input asp-for="@item.Email" disabled/>
+                            <div class="d-flex justify-content-center">@item.Email"</div>
                         </td>
                         <td>
-                            <input asp-for="@item.Subscription" disabled/>
+                            <div class="d-flex justify-content-center">
+                                <input asp-for="@item.Subscription" disabled/>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+                                </svg>
+                                <input asp-for="Input.Subscribed"/>
+                            </div>
                         </td>
                         <td>
-                            <input type="checkbox" asp-for="Input.Subscribed"/>
+                            <div class="d-flex justify-content-center">
+                                <select class="rounded-3" asp-for="@item.Roles[0]" asp-items="Model.Roles" disabled></select>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+                                </svg>
+                                <select class="rounded-3" asp-for="Input.Role" asp-items="Model.Roles"></select>
+                            </div>
                         </td>
                         <td>
-                            <select asp-for="@item.Roles[0]" asp-items="Model.Roles" disabled></select>
-                        </td>
-                        <td>
-                            <select asp-for="Input.Role" asp-items="Model.Roles"></select>
-                        </td>
-                        <td>
-                            <input type="submit" value="Save" class="btn btn-primary"
-                                   asp-page-handler="Save" asp-route-name="@item.UserName"/>
-                            <input type="submit" value="Delete" class="btn btn-danger"
-                                   asp-page-handler="Delete" asp-route-name="@item.UserName"/>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" value="Save" class="btn btn-primary m-1"
+                                       asp-page-handler="Save" asp-route-name="@item.UserName"/>
+                                <input type="submit" value="Delete" class="btn btn-danger m-1"
+                                       asp-page-handler="Delete" asp-route-name="@item.UserName"/>
+                            </div>
                         </td>
                     </form>
                 </tr>

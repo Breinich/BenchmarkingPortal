@@ -29,6 +29,15 @@ body {
   font-size: .75rem;
 }
 
+.tableFixHead {
+  overflow: auto; /* make the table scrollable if height is more than 250 px  */
+  height: 250px; /* gives an initial height of 250px to the table */
+}
+.tableFixHead thead th {
+  position: sticky; /* make the table heads sticky */
+  top: 0px; /* table head will be placed from the top of the table and sticks to it */
+}
+
 #godown{
   height: 60px;
 }
