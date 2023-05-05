@@ -49,5 +49,80 @@ public class UserSeedService : IUserSeedService
                                                        .Select(e => e.Description)));
             }
         }
+
+        await SeedTestUsersAsync();
+    }
+
+    private async Task SeedTestUsersAsync()
+    {
+        if (_userManager.Users.Count() < 10)
+        {
+            Random random = new Random();
+            for (int i = 0; i < 10; i++)
+            {
+                var user = new User
+                {
+                    UserName = $"TestGuest{i}",
+                    Email = $"test{i}@guest.com",
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                };
+
+                var pass = $"{i}.769+87656_{i * random.Next(100)}_ikhFDGHhoihf";
+
+                var createResult = await _userManager.CreateAsync(user, pass);
+
+                if (!createResult.Succeeded)
+                {
+                    throw new ApplicationException("Test user could not be created: " +
+                                                   string.Join(", ",
+                                                       createResult.Errors
+                                                           .Select(e => e.Description)));
+
+                }
+
+                var addToRoleResult = await _userManager.AddToRoleAsync(user, Roles.Guest);
+
+                if (!addToRoleResult.Succeeded)
+                {
+                    throw new ApplicationException("Test user could not be added to role: " +
+                                                   string.Join(", ",
+                                                       addToRoleResult.Errors
+                                                           .Select(e => e.Description)));
+                }
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                var user = new User
+                {
+                    UserName = $"TestUser{i}",
+                    Email = $"test{i}@user.com",
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                };
+
+                var pass = $"{i}.769+87656_{i * random.Next(100)}_ikhZTUJJihf";
+
+                var createResult = await _userManager.CreateAsync(user, pass);
+
+                if (!createResult.Succeeded)
+                {
+                    throw new ApplicationException("Test user could not be created: " +
+                                                   string.Join(", ",
+                                                       createResult.Errors
+                                                           .Select(e => e.Description)));
+
+                }
+
+                var addToRoleResult = await _userManager.AddToRoleAsync(user, Roles.User);
+
+                if (!addToRoleResult.Succeeded)
+                {
+                    throw new ApplicationException("Test user could not be added to role: " +
+                                                   string.Join(", ",
+                                                       addToRoleResult.Errors
+                                                           .Select(e => e.Description)));
+                }
+            }
+        }
     }
 }
