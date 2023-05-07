@@ -10,7 +10,7 @@ public class ConfigurationItemEntityConfiguration : IEntityTypeConfiguration<Con
     {
         builder.ToTable("ConfigurationItem");
 
-        builder.HasKey(e => new { e.Key, e.Scope, e.ConfigurationId });
+        builder.HasKey(e => new { e.Key, e.Value, e.Scope, e.ConfigurationId });
 
         builder.Property(e => e.Key).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Value).HasMaxLength(50).IsRequired();
