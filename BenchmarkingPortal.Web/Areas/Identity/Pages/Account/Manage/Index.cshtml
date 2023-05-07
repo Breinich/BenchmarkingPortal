@@ -5,7 +5,7 @@
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
-<h3>@ViewData["Title"]</h3>
+<h4>@ViewData["Title"]</h4>
 <partial name="_StatusMessage" for="StatusMessage" />
 <div class="row">
     <div class="col-md-6">
@@ -24,9 +24,9 @@
                 <label asp-for="Input.PhoneNumber" class="form-label"></label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
-            <div class="row justify-content-center mb-3">
-                <input asp-for="Input.Subscription" class="form-check-input col-6"/>
-                <label asp-for="Input.Subscription" class="form-check-label col-6"></label>
+            <div class="justify-content-center mb-3">
+                <input asp-for="Input.Subscription" class="form-check-input"/>
+                <label asp-for="Input.Subscription" class="form-check-label"></label>
             </div>
             <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
         </form>

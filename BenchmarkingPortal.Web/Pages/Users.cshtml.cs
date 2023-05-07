@@ -85,7 +85,7 @@ public class UsersModel : PageModel
                 InvokerName = User.Identity?.Name ?? throw new ApplicationException(new ExceptionMessage<User>().NoPrivilege)
             });
             
-            StatusMessage = "User updated";
+            StatusMessage = $"{name} updated";
             return RedirectToPage();
         }
         catch (AggregateException e)
@@ -107,7 +107,7 @@ public class UsersModel : PageModel
                 InvokerName = User.Identity?.Name ?? throw new ApplicationException("Authenticated user not found")
             });
             
-            StatusMessage = "User deleted";
+            StatusMessage = $"{name} deleted";
             return RedirectToPage();
         }
         catch (AggregateException e)
