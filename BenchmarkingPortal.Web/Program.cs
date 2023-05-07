@@ -25,6 +25,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+builder.Services.AddSession(options => { options.IdleTimeout = TimeSpan.FromMinutes(30); });
+builder.Services.AddMemoryCache();
+
+builder.Services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
+
 builder.Services.AddIdentity<User, IdentityRole<int>>( options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<BenchmarkingDbContext>()
     .AddDefaultTokenProviders();
@@ -39,7 +44,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 6;
     options.Password.RequiredUniqueChars = 1;
 // Lockout settings
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
 // User settings
@@ -116,16 +121,21 @@ var app = builder.Build();
 
 await app.MigrateDatabaseAsync<BenchmarkingDbContext>();
 
+
+app.UseExceptionHandler("/Error");
+
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 else
 {
-    app.UseDeveloperExceptionPage();
+    //app.UseDeveloperExceptionPage();
 }
+
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -134,6 +144,8 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseSession();
 
 app.MapRazorPages();
 

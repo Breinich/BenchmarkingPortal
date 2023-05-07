@@ -1,6 +1,431 @@
 ﻿@page
+@using System.Formats.Asn1
 @model BenchmarkingPortal.Web.Pages.Home
 
 @{
     ViewData["Title"] = "Active Benchmarks";
+}
+<partial name="~/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" for="StatusMessage"/>
+<div class="container">
+    <div class="row first-row">
+        <div class="col-11">
+            <h3>My benchmarks</h3>
+        </div>
+        <div class="col-1">
+            <button type="button" class="btn btn-primary d-flex justify-content-center align-items-center rounded-circle p-0" data-bs-toggle="modal" data-bs-target="#newBenchmark" onclick="deleteSession()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="tableFixHead">
+    <table class="table table-striped align-middle">
+        <caption hidden>Table for own, not finished benchmarks</caption>
+        <thead class="table-dark">
+        <tr>
+            <th>
+                <div class="d-flex justify-content-center">Name</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">Started</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">Status</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">Priority</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">RAM</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">CPU</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">Group</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">Executable</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">SourceSet</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">Progress</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">Operations</div>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.UnfinishedBenchmarks)
+        {
+            if (item.User.UserName != null && item.User.UserName.Equals(User.Identity?.Name))
+            {
+                <tr>
+                    <form class="form" method="post">
+                        <td>
+                            <div class="d-flex justify-content-center">@item.Name</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">@item.StartedDate</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">@item.Status</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">@item.Priority</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">@item.Ram GB</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">@item.Cpu Cores</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">@item.ComputerGroup.Id: @item.ComputerGroup.Description</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">@item.Executable.Name.@item.Executable.Version</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">@item.SourceSet.Name</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">Loading...</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">
+                                <input asp-for="EditInput.Priority" class="form-control"/>
+                                @if (item.Status == Status.Running)
+                                {
+                                    <button type="submit" class="btn btn-warning m-1" asp-page-handler="Pause"
+                                            asp-route-id="@item.Id">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pause-fill" viewBox="0 0 16 16">
+                                            <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"/>
+                                        </svg>
+                                    </button>
+                                }
+                                @if (item.Status == Status.Paused)
+                                {
+                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="Resume"
+                                            asp-route-id="@item.Id">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
+                                            <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+                                        </svg>
+                                    </button>
+                                }
+                                <button type="button" class="btn btn-dark m-1" asp-page-handler="Connect" asp-route-id="@item.Id">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-terminal" viewBox="0 0 16 16">
+                                        <path d="M6 9a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3A.5.5 0 0 1 6 9zM3.854 4.146a.5.5 0 1 0-.708.708L4.793 6.5 3.146 8.146a.5.5 0 1 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2z"/>
+                                        <path d="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12z"/>
+                                    </svg>
+                                </button>
+                                <input type="submit" value="Save" class="btn btn-primary m-1"
+                                       asp-page-handler="Save" asp-route-id="@item.Id" asp-route-status="@item.Status"/>
+                                <button type="submit" class="btn btn-danger m-1"
+                                        asp-page-handler="Delete" asp-route-id="@item.Id" asp-route-name="@item.Name">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </form>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+</div>
+<div class="row">
+    <div class="col-11">
+        <h3>Others' benchmarks</h3>
+    </div>
+
+</div>
+<div class="tableFixHead">
+    <table class="table table-striped align-middle">
+        <caption hidden>Table for others', not finished benchmarks</caption>
+        <thead class="table-dark">
+        <tr>
+            <th>
+                <div class="d-flex justify-content-center">Name</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">Started</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">Status</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">Priority</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">RAM</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">CPU</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">Group</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">Executable</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">SourceSet</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">Progress</div>
+            </th>
+            <th>
+                <div class="d-flex justify-content-center">Operations</div>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.UnfinishedBenchmarks)
+        {
+            if (item.User.UserName != null && !item.User.UserName.Equals(User.Identity?.Name))
+            {
+                <tr>
+                    <form class="form" method="post">
+                        <td>
+                            <div class="d-flex justify-content-center">@item.Name</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">@item.StartedDate</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">@item.Status</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">@item.Priority</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">@item.Ram GB</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">@item.Cpu Cores</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">@item.ComputerGroup.Id: @item.ComputerGroup.Description</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">@item.Executable.Name.@item.Executable.Version</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">@item.SourceSet.Name</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">Loading...</div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">
+                                <button type="button" class="btn btn-dark m-1" asp-page-handler="Connect" asp-route-id="@item.Id">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-terminal" viewBox="0 0 16 16">
+                                        <path d="M6 9a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3A.5.5 0 0 1 6 9zM3.854 4.146a.5.5 0 1 0-.708.708L4.793 6.5 3.146 8.146a.5.5 0 1 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2z"/>
+                                        <path d="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </form>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+</div>
+
+
+<!-- Modal -->
+<form method="post">
+<div class="modal fade" id="newBenchmark" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Start a new benchmark</h5>
+                <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteSession()"></button>
+            </div>
+            <div class="modal-body">
+                <partial name="~/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" for="StatusMessage"/>
+                <div class="form-floating mb-4">
+                    <input asp-for="CreateInput.Name" class="form-control" placeholder="new benchmark's unique name"/>
+                    <label asp-for="CreateInput.Name" class="form-label">Benchmark Name</label>
+                    <span asp-validation-for="CreateInput.Name" class="text-danger"></span>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-6 ps-0">
+                            <div class="form-floating mb-4">
+                                <input asp-for="CreateInput.Ram" class="form-control" placeholder="needed RAM amount"/>
+                                <label asp-for="CreateInput.Ram" class="form-label">Needed RAM</label>
+                                <span asp-validation-for="CreateInput.Ram" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6 pe-0">
+                            <div class="form-floating mb-4">
+                                <input asp-for="CreateInput.Cpu" class="form-control" placeholder="needed CPU amount"/>
+                                <label asp-for="CreateInput.Cpu" class="form-label">Needed CPU</label>
+                                <span asp-validation-for="CreateInput.Cpu" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6 ps-0">
+                            <div class="form-floating mb-4">
+                                <input asp-for="CreateInput.TimeLimit" class="form-control" placeholder="the time limit for one execution"/>
+                                <label asp-for="CreateInput.TimeLimit" class="form-label"></label>
+                                <span asp-validation-for="CreateInput.TimeLimit" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6 pe-0">
+                            <div class="form-floating mb-4">
+                                <input asp-for="CreateInput.HardTimeLimit" class="form-control" placeholder="the hard time limit for one execution"/>
+                                <label asp-for="CreateInput.HardTimeLimit" class="form-label"></label>
+                                <span asp-validation-for="CreateInput.HardTimeLimit" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="form-floating mb-4">
+                    <select asp-for="CreateInput.ExecutableId" asp-items="Model.Executables" class="form-control"></select>
+                    <label asp-for="CreateInput.ExecutableId" class="form-label"></label>
+                    <span asp-validation-for="CreateInput.ExecutableId" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-4">
+                    <select asp-for="CreateInput.SourceSetId" asp-items="Model.SourceSets" class="form-control"></select>
+                    <label asp-for="CreateInput.SourceSetId" class="form-label"></label>
+                    <span asp-validation-for="CreateInput.SourceSetId" class="text-danger"></span>
+                </div> -->
+                <div class="form-floating mb-4">
+                    <input asp-for="CreateInput.SetFilePath" class="form-control" placeholder="the path for the source set"/>
+                    <label asp-for="CreateInput.SetFilePath" class="form-label"></label>
+                    <span asp-validation-for="CreateInput.SetFilePath" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-4">
+                    <input asp-for="CreateInput.PropertyFilePath" class="form-control" placeholder="the path for the property file"/>
+                    <label asp-for="CreateInput.PropertyFilePath" class="form-label"></label>
+                    <span asp-validation-for="CreateInput.PropertyFilePath" class="text-danger"></span>
+                </div>
+                <div class="container">
+                    
+                    <input hidden value="@Scope.Global" id="scopeGlobal"/>
+                    <input hidden value="@Scope.Local" id="scopeLocal"/>
+
+                    <table class="table table-striped align-middle">
+                        <caption class="caption-top">Global</caption>
+                        <thead class="table-dark">
+                        <tr>
+                            <th>
+                                <div class="d-flex justify-content-center">Key</div>
+                            </th>
+                            <th>
+                                <div class="d-flex justify-content-center">Value</div>
+                            </th>
+                            <th>
+                                <div class="d-flex justify-content-center">Operation</div>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr id="globalInput">
+                            <td>
+                                <input type="text" id="globalKey" class="form-control"/>
+                            </td>
+                            <td>
+                                <input type="text" id="globalValue" class="form-control"/>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    <button type="button" class="btn btn-primary m-1" onclick="addConfigItem('@Scope.Global','#globalKey', '#globalValue','#globalInput')">
+                                        Add
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-striped align-middle">
+                        <caption class="caption-top">Local</caption>
+                        <thead class="table-dark">
+                        <tr>
+                            <th>
+                                <div class="d-flex justify-content-center">Key</div>
+                            </th>
+                            <th>
+                                <div class="d-flex justify-content-center">Value</div>
+                            </th>
+                            <th>
+                                <div class="d-flex justify-content-center">Operation</div>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr id="localInput">
+                            <td>
+                                <input type="text" id="localKey" class="form-control"/>
+                            </td>
+                            <td>
+                                <input type="text" id="localValue" class="form-control"/>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    <button type="button" class="btn btn-primary m-1" onclick="addConfigItem('@Scope.Local','#localKey', '#localValue','#localInput')">
+                                        Add
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-striped align-middle">
+                        <caption class="caption-top">Constraints</caption>
+                        <thead class="table-dark">
+                        <tr>
+                            <th>
+                                <div class="d-flex justify-content-center">Premise</div>
+                            </th>
+                            <th>
+                                <div class="d-flex justify-content-center">Consequence</div>
+                            </th>
+                            <th>
+                                <div class="d-flex justify-content-center">Operation</div>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr id="constraintInput">
+                            <td>
+                                <input type="text" id="premise" class="form-control"/>
+                            </td>
+                            <td>
+                                <input type="text" id="consequence" class="form-control"/>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    <button type="button" class="btn btn-primary m-1" onclick="addConstraint('#premise', '#consequence','#constraintInput')">
+                                        Add
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteSession()">Cancel</button>
+                    <button type="submit" asp-page-handler="Start" class="btn btn-primary">Start</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
 }
