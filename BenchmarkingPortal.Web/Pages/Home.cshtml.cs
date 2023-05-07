@@ -172,7 +172,7 @@ public class Home : PageModel
         catch (AggregateException e)
         {
             Console.WriteLine(e);
-            StatusMessage = e.InnerException?.Message ?? e.Message;
+            StatusMessage = "Error: " + e.InnerException?.Message;
             
             return RedirectToPage();
         }
@@ -335,7 +335,7 @@ public class Home : PageModel
         catch (AggregateException e)
         {
             Console.WriteLine(e);
-            StatusMessage = e.InnerException?.Message ?? e.Message;
+            StatusMessage = "Error: " + e.InnerException?.Message ?? e.Message;
             
             return RedirectToPage();
         }
@@ -361,7 +361,7 @@ public class Home : PageModel
         catch (AggregateException e)
         {
             Console.WriteLine(e);
-            StatusMessage = e.InnerException?.Message ?? e.Message;
+            StatusMessage ="Error: " +  e.InnerException?.Message ?? e.Message;
             
             return RedirectToPage();
         }
