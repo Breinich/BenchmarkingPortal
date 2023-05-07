@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
 using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
+using BenchmarkingPortal.Bll.Features.Configuration.Commands;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
 using BenchmarkingPortal.Bll.Features.SourceSet.Queries;
 using BenchmarkingPortal.Dal.Dtos;
@@ -439,10 +441,18 @@ public class Home : PageModel
         
         try
         {
-            //TODO
-            var ConfigurationId = 1;
+            var configs = HttpContext.Session.GetComplexData<List<TempConfigData>>(_tempConfigDataListKey) ?? throw new ApplicationException("No configuration data found.");
+            var constraints = HttpContext.Session.GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey) ?? throw new ApplicationException("No constraint data found.");
+
+            HttpContext.Session.Remove(_tempConfigDataListKey);
+            HttpContext.Session.Remove(_tempConstraintDataListKey);
             
-            
+            var config = await _mediator.Send(new CreateConfigurationCommand()
+            {
+                Configurations = configs.Select(c => (c.Scope, c.Key, c.Value)).ToList(),
+                Constraints = constraints.Select(c => (c.Premise, c.Consequence)).ToList(),
+            });
+
             var benchmark = await _mediator.Send(new StartBenchmarkCommand()
             {
                 Name = CreateInput.Name,
@@ -455,7 +465,7 @@ public class Home : PageModel
                 Cpu = CreateInput.Cpu,
                 TimeLimit = CreateInput.TimeLimit,
                 HardTimeLimit = CreateInput.HardTimeLimit,
-                ConfigurationId = ConfigurationId,
+                ConfigurationId = config.Id,
                 InvokerName = User.Identity?.Name ??
                               throw new ApplicationException(new ExceptionMessage<Benchmark>().NoPrivilege)
             });
@@ -466,6 +476,9 @@ public class Home : PageModel
         }
         catch (AggregateException e)
         {
+            HttpContext.Session.Remove(_tempConfigDataListKey);
+            HttpContext.Session.Remove(_tempConstraintDataListKey);
+            
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException?.Message ?? e.Message);
             
