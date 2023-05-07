@@ -6,5 +6,5 @@ public class DeleteBenchmarkCommand : IRequest
 {
     public int Id { get; set; }
 
-    public string InvokerName { get; set; }
+    public string InvokerName { get; set; } = null!;
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace BenchmarkingPortal.Web.Pages
 {
@@ -11,6 +12,8 @@ namespace BenchmarkingPortal.Web.Pages
         public string? RequestId { get; set; }
 
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+        
+        public string? ExceptionMessage { get; set; }
 
         private readonly ILogger<ErrorModel> _logger;
 
@@ -19,9 +22,30 @@ namespace BenchmarkingPortal.Web.Pages
             _logger = logger;
         }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
             RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+            
+            var exceptionHandlerPathFeature =
+                HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+
+            if (exceptionHandlerPathFeature?.Error is FileNotFoundException)
+            {
+                ExceptionMessage = "The file was not found.";
+            }
+
+            if (exceptionHandlerPathFeature?.Error is UnauthorizedAccessException)
+            {
+                return RedirectToPage("/Identity /Account/AccessDenied");
+            }
+
+            if (exceptionHandlerPathFeature?.Path == "/")
+            {
+                ExceptionMessage ??= string.Empty;
+                ExceptionMessage += " Page: Home.";
+            }
+
+            return Page();
         }
     }
 }

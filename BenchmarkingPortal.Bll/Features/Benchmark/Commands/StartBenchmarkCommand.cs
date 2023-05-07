@@ -27,5 +27,5 @@ public class StartBenchmarkCommand : IRequest<BenchmarkHeader>
 
     public int ConfigurationId { get; set; }
 
-    public int UserId { get; set; }
+    public string InvokerName { get; set; } = null!;
 }

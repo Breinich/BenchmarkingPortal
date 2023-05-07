@@ -34,7 +34,7 @@ public class StartBenchmarkTest : IClassFixture<DatabaseFixture>, IDisposable
             SetFilePath = "C:\\Users\\User\\Desktop\\test.txt",
             PropertyFilePath = "C:\\Users\\User\\Desktop\\test.txt",
             ConfigurationId = 1,
-            UserId = 1,
+            InvokerName = "TestUser",
 
         }, CancellationToken.None);
 

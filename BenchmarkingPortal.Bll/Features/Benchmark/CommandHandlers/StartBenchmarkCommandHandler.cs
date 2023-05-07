@@ -70,7 +70,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             SetFilePath = request.SetFilePath,
             PropertyFilePath = request.PropertyFilePath,
             ConfigurationId = request.ConfigurationId,
-            User = new UserHeader(await _context.Users.FindAsync(request.UserId) ?? throw new ArgumentException(nameof(request), new ExceptionMessage<Dal.Entities.User>().ObjectNotFound)),
+            User = new UserHeader(await _context.Users.FindAsync(request.InvokerName) ?? throw new ArgumentException(nameof(request), new ExceptionMessage<Dal.Entities.User>().ObjectNotFound)),
         };
 
         // The other values will be checked by the scheduler
@@ -110,7 +110,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             // TODO need to be fixed
             StartedDate = startedDate,
             ConfigurationId = request.ConfigurationId,
-            UserId = request.UserId,
+            UserId = await _context.Users.Where(u => u.UserName != null && u.UserName.Equals(request.InvokerName)).Select(u => u.Id).FirstOrDefaultAsync(cancellationToken)
         };
 
         _context.Benchmarks.Add(benchmark);
