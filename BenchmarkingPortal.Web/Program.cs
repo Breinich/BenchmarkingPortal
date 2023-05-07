@@ -60,7 +60,11 @@ builder.Services.AddDbContext<BenchmarkingDbContext>(
 builder.Services.AddScoped<IRoleSeedService, RoleSeedService>();
 builder.Services.AddScoped<IUserSeedService, UserSeedService>();
 
-builder.Services.AddAuthentication().AddCookie()
+builder.Services.AddAuthentication().AddCookie(o =>
+    {
+        o.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        o.SlidingExpiration = true;
+    })
     .AddGitHub(options =>
     {
         options.ClientId = builder.Configuration["GitHub:ClientId"] ?? throw new InvalidOperationException();
