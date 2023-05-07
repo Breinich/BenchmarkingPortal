@@ -27,9 +27,9 @@ public class CreateConfigurationCommandHandler : IRequestHandler<CreateConfigura
         {
             await _context.ConfigurationItems.AddAsync(new ConfigurationItem()
             {
-                Key = configItem.Key,
-                Value = configItem.Value,
-                Scope = (Scope)Enum.Parse(typeof(Scope), configItem.Scope),
+                Key = configItem.Item2,
+                Value = configItem.Item3,
+                Scope = configItem.Item1,
                 ConfigurationId = config.Id,
             }, cancellationToken);
         }
@@ -40,8 +40,8 @@ public class CreateConfigurationCommandHandler : IRequestHandler<CreateConfigura
         {
             await _context.Constraints.AddAsync(new Constraint()
             {
-                Premise = constraint.Premise,
-                Consequence = constraint.Consequence,
+                Premise = constraint.Item1,
+                Consequence = constraint.Item2,
             }, cancellationToken);
         }
 
