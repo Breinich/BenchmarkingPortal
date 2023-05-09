@@ -18,7 +18,7 @@ public class ExecutableHeader
 
     public DateTime UploadedDate { get; set; }
 
-    public UserHeader? User { get; set; }
+    public UserHeader User { get; set; } = null!;
 
     public ExecutableHeader() { }
 
