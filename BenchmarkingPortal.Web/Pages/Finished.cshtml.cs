@@ -1,6 +1,8 @@
-﻿using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
+﻿using BenchmarkingPortal.Bll.Exceptions;
+using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
 using BenchmarkingPortal.Dal.Dtos;
+using BenchmarkingPortal.Dal.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,19 +15,16 @@ public class Finished : PageModel
 {
     private readonly IMediator _mediator;
 
-    [BindProperty]
-     public string? StatusMessage { get; set; }
-     [BindProperty]
-     public List<BenchmarkHeader> FinishedBenchmarks { get; set; }
+    [BindProperty] public string? StatusMessage { get; set; }
+    [BindProperty] public List<BenchmarkHeader> FinishedBenchmarks { get; set; }
+
     
-     
-     
-     public Finished(IMediator mediator)
-     {
-         _mediator = mediator;
-         FinishedBenchmarks = new List<BenchmarkHeader>();
-     }
-     
+    public Finished(IMediator mediator)
+    {
+        _mediator = mediator;
+        FinishedBenchmarks = new List<BenchmarkHeader>();
+    }
+
     public async Task<IActionResult> OnGet()
     {
         try
@@ -40,12 +39,12 @@ public class Finished : PageModel
         catch (AggregateException e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " +e.InnerException?.Message;
+            StatusMessage = "Error: " + e.InnerException?.Message;
 
             return RedirectToPage();
         }
     }
-    
+
     public async Task<IActionResult> OnPostDeleteAsync(int id)
     {
         try
@@ -53,7 +52,8 @@ public class Finished : PageModel
             await _mediator.Send(new DeleteBenchmarkCommand()
             {
                 Id = id,
-                InvokerName = User.Identity?.Name ?? throw new InvalidOperationException()
+                InvokerName = User.Identity?.Name ??
+                              throw new ApplicationException(new ExceptionMessage<Benchmark>().NoPrivilege)
             });
 
             StatusMessage = "Benchmark deleted successfully.";
@@ -62,11 +62,26 @@ public class Finished : PageModel
         catch (AggregateException e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " +e.InnerException?.Message;
+            StatusMessage = "Error: " + e.InnerException?.Message;
 
             return RedirectToPage();
         }
     }
 
-  
+    public IActionResult OnPostDownload(string path)
+    {
+        try
+        {
+            StatusMessage = "Download started.";
+            return Page();
+        }
+        catch (AggregateException e)
+        {
+            Console.WriteLine(e);
+            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
+
+            return RedirectToPage();
+        }
+    }
+
 }
