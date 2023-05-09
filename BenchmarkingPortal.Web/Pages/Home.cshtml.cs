@@ -172,7 +172,7 @@ public class Home : PageModel
         catch (AggregateException e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + e.InnerException?.Message;
+            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
             
             return RedirectToPage();
         }
@@ -335,7 +335,7 @@ public class Home : PageModel
         catch (AggregateException e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + e.InnerException?.Message ?? e.Message;
+            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
             
             return RedirectToPage();
         }
@@ -361,7 +361,7 @@ public class Home : PageModel
         catch (AggregateException e)
         {
             Console.WriteLine(e);
-            StatusMessage ="Error: " +  e.InnerException?.Message ?? e.Message;
+            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
             
             return RedirectToPage();
         }
@@ -387,7 +387,7 @@ public class Home : PageModel
         catch (AggregateException e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException?.Message ?? e.Message);
+            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
             
             return RedirectToPage();
         }
@@ -411,7 +411,7 @@ public class Home : PageModel
         catch (AggregateException e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException?.Message ?? e.Message);
+            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
             
             return RedirectToPage();
         }
@@ -426,7 +426,7 @@ public class Home : PageModel
         catch (AggregateException e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException?.Message ?? e.Message);
+            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
             
             return RedirectToPage();
         }
@@ -480,7 +480,7 @@ public class Home : PageModel
             HttpContext.Session.Remove(_tempConstraintDataListKey);
             
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException?.Message ?? e.Message);
+            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
             
             return Page();
         }

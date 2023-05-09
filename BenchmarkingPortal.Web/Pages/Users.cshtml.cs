@@ -58,7 +58,7 @@ public class UsersModel : PageModel
         catch (AggregateException e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException?.Message ?? e.Message);
+            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
             
             return RedirectToPage();
         }
@@ -91,7 +91,7 @@ public class UsersModel : PageModel
         catch (AggregateException e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException?.Message ?? e.Message);
+            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
             
             return RedirectToPage();
         }
@@ -113,7 +113,7 @@ public class UsersModel : PageModel
         catch (AggregateException e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException?.Message ?? e.Message);
+            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
             
             return RedirectToPage();
         }
