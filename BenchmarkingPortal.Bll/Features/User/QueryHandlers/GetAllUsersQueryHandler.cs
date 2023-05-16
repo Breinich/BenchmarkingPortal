@@ -24,16 +24,13 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, IEnumer
         var users = await _context.Users.ToListAsync(cancellationToken);
 
         var list = new List<UserHeader>();
-        
+
         foreach (var u in users)
-        {
             list.Add(new UserHeader(u)
             {
                 Roles = (await _userManager.GetRolesAsync(u)).ToList()
             });
-        }
 
         return list;
     }
-        
 }

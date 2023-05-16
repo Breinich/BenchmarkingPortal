@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BenchmarkingPortal.Dal.SeedService;
 
-public class RoleSeedService :IRoleSeedService
+public class RoleSeedService : IRoleSeedService
 {
     private readonly RoleManager<IdentityRole<int>> _roleManager;
 
@@ -13,7 +13,7 @@ public class RoleSeedService :IRoleSeedService
     }
 
     public async Task SeedRoleAsync()
-    {        
+    {
         if (!await _roleManager.RoleExistsAsync(Roles.Guest))
             await _roleManager.CreateAsync(new IdentityRole<int> { Name = Roles.Guest });
         if (!await _roleManager.RoleExistsAsync(Roles.User))

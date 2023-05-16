@@ -20,7 +20,7 @@ public class UpdateWorkerCommandHandler : IRequestHandler<UpdateWorkerCommand, W
     {
         var worker = await _context.Workers.FindAsync(request.WorkerId, cancellationToken) ??
                      throw new ArgumentException(new ExceptionMessage<Dal.Entities.Worker>().ObjectNotFound);
-        
+
 
         var workerDto = new WorkerHeader(worker);
         workerDto.ComputerGroupId = request.ComputerGroupId;

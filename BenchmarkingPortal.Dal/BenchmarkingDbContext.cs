@@ -6,9 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Dal;
 
-public partial class BenchmarkingDbContext : IdentityDbContext<User, IdentityRole<int>, int>
+public class BenchmarkingDbContext : IdentityDbContext<User, IdentityRole<int>, int>
 {
-
     public BenchmarkingDbContext(DbContextOptions options)
         : base(options)
     {
@@ -34,7 +33,7 @@ public partial class BenchmarkingDbContext : IdentityDbContext<User, IdentityRol
     {
         base.OnModelCreating(builder);
 
-        
+
         builder.ApplyConfiguration(new BenchmarkEntityConfiguration());
 
         builder.ApplyConfiguration(new ComputerGroupEntityConfiguration());

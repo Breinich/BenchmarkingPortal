@@ -30,7 +30,7 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
 
-builder.Services.AddIdentity<User, IdentityRole<int>>( options => options.SignIn.RequireConfirmedAccount = false)
+builder.Services.AddIdentity<User, IdentityRole<int>>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<BenchmarkingDbContext>()
     .AddDefaultTokenProviders();
 

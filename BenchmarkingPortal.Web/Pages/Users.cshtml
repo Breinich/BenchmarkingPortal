@@ -1,5 +1,5 @@
 ﻿@page
-@model BenchmarkingPortal.Web.Pages.UsersModel
+@model UsersModel
 
 @{
     ViewData["Title"] = "Users";
@@ -31,7 +31,7 @@
         </tr>
         </thead>
         <tbody>
-        @foreach(var item in Model.UserList)
+        @foreach (var item in Model.UserList)
         {
             if (item.Roles.Contains(Roles.Guest))
             {
@@ -104,7 +104,7 @@
         </tr>
         </thead>
         <tbody>
-        @foreach(var item in Model.UserList)
+        @foreach (var item in Model.UserList)
         {
             if (item.Roles.Contains(Roles.Guest) == false && item.UserName != User.Identity?.Name)
             {

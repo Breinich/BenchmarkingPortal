@@ -3,4 +3,6 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.SourceSet.Queries;
 
-public class GetAllSourceSetsQuery : IRequest<IEnumerable<SourceSetHeader>> { }
+public class GetAllSourceSetsQuery : IRequest<IEnumerable<SourceSetHeader>>
+{
+}

@@ -10,5 +10,4 @@ public class UploadNewSourceSetCommand : IRequest<SourceSetHeader>
     public string? Version { get; set; }
     public DateTime UploadedDate { get; set; }
     public string InvokerName { get; set; } = null!;
-
 }

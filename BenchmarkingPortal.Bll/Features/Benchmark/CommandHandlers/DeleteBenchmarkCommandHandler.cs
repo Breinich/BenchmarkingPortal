@@ -34,22 +34,18 @@ public class DeleteBenchmarkCommandHandler : IRequestHandler<DeleteBenchmarkComm
         {
             var user = await _userManager.FindByNameAsync(request.InvokerName) ??
                        throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().ObjectNotFound);
-            
-            
+
+
             var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);
 
             if (!admin)
-            {
                 throw new ArgumentException(
                     new ExceptionMessage<Dal.Entities.Benchmark>().NoPrivilege);
-            }
         }
 
         // Only finished benchmarks are allowed to delete
         if (benchmarkHeader.Status != Status.Finished)
-        {
             throw new ArgumentException("The benchmark, that wanted to be deleted hasn't been finished yet.");
-        }
 
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 

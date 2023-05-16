@@ -4,18 +4,9 @@ namespace BenchmarkingPortal.Dal.Dtos;
 
 public class SourceSetHeader
 {
-    public int Id { get; set; }
-
-    public string Name { get; set; } = null!;
-
-    public string? Path { get; set; }
-
-    public string? Version { get; set; }
-
-    public DateTime UploadedDate { get; set; }
-    public string UserName { get; set; } = null!;
-
-    public SourceSetHeader() { }
+    public SourceSetHeader()
+    {
+    }
 
     public SourceSetHeader(SourceSet s)
     {
@@ -26,4 +17,15 @@ public class SourceSetHeader
         UserName = s.UserName;
         Version = s.Version;
     }
+
+    public int Id { get; set; }
+
+    public string Name { get; set; } = null!;
+
+    public string? Path { get; set; }
+
+    public string? Version { get; set; }
+
+    public DateTime UploadedDate { get; set; }
+    public string UserName { get; set; } = null!;
 }

@@ -17,7 +17,9 @@ public class GetAllExecutablesQueryHandler : IRequestHandler<GetAllExecutablesQu
 
 
     public async Task<IEnumerable<ExecutableHeader>> Handle(GetAllExecutablesQuery request,
-        CancellationToken cancellationToken) =>
-        await _context.Executables.Select(e => new ExecutableHeader(e))
+        CancellationToken cancellationToken)
+    {
+        return await _context.Executables.Select(e => new ExecutableHeader(e))
             .ToListAsync(cancellationToken);
+    }
 }

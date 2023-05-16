@@ -2,7 +2,6 @@
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.SourceSet.CommandHandlers;
 
@@ -20,13 +19,13 @@ public class UploadNewSourceSetCommandHandler : IRequestHandler<UploadNewSourceS
     {
         request.Version ??= "1.0";
 
-        var sourceSet = new Dal.Entities.SourceSet()
+        var sourceSet = new Dal.Entities.SourceSet
         {
             Name = request.Name,
             Path = request.Path,
             UserName = request.InvokerName,
             UploadedDate = request.UploadedDate,
-            Version = request.Version,
+            Version = request.Version
         };
 
         await _context.SourceSets.AddAsync(sourceSet, cancellationToken);

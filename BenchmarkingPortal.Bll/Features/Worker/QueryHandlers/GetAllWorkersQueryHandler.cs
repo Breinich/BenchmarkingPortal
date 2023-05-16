@@ -16,6 +16,8 @@ public class GetAllWorkersQueryHandler : IRequestHandler<GetAllWorkersQuery, IEn
     }
 
     public async Task<IEnumerable<WorkerHeader>>
-        Handle(GetAllWorkersQuery request, CancellationToken cancellationToken) =>
-        await _context.Workers.Select(w => new WorkerHeader(w)).ToListAsync(cancellationToken);
+        Handle(GetAllWorkersQuery request, CancellationToken cancellationToken)
+    {
+        return await _context.Workers.Select(w => new WorkerHeader(w)).ToListAsync(cancellationToken);
+    }
 }

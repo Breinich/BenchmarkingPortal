@@ -16,19 +16,6 @@ namespace BenchmarkingPortal.Web.Pages;
 [Authorize(Policy = Policies.RequireAdministratorRole)]
 public class UsersModel : PageModel
 {
-    [TempData]
-    public string? StatusMessage { get; set; }
-    public IEnumerable<SelectListItem> Roles { get; set; }
-    public List<UserHeader> UserList { get; set; }
-    [BindProperty]
-    public InputModel Input { get; set; }
-    
-    public class InputModel
-    {
-        public bool Subscribed { get; set; }
-        public string? Role { get; set; }
-    }
-
     private readonly IMediator _mediator;
     public readonly RoleManager<IdentityRole<int>> RoleManager;
 
@@ -38,15 +25,22 @@ public class UsersModel : PageModel
         Roles = new List<SelectListItem>();
         _mediator = mediator;
         RoleManager = roleManager;
-        
+
         Input = new InputModel();
     }
-    
+
+    [TempData] public string? StatusMessage { get; set; }
+
+    public IEnumerable<SelectListItem> Roles { get; set; }
+    public List<UserHeader> UserList { get; set; }
+
+    [BindProperty] public InputModel Input { get; set; }
+
     public async Task<IActionResult> OnGet()
     {
         try
         {
-            Roles = await RoleManager.Roles.Select(x => new SelectListItem() 
+            Roles = await RoleManager.Roles.Select(x => new SelectListItem
             {
                 Text = x.ToString(),
                 Value = x.ToString()
@@ -59,32 +53,29 @@ public class UsersModel : PageModel
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;
-            
+
             return RedirectToPage();
         }
-        
     }
-    
+
     public async Task<IActionResult> OnPostSaveAsync(string name)
     {
-        if (!ModelState.IsValid)
-        {
-            return Page();
-        }
-        
+        if (!ModelState.IsValid) return Page();
+
         var subscribed = Input.Subscribed;
         var role = Input.Role;
 
         try
         {
-            var updatedUser = await _mediator.Send(new UpdateUserCommand()
+            var updatedUser = await _mediator.Send(new UpdateUserCommand
             {
                 UserName = name,
                 Subscription = subscribed,
                 Role = role,
-                InvokerName = User.Identity?.Name ?? throw new ApplicationException(new ExceptionMessage<User>().NoPrivilege)
+                InvokerName = User.Identity?.Name ??
+                              throw new ApplicationException(new ExceptionMessage<User>().NoPrivilege)
             });
-            
+
             StatusMessage = $"{name} updated";
             return RedirectToPage();
         }
@@ -92,21 +83,21 @@ public class UsersModel : PageModel
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;
-            
+
             return RedirectToPage();
         }
     }
-    
+
     public async Task<IActionResult> OnPostDeleteAsync(string name)
     {
         try
         {
-            await _mediator.Send(new DeleteUserCommand()
+            await _mediator.Send(new DeleteUserCommand
             {
                 UserName = name,
                 InvokerName = User.Identity?.Name ?? throw new ApplicationException("Authenticated user not found")
             });
-            
+
             StatusMessage = $"{name} deleted";
             return RedirectToPage();
         }
@@ -114,8 +105,14 @@ public class UsersModel : PageModel
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;
-            
+
             return RedirectToPage();
         }
+    }
+
+    public class InputModel
+    {
+        public bool Subscribed { get; set; }
+        public string? Role { get; set; }
     }
 }

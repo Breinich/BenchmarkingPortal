@@ -4,6 +4,31 @@ namespace BenchmarkingPortal.Dal.Dtos;
 
 public class BenchmarkHeader
 {
+    public BenchmarkHeader()
+    {
+    }
+
+    public BenchmarkHeader(Benchmark b)
+    {
+        Id = b.Id;
+        Name = b.Name;
+        Priority = b.Priority;
+        Status = b.Status;
+        Ram = b.Ram;
+        Cpu = b.Cpu;
+        Result = b.Result;
+        TimeLimit = b.TimeLimit;
+        HardTimeLimit = b.HardTimeLimit;
+        ComputerGroupId = b.ComputerGroupId;
+        ExecutableId = b.ExecutableId;
+        SourceSetId = b.SourceSetId;
+        SetFilePath = b.SetFilePath;
+        PropertyFilePath = b.PropertyFilePath;
+        StartedDate = b.StartedDate;
+        ConfigurationId = b.ConfigurationId;
+        UserName = b.UserName;
+    }
+
     public int Id { get; set; }
 
     public string? Name { get; set; }
@@ -36,28 +61,4 @@ public class BenchmarkHeader
 
     public int ConfigurationId { get; set; }
     public string UserName { get; set; } = null!;
-
-    public BenchmarkHeader() { }
-
-    public BenchmarkHeader(Benchmark b)
-    {
-        Id = b.Id;
-        Name = b.Name;
-        Priority = b.Priority;
-        Status = b.Status;
-        Ram = b.Ram;
-        Cpu = b.Cpu;
-        Result = b.Result;
-        TimeLimit = b.TimeLimit;
-        HardTimeLimit = b.HardTimeLimit;
-        ComputerGroupId = b.ComputerGroupId;
-        ExecutableId = b.ExecutableId;
-        SourceSetId = b.SourceSetId;
-        SetFilePath = b.SetFilePath;
-        PropertyFilePath = b.PropertyFilePath;
-        StartedDate = b.StartedDate;
-        ConfigurationId = b.ConfigurationId;
-        UserName = b.UserName;
-    }
-
 }

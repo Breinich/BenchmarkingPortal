@@ -1,6 +1,6 @@
 ﻿namespace BenchmarkingPortal.Dal.Entities;
 
-public partial class ComputerGroup
+public class ComputerGroup
 {
     public int Id { get; set; }
 

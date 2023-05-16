@@ -26,6 +26,5 @@ public class ComputerGroupEntityConfiguration : IEntityTypeConfiguration<Compute
     private void SampleData(EntityTypeBuilder<ComputerGroup> builder)
     {
         // Load test data here
-
     }
 }

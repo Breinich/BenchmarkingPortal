@@ -14,22 +14,20 @@ public class CreateComputerGroupCommandHandler : IRequestHandler<CreateComputerG
         _context = context;
     }
 
-    public async Task<ComputerGroupHeader> Handle(CreateComputerGroupCommand request, CancellationToken cancellationToken)
+    public async Task<ComputerGroupHeader> Handle(CreateComputerGroupCommand request,
+        CancellationToken cancellationToken)
     {
         var computerGroup = new Dal.Entities.ComputerGroup();
 
-        if (request.Description != null)
-        {
-            computerGroup.Description = request.Description;
-        }
+        if (request.Description != null) computerGroup.Description = request.Description;
 
         await _context.ComputerGroups.AddAsync(computerGroup, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return new ComputerGroupHeader()
+        return new ComputerGroupHeader
         {
             Id = computerGroup.Id,
-            Description = request.Description,
+            Description = request.Description
         };
     }
 }

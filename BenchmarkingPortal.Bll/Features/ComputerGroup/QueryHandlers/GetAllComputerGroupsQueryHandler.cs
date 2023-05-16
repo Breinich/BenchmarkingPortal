@@ -6,7 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.ComputerGroup.QueryHandlers;
 
-public class GetAllComputerGroupsQueryHandler : IRequestHandler<GetAllComputerGroupsQuery, IEnumerable<ComputerGroupHeader>>
+public class
+    GetAllComputerGroupsQueryHandler : IRequestHandler<GetAllComputerGroupsQuery, IEnumerable<ComputerGroupHeader>>
 {
     private readonly BenchmarkingDbContext _context;
 
@@ -16,10 +17,12 @@ public class GetAllComputerGroupsQueryHandler : IRequestHandler<GetAllComputerGr
     }
 
     public async Task<IEnumerable<ComputerGroupHeader>> Handle(GetAllComputerGroupsQuery request,
-        CancellationToken cancellationToken) =>
-        await _context.ComputerGroups.Select(cG => new ComputerGroupHeader()
+        CancellationToken cancellationToken)
+    {
+        return await _context.ComputerGroups.Select(cG => new ComputerGroupHeader
         {
             Id = cG.Id,
-            Description = cG.Description,
+            Description = cG.Description
         }).ToListAsync(cancellationToken);
+    }
 }

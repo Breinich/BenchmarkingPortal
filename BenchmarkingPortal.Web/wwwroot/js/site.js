@@ -30,19 +30,19 @@ function addConfigItem(scope, keyId, valueId, inputId) {
         success: function (newItem) {
             $(inputId).before(
                 '<tr id="' + scope + '_' + newItem.Key + '_' + newItem.Value + '">' +
-                    '<td>' +
-                        '<input readOnly value="' + newItem.Key + '" class="form-control-plaintext"/>' + 
-                    '</td>' +
-                    '<td>' + 
-                        '<input readOnly value="' + newItem.Value + '" class="form-control-plaintext"/>' + 
-                    '</td>' +
-                    '<td>' + 
-                        '<button type="button" class="btn btn-danger m-1" onclick="deleteConfigItem(\'' + scope + '\',\'' + newItem.Key + '\',\'' + newItem.Value + '\')">' +
-                            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">\n' +
-                                '<path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>\n' +
-                            '</svg>' +
-                        '</button>' +
-                    '</td>' +
+                '<td>' +
+                '<input readOnly value="' + newItem.Key + '" class="form-control-plaintext"/>' +
+                '</td>' +
+                '<td>' +
+                '<input readOnly value="' + newItem.Value + '" class="form-control-plaintext"/>' +
+                '</td>' +
+                '<td>' +
+                '<button type="button" class="btn btn-danger m-1" onclick="deleteConfigItem(\'' + scope + '\',\'' + newItem.Key + '\',\'' + newItem.Value + '\')">' +
+                '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">\n' +
+                '<path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>\n' +
+                '</svg>' +
+                '</button>' +
+                '</td>' +
                 '</tr>');
 
 
@@ -85,7 +85,7 @@ function deleteConfigItem(scope, key, value) {
 function addConstraint(premiseId, consequenceId, inputId) {
     const premise = $(premiseId).val();
     const consequence = $(consequenceId).val();
-    
+
     $.ajax({
         type: "POST",
         url: "/Home?premise=" + premise + "&consequence=" + consequence + "&handler=AddConstraint",
@@ -127,7 +127,7 @@ function addConstraint(premiseId, consequenceId, inputId) {
     });
 }
 
-function deleteConstraint( premise, consequence) {
+function deleteConstraint(premise, consequence) {
 
     $.ajax({
         type: "POST",
@@ -151,7 +151,7 @@ function deleteConstraint( premise, consequence) {
     });
 }
 
-function deleteSession(){
+function deleteSession() {
     $.ajax({
         type: "POST",
         url: "/Home?handler=DeleteSession",
@@ -162,7 +162,8 @@ function deleteSession(){
                 $('input:hidden[name="__RequestVerificationToken"]').val());
         },
 
-        success: function () {},
+        success: function () {
+        },
         failure: function (response) {
             alert("failure: " + response.responseText);
         },

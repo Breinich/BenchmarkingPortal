@@ -1,5 +1,4 @@
-﻿using BenchmarkingPortal.Bll.Exceptions;
-using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
+﻿using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
@@ -21,42 +20,32 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
     {
         // ---------------------------------------------------------
         // Value validations first:
-        
+
         // Checking whether the name of the new benchmark is unique
-        int nameCountAsync = await _context.Benchmarks.Where(b => b.Name.Equals(request.Name)).Select(b => b.Id)
+        var nameCountAsync = await _context.Benchmarks.Where(b => b.Name.Equals(request.Name)).Select(b => b.Id)
             .CountAsync(cancellationToken);
 
         if (nameCountAsync > 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(request),request.Name,"A benchmark with the same name already exists.");
-        }
+            throw new ArgumentOutOfRangeException(nameof(request), request.Name,
+                "A benchmark with the same name already exists.");
 
         // Maximum available RAM amount is 16 GB
         if (request.Ram is <= 0 or > 16)
-        {
-            throw new ArgumentOutOfRangeException(nameof(request), request.Ram,"The benchmark must use minimum 1 GB and maximum 16 GB amount of RAM.");
-        }
+            throw new ArgumentOutOfRangeException(nameof(request), request.Ram,
+                "The benchmark must use minimum 1 GB and maximum 16 GB amount of RAM.");
 
         // Maximum available CPU core count is 8
         if (request.Cpu is <= 0 or > 8)
-        {
             throw new ArgumentOutOfRangeException(nameof(request), request.Cpu,
                 "The benchmark must run on at least 1 CPU core and at most on 8 CPU cores.");
-        }
 
         // Default value for TimeLimit is 900 seconds
-        if (request.TimeLimit is 0)
-        {
-            request.TimeLimit = 900;
-        }
+        if (request.TimeLimit is 0) request.TimeLimit = 900;
 
         // Default value for HardTimeLimit is 960 seconds
-        if (request.HardTimeLimit is 0)
-        {
-            request.HardTimeLimit = 960;
-        }
+        if (request.HardTimeLimit is 0) request.HardTimeLimit = 960;
 
-        var newBenchmark = new BenchmarkHeader()
+        var newBenchmark = new BenchmarkHeader
         {
             Name = request.Name,
             Priority = request.Priority,
@@ -70,7 +59,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             SetFilePath = request.SetFilePath,
             PropertyFilePath = request.PropertyFilePath,
             ConfigurationId = request.ConfigurationId,
-            UserName = request.InvokerName,
+            UserName = request.InvokerName
         };
 
         // The other values will be checked by the scheduler
@@ -92,7 +81,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
 
         // Creating new Benchmark entity and writing it to the DB
         // At this point, the benchmark has been successfully configured and started
-        var benchmark = new Dal.Entities.Benchmark()
+        var benchmark = new Dal.Entities.Benchmark
         {
             Name = request.Name,
             Priority = request.Priority,
@@ -110,7 +99,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             // TODO need to be fixed
             StartedDate = startedDate,
             ConfigurationId = request.ConfigurationId,
-            UserName = newBenchmark.UserName,
+            UserName = newBenchmark.UserName
         };
 
         _context.Benchmarks.Add(benchmark);

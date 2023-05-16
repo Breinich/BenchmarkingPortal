@@ -1,9 +1,7 @@
-﻿using BenchmarkingPortal.Bll.Exceptions;
-using BenchmarkingPortal.Bll.Features.Executable.Commands;
+﻿using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.Executable.CommandHandlers;
 
@@ -21,7 +19,7 @@ public class UploadNewExecutableCommandHandler : IRequestHandler<UploadNewExecut
     {
         request.Version ??= "1.0";
 
-        var exe = new Dal.Entities.Executable()
+        var exe = new Dal.Entities.Executable
         {
             Name = request.Name,
             OwnerTool = request.OwnerTool,

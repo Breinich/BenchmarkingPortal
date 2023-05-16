@@ -23,11 +23,12 @@ public class GetResultPathQueryHandler : IRequestHandler<GetResultPathQuery, str
                         throw new ArgumentException(new ExceptionMessage<Dal.Entities.Benchmark>().ObjectNotFound);
 
 
-        if(benchmark.Status != Status.Finished)
+        if (benchmark.Status != Status.Finished)
             throw new ArgumentException(
                 "The benchmark hasn't been finished yet.");
-        
 
-        return benchmark.Result ?? throw new ApplicationException("Somehow this finished benchmark doesn't store the results' path.");
+
+        return benchmark.Result ??
+               throw new ApplicationException("Somehow this finished benchmark doesn't store the results' path.");
     }
 }

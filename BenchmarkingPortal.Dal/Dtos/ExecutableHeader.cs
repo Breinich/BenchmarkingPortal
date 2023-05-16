@@ -4,6 +4,22 @@ namespace BenchmarkingPortal.Dal.Dtos;
 
 public class ExecutableHeader
 {
+    public ExecutableHeader()
+    {
+    }
+
+    public ExecutableHeader(Executable e)
+    {
+        Id = e.Id;
+        OwnerTool = e.OwnerTool;
+        ToolVersion = e.ToolVersion;
+        Path = e.Path;
+        Name = e.Name;
+        Version = e.Version;
+        UploadedDate = e.UploadedDate;
+        UserName = e.UserName;
+    }
+
     public int Id { get; set; }
 
     public string? OwnerTool { get; set; }
@@ -19,18 +35,4 @@ public class ExecutableHeader
     public DateTime UploadedDate { get; set; }
 
     public string UserName { get; set; } = null!;
-
-    public ExecutableHeader() { }
-
-    public ExecutableHeader(Executable e)
-    {
-        Id = e.Id;
-        OwnerTool = e.OwnerTool;
-        ToolVersion = e.ToolVersion;
-        Path = e.Path;
-        Name = e.Name;
-        Version = e.Version;
-        UploadedDate = e.UploadedDate;
-        UserName = e.UserName;
-    }
 }

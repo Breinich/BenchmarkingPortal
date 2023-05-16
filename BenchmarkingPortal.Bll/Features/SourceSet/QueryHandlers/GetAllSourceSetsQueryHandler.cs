@@ -17,6 +17,8 @@ public class GetAllSourceSetsQueryHandler : IRequestHandler<GetAllSourceSetsQuer
 
 
     public async Task<IEnumerable<SourceSetHeader>> Handle(GetAllSourceSetsQuery request,
-        CancellationToken cancellationToken) =>
-        await _context.SourceSets.Select(s => new SourceSetHeader(s)).ToListAsync(cancellationToken);
+        CancellationToken cancellationToken)
+    {
+        return await _context.SourceSets.Select(s => new SourceSetHeader(s)).ToListAsync(cancellationToken);
+    }
 }

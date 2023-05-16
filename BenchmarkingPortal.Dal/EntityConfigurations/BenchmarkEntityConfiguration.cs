@@ -60,6 +60,5 @@ public class BenchmarkEntityConfiguration : IEntityTypeConfiguration<Benchmark>
     private void SampleData(EntityTypeBuilder<Benchmark> builder)
     {
         // Load test data here
-
     }
 }

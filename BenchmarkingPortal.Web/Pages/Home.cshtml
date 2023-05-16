@@ -1,5 +1,5 @@
 ﻿@page
-@model BenchmarkingPortal.Web.Pages.Home
+@model Home
 @inject IAuthorizationService AuthorizationService
 @{
     ViewData["Title"] = "Active Benchmarks";
@@ -274,185 +274,185 @@
 
 <!-- Modal -->
 <form method="post">
-<div class="modal fade" id="newBenchmark" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Start a new benchmark</h5>
-                <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteSession()"></button>
-            </div>
-            <div class="modal-body">
-                <partial name="~/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" for="StatusMessage"/>
-                <div class="form-floating mb-4">
-                    <input asp-for="CreateInput.Name" class="form-control" placeholder="new benchmark's unique name"/>
-                    <label asp-for="CreateInput.Name" class="form-label">Benchmark Name</label>
-                    <span asp-validation-for="CreateInput.Name" class="text-danger"></span>
+    <div class="modal fade" id="newBenchmark" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Start a new benchmark</h5>
+                    <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteSession()"></button>
                 </div>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-6 ps-0">
-                            <div class="form-floating mb-4">
-                                <input asp-for="CreateInput.Ram" class="form-control" placeholder="needed RAM amount"/>
-                                <label asp-for="CreateInput.Ram" class="form-label">Needed RAM</label>
-                                <span asp-validation-for="CreateInput.Ram" class="text-danger"></span>
+                <div class="modal-body">
+                    <partial name="~/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" for="StatusMessage"/>
+                    <div class="form-floating mb-4">
+                        <input asp-for="CreateInput.Name" class="form-control" placeholder="new benchmark's unique name"/>
+                        <label asp-for="CreateInput.Name" class="form-label">Benchmark Name</label>
+                        <span asp-validation-for="CreateInput.Name" class="text-danger"></span>
+                    </div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-6 ps-0">
+                                <div class="form-floating mb-4">
+                                    <input asp-for="CreateInput.Ram" class="form-control" placeholder="needed RAM amount"/>
+                                    <label asp-for="CreateInput.Ram" class="form-label">Needed RAM</label>
+                                    <span asp-validation-for="CreateInput.Ram" class="text-danger"></span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-6 pe-0">
-                            <div class="form-floating mb-4">
-                                <input asp-for="CreateInput.Cpu" class="form-control" placeholder="needed CPU amount"/>
-                                <label asp-for="CreateInput.Cpu" class="form-label">Needed CPU</label>
-                                <span asp-validation-for="CreateInput.Cpu" class="text-danger"></span>
+                            <div class="col-6 pe-0">
+                                <div class="form-floating mb-4">
+                                    <input asp-for="CreateInput.Cpu" class="form-control" placeholder="needed CPU amount"/>
+                                    <label asp-for="CreateInput.Cpu" class="form-label">Needed CPU</label>
+                                    <span asp-validation-for="CreateInput.Cpu" class="text-danger"></span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-6 ps-0">
-                            <div class="form-floating mb-4">
-                                <input asp-for="CreateInput.TimeLimit" class="form-control" placeholder="the time limit for one execution"/>
-                                <label asp-for="CreateInput.TimeLimit" class="form-label"></label>
-                                <span asp-validation-for="CreateInput.TimeLimit" class="text-danger"></span>
+                            <div class="col-6 ps-0">
+                                <div class="form-floating mb-4">
+                                    <input asp-for="CreateInput.TimeLimit" class="form-control" placeholder="the time limit for one execution"/>
+                                    <label asp-for="CreateInput.TimeLimit" class="form-label"></label>
+                                    <span asp-validation-for="CreateInput.TimeLimit" class="text-danger"></span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-6 pe-0">
-                            <div class="form-floating mb-4">
-                                <input asp-for="CreateInput.HardTimeLimit" class="form-control" placeholder="the hard time limit for one execution"/>
-                                <label asp-for="CreateInput.HardTimeLimit" class="form-label"></label>
-                                <span asp-validation-for="CreateInput.HardTimeLimit" class="text-danger"></span>
+                            <div class="col-6 pe-0">
+                                <div class="form-floating mb-4">
+                                    <input asp-for="CreateInput.HardTimeLimit" class="form-control" placeholder="the hard time limit for one execution"/>
+                                    <label asp-for="CreateInput.HardTimeLimit" class="form-label"></label>
+                                    <span asp-validation-for="CreateInput.HardTimeLimit" class="text-danger"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-floating mb-4">
-                    <select asp-for="CreateInput.ExecutableId" asp-items="Model.Executables" class="form-control"></select>
-                    <label asp-for="CreateInput.ExecutableId" class="form-label"></label>
-                    <span asp-validation-for="CreateInput.ExecutableId" class="text-danger"></span>
-                </div>
-                <div class="form-floating mb-4">
-                    <select asp-for="CreateInput.SourceSetId" asp-items="Model.SourceSets" class="form-control"></select>
-                    <label asp-for="CreateInput.SourceSetId" class="form-label"></label>
-                    <span asp-validation-for="CreateInput.SourceSetId" class="text-danger"></span>
-                </div>
-                <div class="form-floating mb-4">
-                    <input asp-for="CreateInput.SetFilePath" class="form-control" placeholder="the path for the source set"/>
-                    <label asp-for="CreateInput.SetFilePath" class="form-label"></label>
-                    <span asp-validation-for="CreateInput.SetFilePath" class="text-danger"></span>
-                </div>
-                <div class="form-floating mb-4">
-                    <input asp-for="CreateInput.PropertyFilePath" class="form-control" placeholder="the path for the property file"/>
-                    <label asp-for="CreateInput.PropertyFilePath" class="form-label"></label>
-                    <span asp-validation-for="CreateInput.PropertyFilePath" class="text-danger"></span>
-                </div>
-                <div class="container">
-                    
-                    <input hidden value="@Scope.Global" id="scopeGlobal"/>
-                    <input hidden value="@Scope.Local" id="scopeLocal"/>
+                    <div class="form-floating mb-4">
+                        <select asp-for="CreateInput.ExecutableId" asp-items="Model.Executables" class="form-control"></select>
+                        <label asp-for="CreateInput.ExecutableId" class="form-label"></label>
+                        <span asp-validation-for="CreateInput.ExecutableId" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <select asp-for="CreateInput.SourceSetId" asp-items="Model.SourceSets" class="form-control"></select>
+                        <label asp-for="CreateInput.SourceSetId" class="form-label"></label>
+                        <span asp-validation-for="CreateInput.SourceSetId" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input asp-for="CreateInput.SetFilePath" class="form-control" placeholder="the path for the source set"/>
+                        <label asp-for="CreateInput.SetFilePath" class="form-label"></label>
+                        <span asp-validation-for="CreateInput.SetFilePath" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input asp-for="CreateInput.PropertyFilePath" class="form-control" placeholder="the path for the property file"/>
+                        <label asp-for="CreateInput.PropertyFilePath" class="form-label"></label>
+                        <span asp-validation-for="CreateInput.PropertyFilePath" class="text-danger"></span>
+                    </div>
+                    <div class="container">
 
-                    <table class="table table-striped align-middle">
-                        <caption class="caption-top">Global</caption>
-                        <thead class="table-dark">
-                        <tr>
-                            <th>
-                                <div class="d-flex justify-content-center">Key</div>
-                            </th>
-                            <th>
-                                <div class="d-flex justify-content-center">Value</div>
-                            </th>
-                            <th>
-                                <div class="d-flex justify-content-center">Operation</div>
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr id="globalInput">
-                            <td>
-                                <input type="text" id="globalKey" class="form-control"/>
-                            </td>
-                            <td>
-                                <input type="text" id="globalValue" class="form-control"/>
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center">
-                                    <button type="button" class="btn btn-primary m-1" onclick="addConfigItem('@Scope.Global','#globalKey', '#globalValue','#globalInput')">
-                                        Add
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-striped align-middle">
-                        <caption class="caption-top">Local</caption>
-                        <thead class="table-dark">
-                        <tr>
-                            <th>
-                                <div class="d-flex justify-content-center">Key</div>
-                            </th>
-                            <th>
-                                <div class="d-flex justify-content-center">Value</div>
-                            </th>
-                            <th>
-                                <div class="d-flex justify-content-center">Operation</div>
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr id="localInput">
-                            <td>
-                                <input type="text" id="localKey" class="form-control"/>
-                            </td>
-                            <td>
-                                <input type="text" id="localValue" class="form-control"/>
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center">
-                                    <button type="button" class="btn btn-primary m-1" onclick="addConfigItem('@Scope.Local','#localKey', '#localValue','#localInput')">
-                                        Add
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-striped align-middle">
-                        <caption class="caption-top">Constraints</caption>
-                        <thead class="table-dark">
-                        <tr>
-                            <th>
-                                <div class="d-flex justify-content-center">Premise</div>
-                            </th>
-                            <th>
-                                <div class="d-flex justify-content-center">Consequence</div>
-                            </th>
-                            <th>
-                                <div class="d-flex justify-content-center">Operation</div>
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr id="constraintInput">
-                            <td>
-                                <input type="text" id="premise" class="form-control"/>
-                            </td>
-                            <td>
-                                <input type="text" id="consequence" class="form-control"/>
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center">
-                                    <button type="button" class="btn btn-primary m-1" onclick="addConstraint('#premise', '#consequence','#constraintInput')">
-                                        Add
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteSession()">Cancel</button>
-                    <button type="submit" asp-page-handler="Start" class="btn btn-primary">Start</button>
+                        <input hidden value="@Scope.Global" id="scopeGlobal"/>
+                        <input hidden value="@Scope.Local" id="scopeLocal"/>
+
+                        <table class="table table-striped align-middle">
+                            <caption class="caption-top">Global</caption>
+                            <thead class="table-dark">
+                            <tr>
+                                <th>
+                                    <div class="d-flex justify-content-center">Key</div>
+                                </th>
+                                <th>
+                                    <div class="d-flex justify-content-center">Value</div>
+                                </th>
+                                <th>
+                                    <div class="d-flex justify-content-center">Operation</div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr id="globalInput">
+                                <td>
+                                    <input type="text" id="globalKey" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input type="text" id="globalValue" class="form-control"/>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center">
+                                        <button type="button" class="btn btn-primary m-1" onclick="addConfigItem('@Scope.Global','#globalKey', '#globalValue','#globalInput')">
+                                            Add
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-striped align-middle">
+                            <caption class="caption-top">Local</caption>
+                            <thead class="table-dark">
+                            <tr>
+                                <th>
+                                    <div class="d-flex justify-content-center">Key</div>
+                                </th>
+                                <th>
+                                    <div class="d-flex justify-content-center">Value</div>
+                                </th>
+                                <th>
+                                    <div class="d-flex justify-content-center">Operation</div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr id="localInput">
+                                <td>
+                                    <input type="text" id="localKey" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input type="text" id="localValue" class="form-control"/>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center">
+                                        <button type="button" class="btn btn-primary m-1" onclick="addConfigItem('@Scope.Local','#localKey', '#localValue','#localInput')">
+                                            Add
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-striped align-middle">
+                            <caption class="caption-top">Constraints</caption>
+                            <thead class="table-dark">
+                            <tr>
+                                <th>
+                                    <div class="d-flex justify-content-center">Premise</div>
+                                </th>
+                                <th>
+                                    <div class="d-flex justify-content-center">Consequence</div>
+                                </th>
+                                <th>
+                                    <div class="d-flex justify-content-center">Operation</div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr id="constraintInput">
+                                <td>
+                                    <input type="text" id="premise" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input type="text" id="consequence" class="form-control"/>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center">
+                                        <button type="button" class="btn btn-primary m-1" onclick="addConstraint('#premise', '#consequence','#constraintInput')">
+                                            Add
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteSession()">Cancel</button>
+                        <button type="submit" asp-page-handler="Start" class="btn btn-primary">Start</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </form>
 
 @section Scripts {

@@ -7,10 +7,7 @@ public static class SessionExtensions
     public static T? GetComplexData<T>(this ISession session, string key)
     {
         var data = session.GetString(key);
-        if (data == null)
-        {
-            return default(T);
-        }
+        if (data == null) return default;
         return JsonConvert.DeserializeObject<T>(data);
     }
 

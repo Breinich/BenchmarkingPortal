@@ -1,6 +1,6 @@
 ﻿namespace BenchmarkingPortal.Dal.Entities;
 
-public partial class ConfigurationItem
+public class ConfigurationItem
 {
     public string Key { get; set; } = null!;
 

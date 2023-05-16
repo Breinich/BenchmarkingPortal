@@ -17,34 +17,33 @@ public class Finished : PageModel
 {
     private readonly IMediator _mediator;
 
-    [TempData]
-    public string? StatusMessage { get; set; }
-    
-    public List<BenchmarkHeader> FinishedBenchmarks { get; set; } = new();
-    
-    public Dictionary<int, string> ExecutableNames { get; set; } = new();
-    public Dictionary<int, string> SourceSetNames { get; set; } = new();
-
 
     public Finished(IMediator mediator)
     {
         _mediator = mediator;
     }
 
+    [TempData] public string? StatusMessage { get; set; }
+
+    public List<BenchmarkHeader> FinishedBenchmarks { get; set; } = new();
+
+    public Dictionary<int, string> ExecutableNames { get; set; } = new();
+    public Dictionary<int, string> SourceSetNames { get; set; } = new();
+
     public async Task<IActionResult> OnGet()
     {
         try
         {
-            FinishedBenchmarks = (await _mediator.Send(new GetAllBenchmarksQuery()
+            FinishedBenchmarks = (await _mediator.Send(new GetAllBenchmarksQuery
             {
                 Finished = true
             })).ToList();
-            
+
             ExecutableNames = (await _mediator.Send(new GetAllExecutablesQuery()))
-                .ToDictionary(x => x.Id, x => x.Name+":"+x.Version);
-            
+                .ToDictionary(x => x.Id, x => x.Name + ":" + x.Version);
+
             SourceSetNames = (await _mediator.Send(new GetAllSourceSetsQuery()))
-                .ToDictionary(x => x.Id, x => x.Name+": "+x.Version);
+                .ToDictionary(x => x.Id, x => x.Name + ": " + x.Version);
 
             return Page();
         }
@@ -61,7 +60,7 @@ public class Finished : PageModel
     {
         try
         {
-            await _mediator.Send(new DeleteBenchmarkCommand()
+            await _mediator.Send(new DeleteBenchmarkCommand
             {
                 Id = id,
                 InvokerName = User.Identity?.Name ??
@@ -95,5 +94,4 @@ public class Finished : PageModel
             return RedirectToPage();
         }
     }
-
 }

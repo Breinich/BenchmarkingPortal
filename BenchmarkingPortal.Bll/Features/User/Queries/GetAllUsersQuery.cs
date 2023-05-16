@@ -5,5 +5,4 @@ namespace BenchmarkingPortal.Bll.Features.User.Queries;
 
 public class GetAllUsersQuery : IRequest<IEnumerable<UserHeader>>
 {
-    
 }

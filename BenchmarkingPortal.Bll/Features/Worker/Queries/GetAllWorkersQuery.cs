@@ -3,4 +3,6 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.Worker.Queries;
 
-public class GetAllWorkersQuery : IRequest<IEnumerable<WorkerHeader>> { }
+public class GetAllWorkersQuery : IRequest<IEnumerable<WorkerHeader>>
+{
+}

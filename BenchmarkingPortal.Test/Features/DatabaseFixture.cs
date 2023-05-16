@@ -6,38 +6,43 @@ namespace BenchmarkingPortal.Test.Features;
 
 public class DatabaseFixture : IAsyncLifetime
 {
-    public BenchmarkingDbContext Context { get; private set; }
-    public Mock<UserManager<User>> UserManager { get; init; }
-
     public DatabaseFixture()
     {
         var optionsBuilder = new DbContextOptionsBuilder<BenchmarkingDbContext>();
         optionsBuilder.UseSqlServer(
             "Server=(localdb)\\mssqllocaldb;Database=BenchmarkingPortalTestDb;Trusted_Connection=True;MultipleActiveResultSets=true",
             x => x.MigrationsAssembly("BenchmarkingPortal.Migrations.Test"));
-        
-        Context =  new BenchmarkingDbContext(optionsBuilder.Options);
-        
+
+        Context = new BenchmarkingDbContext(optionsBuilder.Options);
+
         UserManager = new Mock<UserManager<User>>();
     }
-    
+
+    public BenchmarkingDbContext Context { get; }
+    public Mock<UserManager<User>> UserManager { get; init; }
+
     public async Task InitializeAsync()
     {
         await Context.Database.EnsureDeletedAsync();
         await Context.Database.EnsureCreatedAsync();
-        
+
         await SeedDatabase();
     }
-    
+
+    public async Task DisposeAsync()
+    {
+        await Context.Database.EnsureDeletedAsync();
+    }
+
     /// <summary>
-    /// Seeds the database with test data
+    ///     Seeds the database with test data
     /// </summary>
     private async Task SeedDatabase()
     {
         var user = new User
         {
             UserName = "TestUser",
-            Email = "test@me.hu",
+            Email = "test@me.hu"
         };
         await Context.Users.AddAsync(user);
         await Context.SaveChangesAsync();
@@ -50,18 +55,18 @@ public class DatabaseFixture : IAsyncLifetime
             Name = "TestToolAlpha",
             Version = "1.0",
             UploadedDate = DateTime.Now,
-            UserName = user.UserName,
+            UserName = user.UserName
         };
         await Context.Executables.AddAsync(executable);
         await Context.SaveChangesAsync();
-        
+
         var sourceSet = new SourceSet
         {
             Name = "TestSourceSet",
             Path = "C:\\TestSourceSet",
             Version = "1.0",
             UploadedDate = DateTime.Now,
-            UserName = user.UserName,
+            UserName = user.UserName
         };
         await Context.SourceSets.AddAsync(sourceSet);
         await Context.SaveChangesAsync();
@@ -85,11 +90,11 @@ public class DatabaseFixture : IAsyncLifetime
             Address = "192.168.0.0",
             Port = 8080,
             ComputerGroupId = computerGroup.Id,
-            AddedDate = DateTime.Now,
+            AddedDate = DateTime.Now
         };
         await Context.Workers.AddAsync(worker);
         await Context.SaveChangesAsync();
-        
+
         await Context.Benchmarks.AddAsync(new Dal.Entities.Benchmark
         {
             Name = "TestBenchmark",
@@ -106,13 +111,8 @@ public class DatabaseFixture : IAsyncLifetime
             SourceSetId = sourceSet.Id,
             SetFilePath = "C:\\TestSourceSet\\test.txt",
             PropertyFilePath = "C:\\TestSourceSet\\test.properties",
-            ConfigurationId = configuration.Id,
+            ConfigurationId = configuration.Id
         });
         await Context.SaveChangesAsync();
-    }
-
-    public async Task DisposeAsync()
-    {
-        await Context.Database.EnsureDeletedAsync();
     }
 }

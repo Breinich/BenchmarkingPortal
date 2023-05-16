@@ -8,6 +8,5 @@ public class Workers : PageModel
 {
     public void OnGet()
     {
-        
     }
 }

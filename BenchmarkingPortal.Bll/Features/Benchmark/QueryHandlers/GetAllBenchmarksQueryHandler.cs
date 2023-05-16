@@ -16,9 +16,10 @@ public class GetAllBenchmarksQueryHandler : IRequestHandler<GetAllBenchmarksQuer
         _context = context;
     }
 
-    public async Task<IEnumerable<BenchmarkHeader>> Handle(GetAllBenchmarksQuery request, CancellationToken cancellationToken) => 
-
-        await _context.Benchmarks.Where(b => b.Status.Equals(Status.Finished) == request.Finished)
-        .Select(b => new BenchmarkHeader(b)).ToListAsync(cancellationToken);
-
+    public async Task<IEnumerable<BenchmarkHeader>> Handle(GetAllBenchmarksQuery request,
+        CancellationToken cancellationToken)
+    {
+        return await _context.Benchmarks.Where(b => b.Status.Equals(Status.Finished) == request.Finished)
+            .Select(b => new BenchmarkHeader(b)).ToListAsync(cancellationToken);
+    }
 }

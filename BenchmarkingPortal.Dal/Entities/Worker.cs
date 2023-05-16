@@ -1,6 +1,6 @@
 ﻿namespace BenchmarkingPortal.Dal.Entities;
 
-public partial class Worker
+public class Worker
 {
     public int Id { get; set; }
 
@@ -23,10 +23,10 @@ public partial class Worker
     public int ComputerGroupId { get; set; }
 
     public DateTime AddedDate { get; set; }
-    
+
     public string UserName { get; set; } = null!;
-    
+
     public virtual ComputerGroup ComputerGroup { get; set; } = null!;
-    
+
     public virtual User User { get; set; } = null!;
 }

@@ -38,13 +38,11 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
             var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);
 
             if (!admin)
-            {
                 throw new ArgumentException(
                     new ExceptionMessage<Dal.Entities.Benchmark>().NoPrivilege);
-            }
         }
 
-        
+
         if (benchmarkHeader.Status != Status.Finished)
         {
             benchmarkHeader.Priority = request.Priority;
@@ -59,13 +57,12 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
 
 
             // If succeeded, the modified Benchmark will be written into the DB
-           
-           
+
+
             benchmarkEntity.Priority = request.Priority;
             benchmarkEntity.Status = request.Status;
 
             await _context.SaveChangesAsync(cancellationToken);
-            
         }
         else
         {

@@ -2,7 +2,6 @@
 @inject SignInManager<User> SignInManager
 @inject IConfiguration Configuration
 @using BenchmarkingPortal
-@using User = BenchmarkingPortal.Dal.Entities.User
 @model AccessDeniedModel
 @{
     ViewData["Title"] = "Access denied";
@@ -12,13 +11,13 @@
     <h1 class="text-danger">@ViewData["Title"]</h1>
     <p class="text-danger">You do not have access to this resource.</p>
 
-    @if(SignInManager.IsSignedIn(User) && User.IsInRole(Roles.Guest))
+    @if (SignInManager.IsSignedIn(User) && User.IsInRole(Roles.Guest))
     {
         <hr/>
         <a asp-area="Identity" asp-page="/Account/Manage/Index">View your account.</a>
         <p class="text-danger">You are currently logged in as a guest. Please contact the <a href=@($"mailto:{Configuration["Users:AdminPublicEmail"]}")>administrator</a> to request access.</p>
     }
-    else if(!SignInManager.IsSignedIn(User))
+    else if (!SignInManager.IsSignedIn(User))
     {
         <hr/>
         <a asp-area="Identity" asp-page="/Account/Login">Log in.</a>

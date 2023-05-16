@@ -1,7 +1,6 @@
 ﻿using BenchmarkingPortal.Dal.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Runtime.CompilerServices;
 
 namespace BenchmarkingPortal.Dal.EntityConfigurations;
 

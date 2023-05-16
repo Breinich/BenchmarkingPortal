@@ -1,6 +1,6 @@
 ﻿namespace BenchmarkingPortal.Dal.Entities;
 
-public partial class Executable
+public class Executable
 {
     public int Id { get; set; }
 

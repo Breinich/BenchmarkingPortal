@@ -21,7 +21,7 @@ public class ConfigurationItemEntityConfiguration : IEntityTypeConfiguration<Con
     }
 
     private void SampleData(EntityTypeBuilder<ConfigurationItem> builder)
-    { 
+    {
         // Load test data here
     }
 }

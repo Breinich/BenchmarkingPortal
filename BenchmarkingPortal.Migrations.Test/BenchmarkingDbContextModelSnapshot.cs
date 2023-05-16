@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace BenchmarkingPortal.Migrations.Test
+namespace BenchmarkingPortal.Migrations.Base.Migrations
 {
     [DbContext(typeof(BenchmarkingDbContext))]
     partial class BenchmarkingDbContextModelSnapshot : ModelSnapshot
@@ -17,7 +17,7 @@ namespace BenchmarkingPortal.Migrations.Test
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.4")
+                .HasAnnotation("ProductVersion", "7.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -83,8 +83,9 @@ namespace BenchmarkingPortal.Migrations.Test
                     b.Property<int>("TimeLimit")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
@@ -99,9 +100,9 @@ namespace BenchmarkingPortal.Migrations.Test
 
                     b.HasIndex("SourceSetId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserName");
 
-                    b.ToTable("Benchmark", (string)null);
+                    b.ToTable("Benchmarks", (string)null);
                 });
 
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.ComputerGroup", b =>
@@ -118,7 +119,7 @@ namespace BenchmarkingPortal.Migrations.Test
 
                     b.HasKey("Id");
 
-                    b.ToTable("ComputerGroup", (string)null);
+                    b.ToTable("ComputerGroups", (string)null);
                 });
 
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.Configuration", b =>
@@ -131,12 +132,16 @@ namespace BenchmarkingPortal.Migrations.Test
 
                     b.HasKey("Id");
 
-                    b.ToTable("Configuration", (string)null);
+                    b.ToTable("Configurations", (string)null);
                 });
 
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.ConfigurationItem", b =>
                 {
                     b.Property<string>("Key")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Value")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -146,16 +151,11 @@ namespace BenchmarkingPortal.Migrations.Test
                     b.Property<int>("ConfigurationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Key", "Scope", "ConfigurationId");
+                    b.HasKey("Key", "Value", "Scope", "ConfigurationId");
 
                     b.HasIndex("ConfigurationId");
 
-                    b.ToTable("ConfigurationItem", (string)null);
+                    b.ToTable("ConfigurationItems", (string)null);
                 });
 
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.Constraint", b =>
@@ -175,7 +175,7 @@ namespace BenchmarkingPortal.Migrations.Test
 
                     b.HasIndex("ConfigurationId");
 
-                    b.ToTable("Constraint", (string)null);
+                    b.ToTable("Constraints", (string)null);
                 });
 
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.Executable", b =>
@@ -209,8 +209,9 @@ namespace BenchmarkingPortal.Migrations.Test
                     b.Property<DateTime>("UploadedDate")
                         .HasColumnType("datetime");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("Version")
                         .IsRequired()
@@ -219,9 +220,9 @@ namespace BenchmarkingPortal.Migrations.Test
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserName");
 
-                    b.ToTable("Executable", (string)null);
+                    b.ToTable("Executables", (string)null);
                 });
 
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.SourceSet", b =>
@@ -245,8 +246,9 @@ namespace BenchmarkingPortal.Migrations.Test
                     b.Property<DateTime>("UploadedDate")
                         .HasColumnType("datetime");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("Version")
                         .IsRequired()
@@ -255,9 +257,9 @@ namespace BenchmarkingPortal.Migrations.Test
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserName");
 
-                    b.ToTable("SourceSet", (string)null);
+                    b.ToTable("SourceSets", (string)null);
                 });
 
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.User", b =>
@@ -281,10 +283,6 @@ namespace BenchmarkingPortal.Migrations.Test
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("GitHubUserName")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -319,6 +317,7 @@ namespace BenchmarkingPortal.Migrations.Test
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -357,6 +356,11 @@ namespace BenchmarkingPortal.Migrations.Test
                     b.Property<int>("Cpu")
                         .HasColumnType("int");
 
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -376,16 +380,17 @@ namespace BenchmarkingPortal.Migrations.Test
                     b.Property<int>("Storage")
                         .HasColumnType("int");
 
-                    b.Property<string>("Username")
+                    b.Property<string>("UserName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ComputerGroupId");
 
-                    b.ToTable("Worker", (string)null);
+                    b.HasIndex("UserName");
+
+                    b.ToTable("Workers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -549,7 +554,8 @@ namespace BenchmarkingPortal.Migrations.Test
 
                     b.HasOne("BenchmarkingPortal.Dal.Entities.User", "User")
                         .WithMany("Benchmarks")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UserName")
+                        .HasPrincipalKey("UserName")
                         .IsRequired()
                         .HasConstraintName("FK_Benchmark_User");
 
@@ -586,7 +592,8 @@ namespace BenchmarkingPortal.Migrations.Test
                 {
                     b.HasOne("BenchmarkingPortal.Dal.Entities.User", "User")
                         .WithMany("Executables")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UserName")
+                        .HasPrincipalKey("UserName")
                         .IsRequired()
                         .HasConstraintName("FK_Executable_User");
 
@@ -597,7 +604,8 @@ namespace BenchmarkingPortal.Migrations.Test
                 {
                     b.HasOne("BenchmarkingPortal.Dal.Entities.User", "User")
                         .WithMany("SourceSets")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UserName")
+                        .HasPrincipalKey("UserName")
                         .IsRequired()
                         .HasConstraintName("FK_SourceSet_User");
 
@@ -606,11 +614,22 @@ namespace BenchmarkingPortal.Migrations.Test
 
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.Worker", b =>
                 {
-                    b.HasOne("BenchmarkingPortal.Dal.Entities.ComputerGroup", null)
+                    b.HasOne("BenchmarkingPortal.Dal.Entities.ComputerGroup", "ComputerGroup")
                         .WithMany("Workers")
                         .HasForeignKey("ComputerGroupId")
                         .IsRequired()
                         .HasConstraintName("FK_Worker_ComputerGroup");
+
+                    b.HasOne("BenchmarkingPortal.Dal.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserName")
+                        .HasPrincipalKey("UserName")
+                        .IsRequired()
+                        .HasConstraintName("FK_Worker_User");
+
+                    b.Navigation("ComputerGroup");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

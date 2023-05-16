@@ -17,7 +17,7 @@ public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerH
 
     public async Task<WorkerHeader> Handle(AddWorkerCommand request, CancellationToken cancellationToken)
     {
-        var workerDto = new WorkerHeader()
+        var workerDto = new WorkerHeader
         {
             AddedDate = request.AddedDate,
             Address = request.Address,
@@ -28,7 +28,7 @@ public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerH
             Storage = request.Storage,
             Name = request.Name,
             Login = request.Username,
-            Password = request.Password,
+            Password = request.Password
         };
 
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -39,7 +39,7 @@ public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerH
 
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-        var worker = new Dal.Entities.Worker()
+        var worker = new Dal.Entities.Worker
         {
             AddedDate = request.AddedDate,
             Address = request.Address,
@@ -50,7 +50,7 @@ public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerH
             Storage = request.Storage,
             Name = request.Name,
             Login = request.Username,
-            Password = request.Password,
+            Password = request.Password
         };
 
         await _context.Workers.AddAsync(worker, cancellationToken);

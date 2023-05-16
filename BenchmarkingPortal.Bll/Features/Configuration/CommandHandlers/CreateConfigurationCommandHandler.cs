@@ -16,37 +16,34 @@ public class CreateConfigurationCommandHandler : IRequestHandler<CreateConfigura
     }
 
 
-    public async Task<ConfigurationHeader> Handle(CreateConfigurationCommand request, CancellationToken cancellationToken)
+    public async Task<ConfigurationHeader> Handle(CreateConfigurationCommand request,
+        CancellationToken cancellationToken)
     {
         var config = new Dal.Entities.Configuration();
-        
+
         await _context.Configurations.AddAsync(config, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         foreach (var configItem in request.Configurations)
-        {
-            await _context.ConfigurationItems.AddAsync(new ConfigurationItem()
+            await _context.ConfigurationItems.AddAsync(new ConfigurationItem
             {
                 Key = configItem.Item2,
                 Value = configItem.Item3,
                 Scope = configItem.Item1,
-                ConfigurationId = config.Id,
+                ConfigurationId = config.Id
             }, cancellationToken);
-        }
 
         await _context.SaveChangesAsync(cancellationToken);
 
         foreach (var constraint in request.Constraints)
-        {
-            await _context.Constraints.AddAsync(new Constraint()
+            await _context.Constraints.AddAsync(new Constraint
             {
                 Premise = constraint.Item1,
-                Consequence = constraint.Item2,
+                Consequence = constraint.Item2
             }, cancellationToken);
-        }
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return new ConfigurationHeader() { Id = config.Id };
+        return new ConfigurationHeader { Id = config.Id };
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace BenchmarkingPortal.Dal.Entities;
 
-public partial class Configuration
+public class Configuration
 {
     public int Id { get; set; }
 

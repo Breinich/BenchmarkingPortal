@@ -9,7 +9,7 @@ namespace BenchmarkingPortal.Bll.Features.SourceSet.CommandHandlers;
 public class DeleteSourceSetCommandHandler : IRequestHandler<DeleteSourceSetCommand>
 {
     private readonly BenchmarkingDbContext _context;
-    private readonly UserManager<Dal.Entities.User> _userManager; 
+    private readonly UserManager<Dal.Entities.User> _userManager;
 
     public DeleteSourceSetCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager)
     {
@@ -30,10 +30,7 @@ public class DeleteSourceSetCommandHandler : IRequestHandler<DeleteSourceSetComm
 
             var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);
 
-            if (!admin)
-            {
-                throw new ArgumentException(new ExceptionMessage<Dal.Entities.SourceSet>().NoPrivilege);
-            }
+            if (!admin) throw new ArgumentException(new ExceptionMessage<Dal.Entities.SourceSet>().NoPrivilege);
         }
 
         _context.Remove(sourceSet);

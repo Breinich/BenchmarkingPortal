@@ -1,168 +1,169 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #98041c;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #98041c;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-top: 60px;
-  min-height: 100%;
+    margin-top: 60px;
+    min-height: 100%;
 }
 
 body > .container, body > .container > .pb-3 {
-  height: auto;
-  min-height: 100%;
+    height: auto;
+    min-height: 100%;
 }
 
-.navbar{
-  font-weight: bold;
+.navbar {
+    font-weight: bold;
 }
 
-.nav-pills{
-  font-weight: bold;
-  background-color: white;
-  color: #98041c;
+.nav-pills {
+    font-weight: bold;
+    background-color: white;
+    color: #98041c;
 }
 
 .nav-pills .nav-link:not(.active) {
-  font-weight: bold;
-  background-color: white;
-  color: #98041c;
+    font-weight: bold;
+    background-color: white;
+    color: #98041c;
 }
 
 .nav-pills .nav-link.active {
-  background-color: #98041c;
+    background-color: #98041c;
     color: white !important;
-  border-radius: 50rem;
+    border-radius: 50rem;
 }
 
-h3{
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  margin: 0.75rem;
+h3 {
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    margin: 0.75rem;
 }
 
 .btn-primary {
-  background-color: #98041c;
-  border-color: #98041c;
-  border-radius: 50rem;
-  font-weight: bold;
+    background-color: #98041c;
+    border-color: #98041c;
+    border-radius: 50rem;
+    font-weight: bold;
 }
 
 .btn-primary:hover {
-  background-color: black;
-  border-color: black;
+    background-color: black;
+    border-color: black;
 }
 
 .btn-primary:active, .btn-primary:focus {
-  background-color: black;
-  border-color: black;
-  outline: none;
+    background-color: black;
+    border-color: black;
+    outline: none;
 }
 
-.btn-primary:focus:active{
-  background-color: black;
-  border-color: black;
-  outline: none;
+.btn-primary:focus:active {
+    background-color: black;
+    border-color: black;
+    outline: none;
 }
 
-.btn-primary:disabled{
-  background-color: #212529;
-  border-color: #212529;
+.btn-primary:disabled {
+    background-color: #212529;
+    border-color: #212529;
 }
 
 .btn {
-  border-radius: 50rem;
-  font-weight: bold;
+    border-radius: 50rem;
+    font-weight: bold;
 }
 
-.btn-danger{
-  background-color: black;
-  border-color: black;
-  color: white;
+.btn-danger {
+    background-color: black;
+    border-color: black;
+    color: white;
 }
 
-.btn-danger:hover{
-  background-color: #98041c;
-  border-color: #98041c;
-  color: black;
+.btn-danger:hover {
+    background-color: #98041c;
+    border-color: #98041c;
+    color: black;
 }
 
-.btn-danger:active{
-  background-color: #98041c;
-  border-color: #98041c;
-  color: black;
+.btn-danger:active {
+    background-color: #98041c;
+    border-color: #98041c;
+    color: black;
 }
 
-.btn-danger:focus{
-  background-color: #98041c;
-  border-color: #98041c;
-  color: black;
+.btn-danger:focus {
+    background-color: #98041c;
+    border-color: #98041c;
+    color: black;
 }
 
-.form-check-input{
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50rem !important;
+.form-check-input {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50rem !important;
 }
 
-.form-check-input:active{
-  background-color: #98041c;
-  border-color: #98041c;
+.form-check-input:active {
+    background-color: #98041c;
+    border-color: #98041c;
 }
 
-.form-check-input:checked{
-  background-color: #98041c;
-  border-color: #98041c;
+.form-check-input:checked {
+    background-color: #98041c;
+    border-color: #98041c;
 }
 
 .invalid-tooltip {
-  width: 100%;
-  margin-top: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-  font-size: .75rem;
+    width: 100%;
+    margin-top: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    font-size: .75rem;
 }
 
-.rounded-circle{
-  width: 2rem;
-  height: 2rem;
+.rounded-circle {
+    width: 2rem;
+    height: 2rem;
 }
 
-.bi-github{
-  margin-right: 0.5rem;
+.bi-github {
+    margin-right: 0.5rem;
 }
 
 .tableFixHead {
-  overflow: auto;
-  height: calc((100vh - 120px - 2*(1.3rem + .6vw + 1.5rem))/2 - 1rem);
+    overflow: auto;
+    height: calc((100vh - 120px - 2 * (1.3rem + .6vw + 1.5rem)) / 2 - 1rem);
 }
+
 .tableFixHead thead th {
-  position: sticky;
-  top: 0;
+    position: sticky;
+    top: 0;
 }
 
-footer{
-  height: 60px;
-  bottom: 0;
-  width: 100%;
-  background-color: white;
+footer {
+    height: 60px;
+    bottom: 0;
+    width: 100%;
+    background-color: white;
 }
 
-.col-1 > button{
-  margin: 0.75rem;
+.col-1 > button {
+    margin: 0.75rem;
 }

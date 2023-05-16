@@ -5,13 +5,13 @@ namespace BenchmarkingPortal.Test.Features.Benchmark;
 
 public class StartBenchmarkTest : IClassFixture<DatabaseFixture>, IDisposable
 {
-    private readonly DatabaseFixture _fixture;    
+    private readonly DatabaseFixture _fixture;
 
     public StartBenchmarkTest(DatabaseFixture fixture)
     {
         _fixture = fixture;
     }
-    
+
     public void Dispose()
     {
     }
@@ -20,8 +20,8 @@ public class StartBenchmarkTest : IClassFixture<DatabaseFixture>, IDisposable
     public async Task TestSimpleStart()
     {
         var handler = new StartBenchmarkCommandHandler(_fixture.Context);
-        
-        await handler.Handle(new StartBenchmarkCommand()
+
+        await handler.Handle(new StartBenchmarkCommand
         {
             Name = "b2",
             Priority = 1,
@@ -34,8 +34,7 @@ public class StartBenchmarkTest : IClassFixture<DatabaseFixture>, IDisposable
             SetFilePath = "C:\\Users\\User\\Desktop\\test.txt",
             PropertyFilePath = "C:\\Users\\User\\Desktop\\test.txt",
             ConfigurationId = 1,
-            InvokerName = "TestUser",
-
+            InvokerName = "TestUser"
         }, CancellationToken.None);
 
         Assert.Equal(1, _fixture.Context.Benchmarks

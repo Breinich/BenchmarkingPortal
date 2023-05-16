@@ -1,7 +1,6 @@
 ﻿using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Dal;
-using BenchmarkingPortal.Dal.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -31,12 +30,9 @@ public class DeleteExecutableCommandHandler : IRequestHandler<DeleteExecutableCo
 
             var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);
 
-            if (!admin)
-            {
-                throw new ArgumentException(new ExceptionMessage<Dal.Entities.Executable>().NoPrivilege);
-            }
+            if (!admin) throw new ArgumentException(new ExceptionMessage<Dal.Entities.Executable>().NoPrivilege);
         }
-        
+
 
         _context.Remove(exe);
         await _context.SaveChangesAsync(cancellationToken);

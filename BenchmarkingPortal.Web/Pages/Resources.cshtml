@@ -1,5 +1,5 @@
 ﻿@page
-@model BenchmarkingPortal.Web.Pages.Resources
+@model Resources
 @inject IAuthorizationService AuthorizationService
 @{
     ViewData["Title"] = "Resources";
@@ -8,17 +8,17 @@
 <div class="row">
 <div class="col-6">
     <div class="row">
-            <div class="col-11">
-                <h3>My Executables</h3>
-            </div>
-            <div class="col-1 d-flex justify-content-end align-items-center">
-                <button type="button" class="btn btn-primary d-flex justify-content-center align-items-center m-1 p-1" data-bs-toggle="modal" data-bs-target="#newExecutable">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
-                    </svg>
-                </button>
-            </div>
+        <div class="col-11">
+            <h3>My Executables</h3>
         </div>
+        <div class="col-1 d-flex justify-content-end align-items-center">
+            <button type="button" class="btn btn-primary d-flex justify-content-center align-items-center m-1 p-1" data-bs-toggle="modal" data-bs-target="#newExecutable">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
     <div class="tableFixHead">
         <table class="table table-striped align-middle">
             <caption hidden>My Executables</caption>
@@ -81,17 +81,17 @@
 </div>
 <div class="col-6">
     <div class="row">
-            <div class="col-11">
-                <h3>My SourceSets</h3>
-            </div>
-            <div class="col-1 d-flex justify-content-end align-items-center">
-                <button type="button" class="btn btn-primary d-flex justify-content-center align-items-center m-1 p-1" data-bs-toggle="modal" data-bs-target="#newSourceSet">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
-                    </svg>
-                </button>
-            </div>
+        <div class="col-11">
+            <h3>My SourceSets</h3>
         </div>
+        <div class="col-1 d-flex justify-content-end align-items-center">
+            <button type="button" class="btn btn-primary d-flex justify-content-center align-items-center m-1 p-1" data-bs-toggle="modal" data-bs-target="#newSourceSet">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
     <div class="tableFixHead">
         <table class="table table-striped align-middle">
             <caption hidden>My Source Sets</caption>
@@ -149,10 +149,10 @@
 
 <div class="col-6">
     <div class="row">
-            <div class="col-11">
-                <h3>Others' Executables</h3>
-            </div>
+        <div class="col-11">
+            <h3>Others' Executables</h3>
         </div>
+    </div>
     <div class="tableFixHead">
         <table class="table table-striped align-middle">
             <caption hidden>Others' Executables</caption>
@@ -283,72 +283,72 @@
 
 <!-- Modal -->
 <form method="post">
-<div class="modal fade" id="newExecutable" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticExeBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticExeBackdropLabel">Upload a new Executable</h5>
-                <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <partial name="~/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" for="StatusMessage"/>
-                <div class="form-floating mb-4">
-                    <input asp-for="ExecutableInput.Name" class="form-control" placeholder="new executable's unique name"/>
-                    <label asp-for="ExecutableInput.Name" class="form-label"></label>
-                    <span asp-validation-for="ExecutableInput.Name" class="text-danger"></span>
+    <div class="modal fade" id="newExecutable" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticExeBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticExeBackdropLabel">Upload a new Executable</h5>
+                    <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="form-floating mb-4">
-                    <input asp-for="ExecutableInput.Version" class="form-control" placeholder="the version number for the executable"/>
-                    <label asp-for="ExecutableInput.Version" class="form-label"></label>
-                    <span asp-validation-for="ExecutableInput.Version" class="text-danger"></span>
-                </div>
-                <div class="form-floating mb-4">
-                    <input asp-for="ExecutableInput.OwnerTool" class="form-control" placeholder="the executable's owner tool's name"/>
-                    <label asp-for="ExecutableInput.OwnerTool" class="form-label"></label>
-                    <span asp-validation-for="ExecutableInput.OwnerTool" class="text-danger"></span>
-                </div>
-                <div class="form-floating mb-4">
-                    <input asp-for="ExecutableInput.ToolVersion" class="form-control" placeholder="the executable's owner tool's version"/>
-                    <label asp-for="ExecutableInput.ToolVersion" class="form-label"></label>
-                    <span asp-validation-for="ExecutableInput.ToolVersion" class="text-danger"></span>
-                </div>
-                <div class="modal-footer">
-                    <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" asp-page-handler="UploadExecutable" class="btn btn-primary">Upload</button>
+                <div class="modal-body">
+                    <partial name="~/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" for="StatusMessage"/>
+                    <div class="form-floating mb-4">
+                        <input asp-for="ExecutableInput.Name" class="form-control" placeholder="new executable's unique name"/>
+                        <label asp-for="ExecutableInput.Name" class="form-label"></label>
+                        <span asp-validation-for="ExecutableInput.Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input asp-for="ExecutableInput.Version" class="form-control" placeholder="the version number for the executable"/>
+                        <label asp-for="ExecutableInput.Version" class="form-label"></label>
+                        <span asp-validation-for="ExecutableInput.Version" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input asp-for="ExecutableInput.OwnerTool" class="form-control" placeholder="the executable's owner tool's name"/>
+                        <label asp-for="ExecutableInput.OwnerTool" class="form-label"></label>
+                        <span asp-validation-for="ExecutableInput.OwnerTool" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input asp-for="ExecutableInput.ToolVersion" class="form-control" placeholder="the executable's owner tool's version"/>
+                        <label asp-for="ExecutableInput.ToolVersion" class="form-label"></label>
+                        <span asp-validation-for="ExecutableInput.ToolVersion" class="text-danger"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" asp-page-handler="UploadExecutable" class="btn btn-primary">Upload</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </form>
 
 <!-- Modal -->
 <form method="post">
-<div class="modal fade" id="newSourceSet" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticSrcBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticSrcBackdropLabel">Upload a new Source Set</h5>
-                <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <partial name="~/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" for="StatusMessage"/>
-                <div class="form-floating mb-4">
-                    <input asp-for="SourceSetInput.Name" class="form-control" placeholder="new source set's unique name"/>
-                    <label asp-for="SourceSetInput.Name" class="form-label"></label>
-                    <span asp-validation-for="SourceSetInput.Name" class="text-danger"></span>
+    <div class="modal fade" id="newSourceSet" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticSrcBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticSrcBackdropLabel">Upload a new Source Set</h5>
+                    <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="form-floating mb-4">
-                    <input asp-for="SourceSetInput.Version" class="form-control" placeholder="the version number for the source set"/>
-                    <label asp-for="SourceSetInput.Version" class="form-label"></label>
-                    <span asp-validation-for="SourceSetInput.Version" class="text-danger"></span>
-                </div>
-                <div class="modal-footer">
-                    <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" asp-page-handler="UploadSourceSet" class="btn btn-primary">Upload</button>
+                <div class="modal-body">
+                    <partial name="~/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" for="StatusMessage"/>
+                    <div class="form-floating mb-4">
+                        <input asp-for="SourceSetInput.Name" class="form-control" placeholder="new source set's unique name"/>
+                        <label asp-for="SourceSetInput.Name" class="form-label"></label>
+                        <span asp-validation-for="SourceSetInput.Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input asp-for="SourceSetInput.Version" class="form-control" placeholder="the version number for the source set"/>
+                        <label asp-for="SourceSetInput.Version" class="form-label"></label>
+                        <span asp-validation-for="SourceSetInput.Version" class="text-danger"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" asp-page-handler="UploadSourceSet" class="btn btn-primary">Upload</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </form>

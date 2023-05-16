@@ -28,11 +28,11 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, UserH
 
             userEntity.Subscription = request.Subscription;
             await _usermanager.UpdateAsync(userEntity);
-            
+
             var userHeader = new UserHeader(userEntity);
 
             var currentRoles = await _usermanager.GetRolesAsync(userEntity);
-            if(request.Role != null && !currentRoles.Contains(request.Role))
+            if (request.Role != null && !currentRoles.Contains(request.Role))
             {
                 await _usermanager.RemoveFromRolesAsync(userEntity, currentRoles);
                 await _usermanager.AddToRoleAsync(userEntity, request.Role);
@@ -41,9 +41,7 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, UserH
 
             return userHeader;
         }
-        else
-        {
-            throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().NoPrivilege);
-        }
+
+        throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().NoPrivilege);
     }
 }
