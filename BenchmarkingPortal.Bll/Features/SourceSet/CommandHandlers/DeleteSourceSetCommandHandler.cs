@@ -1,7 +1,6 @@
 ﻿using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.SourceSet.Commands;
 using BenchmarkingPortal.Dal;
-using BenchmarkingPortal.Dal.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -24,9 +23,9 @@ public class DeleteSourceSetCommandHandler : IRequestHandler<DeleteSourceSetComm
         var sourceSet = await _context.SourceSets.FindAsync(request.SourceSetId, cancellationToken) ??
                         throw new ArgumentException(new ExceptionMessage<Dal.Entities.SourceSet>().ObjectNotFound);
 
-        if (sourceSet.UserId != request.UserId)
+        if (sourceSet.User.UserName != request.InvokerName)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString()) ??
+            var user = await _userManager.FindByIdAsync(request.InvokerName) ??
                        throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().ObjectNotFound);
 
             var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);

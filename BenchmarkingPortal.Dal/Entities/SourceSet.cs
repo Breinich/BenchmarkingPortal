@@ -11,7 +11,7 @@ public partial class SourceSet
     public string Version { get; set; } = null!;
 
     public DateTime UploadedDate { get; set; }
-    public int UserId { get; set; }
+    public string UserName { get; set; } = null!;
 
 
     public virtual User User { get; set; } = null!;

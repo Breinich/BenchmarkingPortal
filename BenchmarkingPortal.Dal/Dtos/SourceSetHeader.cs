@@ -13,7 +13,7 @@ public class SourceSetHeader
     public string? Version { get; set; }
 
     public DateTime UploadedDate { get; set; }
-    public UserHeader User { get; set; } = null!;
+    public string UserName { get; set; } = null!;
 
     public SourceSetHeader() { }
 
@@ -23,7 +23,7 @@ public class SourceSetHeader
         Name = s.Name;
         Path = s.Path;
         UploadedDate = s.UploadedDate;
-        User = new UserHeader(s.User);
+        UserName = s.UserName;
         Version = s.Version;
     }
 }

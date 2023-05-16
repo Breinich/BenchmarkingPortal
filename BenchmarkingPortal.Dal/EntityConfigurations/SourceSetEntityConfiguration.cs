@@ -19,7 +19,7 @@ public class SourceSetEntityConfiguration : IEntityTypeConfiguration<SourceSet>
         builder.Property(e => e.Version).HasMaxLength(50).IsRequired();
 
         builder.HasOne(d => d.User).WithMany(p => p.SourceSets)
-            .HasForeignKey(d => d.UserId)
+            .HasForeignKey(d => d.UserName)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_SourceSet_User");
 

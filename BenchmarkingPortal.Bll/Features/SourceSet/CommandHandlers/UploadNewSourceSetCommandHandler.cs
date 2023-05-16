@@ -2,6 +2,7 @@
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.SourceSet.CommandHandlers;
 
@@ -23,7 +24,7 @@ public class UploadNewSourceSetCommandHandler : IRequestHandler<UploadNewSourceS
         {
             Name = request.Name,
             Path = request.Path,
-            UserId = request.UserId,
+            UserName = request.InvokerName,
             UploadedDate = request.UploadedDate,
             Version = request.Version,
         };

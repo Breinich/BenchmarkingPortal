@@ -9,6 +9,6 @@ public class UploadNewSourceSetCommand : IRequest<SourceSetHeader>
     public string Path { get; set; } = null!;
     public string? Version { get; set; }
     public DateTime UploadedDate { get; set; }
-    public int UserId { get; set; }
+    public string InvokerName { get; set; } = null!;
 
 }
