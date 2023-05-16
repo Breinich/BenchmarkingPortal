@@ -140,18 +140,17 @@ namespace BenchmarkingPortal.Migrations.Base
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("Value")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("Scope")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("ConfigurationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Key", "Scope", "ConfigurationId");
+                    b.HasKey("Key", "Value", "Scope", "ConfigurationId");
 
                     b.HasIndex("ConfigurationId");
 

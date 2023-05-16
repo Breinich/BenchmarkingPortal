@@ -50,7 +50,7 @@ public class DatabaseFixture : IAsyncLifetime
             Name = "TestToolAlpha",
             Version = "1.0",
             UploadedDate = DateTime.Now,
-            UserId = user.Id,
+            UserName = user.UserName,
         };
         await Context.Executables.AddAsync(executable);
         await Context.SaveChangesAsync();
@@ -61,7 +61,7 @@ public class DatabaseFixture : IAsyncLifetime
             Path = "C:\\TestSourceSet",
             Version = "1.0",
             UploadedDate = DateTime.Now,
-            UserId = user.Id,
+            UserName = user.UserName,
         };
         await Context.SourceSets.AddAsync(sourceSet);
         await Context.SaveChangesAsync();

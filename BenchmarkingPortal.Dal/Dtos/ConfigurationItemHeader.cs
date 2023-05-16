@@ -10,5 +10,5 @@ public class ConfigurationItemHeader
 
     public Scope Scope { get; set; }
 
-    public ConfigurationHeader? Configuration { get; set; }
+    public int ConfigurationId { get; set; }
 }
