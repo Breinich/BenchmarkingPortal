@@ -24,8 +24,7 @@ public class Home : PageModel
 
     [TempData]
     public string? StatusMessage { get; set; }
-
-    public List<BenchmarkHeader> UnfinishedBenchmarks { get; set; }
+    
     [BindProperty]
     public EditInputModel EditInput { get; set; } = default!;
     
@@ -46,17 +45,19 @@ public class Home : PageModel
         [Display(Name = "Priority")]
         public int Priority { get; set; }
         [Required]
-        [Range(1,16)]
+        [Range(1,Int32.MaxValue)]
         [Display(Name = "RAM")]
         public int Ram { get; set; }
         [Required]
-        [Range(1,8)]
+        [Range(1,Int32.MaxValue)]
         [Display(Name = "CPU")]
         public int Cpu { get; set; }
-        [Range(1, 1800)]
+        [Range(1, Int32.MaxValue)]
         [Display(Name = "Time Limit")]
         public int TimeLimit { get; set; }
-        [Range(1, 1800)]
+
+        [Range(1, Int32.MaxValue)]
+
         [Display(Name = "Hard Time Limit")]
         public int HardTimeLimit { get; set; }
         [Required]
@@ -71,6 +72,7 @@ public class Home : PageModel
         public string SetFilePath { get; set; } = null!;
         [Required]
         [StringLength(255)]
+        [Display(Name = "Property File Path")]
         public string PropertyFilePath { get; set; } = null!;
     }
 
@@ -145,10 +147,7 @@ public class Home : PageModel
 
     public Home(IMediator mediator)
     {
-        UnfinishedBenchmarks = new List<BenchmarkHeader>();
         _mediator = mediator;
-        Executables = new List<SelectListItem>();
-        SourceSets = new List<SelectListItem>();
     }
 
 
@@ -434,7 +433,7 @@ public class Home : PageModel
 
     public async Task<IActionResult> OnPostStartAsync()
     {
-        if (ModelState.IsValid == false)
+        if (!ModelState.IsValid)
         {
             return Page();
         }
