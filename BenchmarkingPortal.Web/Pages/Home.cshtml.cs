@@ -141,9 +141,10 @@ public class Home : PageModel
     
     private readonly string _tempConfigDataListKey = "TempConfigDataList";
     private readonly string _tempConstraintDataListKey = "TempConstraintDataList";
-    
-    public List<SelectListItem> Executables { get; set; }
-    public List<SelectListItem> SourceSets { get; set; }
+
+    public List<BenchmarkHeader> UnfinishedBenchmarks { get; set; } = new();
+    public List<SelectListItem> Executables { get; set; } = new();
+    public List<SelectListItem> SourceSets { get; set; } = new();
 
     public Home(IMediator mediator)
     {
@@ -162,9 +163,9 @@ public class Home : PageModel
                 Finished = false
             })).ToList();
             
-            Executables = (await _mediator.Send(new GetAllExecutablesQuery())).Select(e => new SelectListItem(e.Name, e.Id.ToString())).ToList();
+            Executables = (await _mediator.Send(new GetAllExecutablesQuery())).Select(e => new SelectListItem(e.Name+"."+e.Version, e.Id.ToString())).ToList();
             
-            SourceSets = (await _mediator.Send(new GetAllSourceSetsQuery())).Select(s => new SelectListItem(s.Name, s.Id.ToString())).ToList();
+            SourceSets = (await _mediator.Send(new GetAllSourceSetsQuery())).Select(s => new SelectListItem(s.Name+"."+s.Version, s.Id.ToString())).ToList();
             
             return Page();
         }

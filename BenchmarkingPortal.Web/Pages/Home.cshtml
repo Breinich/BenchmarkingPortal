@@ -10,7 +10,7 @@
         <div class="col-11">
             <h3>My benchmarks</h3>
         </div>
-        <div class="col-1">
+        <div class="col-1 d-flex justify-content-end">
             <button type="button" class="btn btn-primary d-flex justify-content-center align-items-center rounded-circle p-0" data-bs-toggle="modal" data-bs-target="#newBenchmark" onclick="deleteSession()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
@@ -62,7 +62,7 @@
         <tbody>
         @foreach (var item in Model.UnfinishedBenchmarks)
         {
-            if (item.User.UserName != null && item.User.UserName.Equals(User.Identity?.Name))
+            if (item.UserName != null && item.UserName.Equals(User.Identity?.Name))
             {
                 <tr>
                     <form class="form" method="post">
@@ -85,13 +85,13 @@
                             <div class="d-flex justify-content-center">@item.Cpu Cores</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.ComputerGroup.Id: @item.ComputerGroup.Description</div>
+                            <div class="d-flex justify-content-center">@item.ComputerGroupId</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.Executable.Name.@item.Executable.Version</div>
+                            <div class="d-flex justify-content-center">@Model.Executables.Find(e => e.Value.Equals(item.ExecutableId.ToString()))?.Text</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.SourceSet.Name</div>
+                            <div class="d-flex justify-content-center">@Model.SourceSets.Find(s => s.Value.Equals(item.SourceSetId.ToString()))?.Text</div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">Loading...</div>
@@ -189,7 +189,7 @@
         <tbody>
         @foreach (var item in Model.UnfinishedBenchmarks)
         {
-            if (item.User.UserName != null && !item.User.UserName.Equals(User.Identity?.Name))
+            if (!item.UserName.Equals(User.Identity?.Name))
             {
                 <tr>
                     <form class="form" method="post">
@@ -212,13 +212,13 @@
                             <div class="d-flex justify-content-center">@item.Cpu Cores</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.ComputerGroup.Id: @item.ComputerGroup.Description</div>
+                            <div class="d-flex justify-content-center">@item.ComputerGroupId</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.Executable.Name.@item.Executable.Version</div>
+                            <div class="d-flex justify-content-center">@Model.Executables.Find(e => e.Value.Equals(item.ExecutableId.ToString()))?.Text</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.SourceSet.Name</div>
+                            <div class="d-flex justify-content-center">@Model.SourceSets.Find(s => s.Value.Equals(item.SourceSetId.ToString()))?.Text</div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">Loading...</div>
