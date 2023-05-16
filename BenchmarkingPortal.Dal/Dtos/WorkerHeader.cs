@@ -25,12 +25,14 @@ public class WorkerHeader
     public int ComputerGroupId { get; set; }
 
     public DateTime AddedDate { get; set; }
+    
+    public string UserName { get; set; } = null!;
 
     public WorkerHeader() { }
 
     public WorkerHeader(Worker worker)
     {
-
+        Id = worker.Id;
         AddedDate = worker.AddedDate;
         Address = worker.Address;
         Port = worker.Port;
@@ -41,5 +43,6 @@ public class WorkerHeader
         Name = worker.Name;
         Username = worker.Username;
         Password = worker.Password;
+        UserName = worker.UserName;
     }
 }

@@ -18,6 +18,16 @@ public class WorkerEntityConfiguration : IEntityTypeConfiguration<Worker>
         builder.Property(e => e.Name).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Password).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Username).HasMaxLength(50).IsRequired();
+        
+        builder.HasOne(w => w.User).WithMany()
+            .HasForeignKey(w => w.UserName)
+            .OnDelete(DeleteBehavior.ClientSetNull)
+            .HasConstraintName("FK_Worker_User");
+        
+        builder.HasOne(w => w.ComputerGroup).WithMany(w => w.Workers)
+            .HasForeignKey(w => w.ComputerGroupId)
+            .OnDelete(DeleteBehavior.ClientSetNull)
+            .HasConstraintName("FK_Worker_ComputerGroup");
 
         SampleData(builder);
     }
