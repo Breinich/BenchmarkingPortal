@@ -65,12 +65,12 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             Cpu = request.Cpu,
             TimeLimit = request.TimeLimit,
             HardTimeLimit = request.HardTimeLimit,
-            Executable = new ExecutableHeader(await _context.Executables.FindAsync(request.ExecutableId) ?? throw new ArgumentException(nameof(request), new ExceptionMessage<Dal.Entities.Executable>().ObjectNotFound)),
-            SourceSet = new SourceSetHeader(await _context.SourceSets.FindAsync(request.SourceSetId) ?? throw new ArgumentException(nameof(request), new ExceptionMessage<Dal.Entities.SourceSet>().ObjectNotFound)),
+            ExecutableId = request.ExecutableId,
+            SourceSetId = request.SourceSetId,
             SetFilePath = request.SetFilePath,
             PropertyFilePath = request.PropertyFilePath,
             ConfigurationId = request.ConfigurationId,
-            User = new UserHeader(await _context.Users.FindAsync(request.InvokerName) ?? throw new ArgumentException(nameof(request), new ExceptionMessage<Dal.Entities.User>().ObjectNotFound)),
+            UserName = request.InvokerName,
         };
 
         // The other values will be checked by the scheduler
@@ -110,7 +110,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             // TODO need to be fixed
             StartedDate = startedDate,
             ConfigurationId = request.ConfigurationId,
-            UserId = await _context.Users.Where(u => u.UserName != null && u.UserName.Equals(request.InvokerName)).Select(u => u.Id).FirstOrDefaultAsync(cancellationToken)
+            UserName = newBenchmark.UserName,
         };
 
         _context.Benchmarks.Add(benchmark);

@@ -102,7 +102,7 @@ public class DatabaseFixture : IAsyncLifetime
             HardTimeLimit = 960,
             ComputerGroupId = computerGroup.Id,
             ExecutableId = executable.Id,
-            UserId = user.Id,
+            UserName = user.UserName,
             SourceSetId = sourceSet.Id,
             SetFilePath = "C:\\TestSourceSet\\test.txt",
             PropertyFilePath = "C:\\TestSourceSet\\test.properties",

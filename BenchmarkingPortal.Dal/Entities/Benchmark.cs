@@ -33,7 +33,7 @@ public partial class Benchmark
     public DateTime StartedDate { get; set; }
 
     public int ConfigurationId { get; set; }
-    public int UserId { get; set; }
+    public string UserName { get; set; } = null!;
 
     public virtual ComputerGroup ComputerGroup { get; set; } = null!;
 

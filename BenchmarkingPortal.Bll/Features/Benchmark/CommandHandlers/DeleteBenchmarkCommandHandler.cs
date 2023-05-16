@@ -30,7 +30,7 @@ public class DeleteBenchmarkCommandHandler : IRequestHandler<DeleteBenchmarkComm
 
 
         // Only the owner or the administrators have the permission to delete a specific benchmark
-        if (benchmarkHeader.User.UserName != request.InvokerName)
+        if (benchmarkHeader.UserName != request.InvokerName)
         {
             var user = await _userManager.FindByNameAsync(request.InvokerName) ??
                        throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().ObjectNotFound);

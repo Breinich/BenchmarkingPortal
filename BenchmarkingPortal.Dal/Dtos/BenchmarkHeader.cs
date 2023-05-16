@@ -22,11 +22,11 @@ public class BenchmarkHeader
 
     public int HardTimeLimit { get; set; }
 
-    public ComputerGroupHeader ComputerGroup { get; set; } = null!;
+    public int ComputerGroupId { get; set; }
 
-    public ExecutableHeader Executable { get; set; } = null!;
+    public int ExecutableId { get; set; }
 
-    public SourceSetHeader SourceSet { get; set; } = null!;
+    public int SourceSetId { get; set; }
 
     public string? SetFilePath { get; set; }
 
@@ -35,7 +35,7 @@ public class BenchmarkHeader
     public DateTime StartedDate { get; set; }
 
     public int ConfigurationId { get; set; }
-    public UserHeader User { get; set; } = null!;
+    public string UserName { get; set; } = null!;
 
     public BenchmarkHeader() { }
 
@@ -50,14 +50,14 @@ public class BenchmarkHeader
         Result = b.Result;
         TimeLimit = b.TimeLimit;
         HardTimeLimit = b.HardTimeLimit;
-        ComputerGroup = new ComputerGroupHeader(b.ComputerGroup);
-        Executable = new ExecutableHeader(b.Executable);
-        SourceSet = new SourceSetHeader(b.SourceSet);
+        ComputerGroupId = b.ComputerGroupId;
+        ExecutableId = b.ExecutableId;
+        SourceSetId = b.SourceSetId;
         SetFilePath = b.SetFilePath;
         PropertyFilePath = b.PropertyFilePath;
         StartedDate = b.StartedDate;
         ConfigurationId = b.ConfigurationId;
-        User = new UserHeader(b.User);
+        UserName = b.UserName;
     }
 
 }

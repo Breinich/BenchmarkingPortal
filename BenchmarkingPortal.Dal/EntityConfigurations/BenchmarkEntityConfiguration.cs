@@ -49,7 +49,7 @@ public class BenchmarkEntityConfiguration : IEntityTypeConfiguration<Benchmark>
             .HasConstraintName("FK_Benchmark_SourceSet");
 
         builder.HasOne(d => d.User).WithMany(p => p.Benchmarks)
-            .HasForeignKey(d => d.UserId)
+            .HasForeignKey(d => d.UserName)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_Benchmark_User");
 
