@@ -27,7 +27,7 @@ public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerH
             Ram = request.Ram,
             Storage = request.Storage,
             Name = request.Name,
-            Username = request.Username,
+            Login = request.Username,
             Password = request.Password,
         };
 
@@ -49,7 +49,7 @@ public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerH
             Ram = request.Ram,
             Storage = request.Storage,
             Name = request.Name,
-            Username = request.Username,
+            Login = request.Username,
             Password = request.Password,
         };
 
