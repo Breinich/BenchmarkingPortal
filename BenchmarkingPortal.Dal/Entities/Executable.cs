@@ -16,7 +16,7 @@ public partial class Executable
 
     public DateTime UploadedDate { get; set; }
 
-    public int UserId { get; set; }
+    public string UserName { get; set; } = null!;
 
     public virtual ICollection<Benchmark> Benchmarks { get; } = new List<Benchmark>();
 

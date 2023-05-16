@@ -1,7 +1,9 @@
-﻿using BenchmarkingPortal.Bll.Features.Executable.Commands;
+﻿using BenchmarkingPortal.Bll.Exceptions;
+using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.Executable.CommandHandlers;
 
@@ -27,7 +29,7 @@ public class UploadNewExecutableCommandHandler : IRequestHandler<UploadNewExecut
             Path = request.Path,
             Version = request.Version,
             UploadedDate = request.UploadedDate,
-            UserId = request.UserId,
+            UserName = request.InvokerName
         };
 
         await _context.Executables.AddAsync(exe, cancellationToken);

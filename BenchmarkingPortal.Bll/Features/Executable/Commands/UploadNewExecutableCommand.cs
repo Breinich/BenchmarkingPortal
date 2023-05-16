@@ -11,6 +11,6 @@ public class UploadNewExecutableCommand : IRequest<ExecutableHeader>
     public string Name { get; set; } = null!;
     public string? Version { get; set; }
     public DateTime UploadedDate { get; set; }
-    public int UserId { get; set; }
+    public string InvokerName { get; set; } = null!;
 
 }

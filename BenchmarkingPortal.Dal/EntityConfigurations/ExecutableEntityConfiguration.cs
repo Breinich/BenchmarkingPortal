@@ -21,7 +21,7 @@ public class ExecutableEntityConfiguration : IEntityTypeConfiguration<Executable
         builder.Property(e => e.Version).HasMaxLength(50).IsRequired();
 
         builder.HasOne(d => d.User).WithMany(p => p.Executables)
-            .HasForeignKey(d => d.UserId)
+            .HasForeignKey(d => d.UserName)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_Executable_User");
 

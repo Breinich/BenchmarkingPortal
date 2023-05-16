@@ -18,7 +18,7 @@ public class ExecutableHeader
 
     public DateTime UploadedDate { get; set; }
 
-    public UserHeader User { get; set; } = null!;
+    public string UserName { get; set; } = null!;
 
     public ExecutableHeader() { }
 
@@ -31,6 +31,6 @@ public class ExecutableHeader
         Name = e.Name;
         Version = e.Version;
         UploadedDate = e.UploadedDate;
-        User = new UserHeader(e.User);
+        UserName = e.UserName;
     }
 }
