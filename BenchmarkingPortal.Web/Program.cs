@@ -119,7 +119,6 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(GetAllUsersQuery).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(UpdateUserCommand).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(DeleteUserCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(GetAllExecutableNamesQuery).Assembly);
 });
 
 var app = builder.Build();

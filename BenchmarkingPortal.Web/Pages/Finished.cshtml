@@ -7,7 +7,6 @@
 <partial name="~/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" for="StatusMessage"/>
 
 <h3>My benchmarks</h3>
-
 <div class="tableFixHead">
     <table class="table table-striped align-middle">
         <caption hidden>Table for own, not finished benchmarks</caption>
@@ -42,7 +41,7 @@
         <tbody>
         @foreach (var item in Model.FinishedBenchmarks)
         {
-            if (item.User.UserName != null && item.User.UserName.Equals(User.Identity?.Name))
+            if (item.UserName.Equals(User.Identity?.Name))
             {
                 <tr>
                     <form class="form" method="post">
@@ -59,13 +58,17 @@
                             <div class="d-flex justify-content-center">@item.Cpu Cores</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.ComputerGroup.Id: @item.ComputerGroup.Description</div>
+                            <div class="d-flex justify-content-center">@item.ComputerGroupId</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.Executable.Name.@item.Executable.Version</div>
+                            <div class="d-flex justify-content-center">
+                                @Model.ExecutableNames.GetValueOrDefault(item.ExecutableId)
+                            </div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.SourceSet.Name</div>
+                            <div class="d-flex justify-content-center">
+                                @Model.SourceSetNames.GetValueOrDefault(item.SourceSetId)
+                            </div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">
@@ -77,7 +80,7 @@
                                    </svg>
                                 </button>
                                 <button type="submit" class="btn btn-danger m-1"
-                                        asp-page-handler="Delete" asp-route-id="@item.Id">
+                                        asp-page-handler="Delete" asp-route-id="@item.Id" asp-route-name="@item.Name">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                                         <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                                     </svg>
@@ -126,7 +129,7 @@
         <tbody>
         @foreach (var item in Model.FinishedBenchmarks)
         {
-            if (item.User.UserName != null && !item.User.UserName.Equals(User.Identity?.Name))
+            if (!item.UserName.Equals(User.Identity?.Name))
             {
                 <tr>
                     <form class="form" method="post">
@@ -143,13 +146,17 @@
                             <div class="d-flex justify-content-center">@item.Cpu Cores</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.ComputerGroup.Id: @item.ComputerGroup.Description</div>
+                            <div class="d-flex justify-content-center">@item.ComputerGroupId</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.Executable.Name.@item.Executable.Version</div>
+                            <div class="d-flex justify-content-center">
+                                @Model.ExecutableNames.GetValueOrDefault(item.ExecutableId)
+                            </div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.SourceSet.Name</div>
+                            <div class="d-flex justify-content-center">
+                                @Model.SourceSetNames.GetValueOrDefault(item.SourceSetId)
+                            </div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">
@@ -162,7 +169,7 @@
                                 @if(!(await AuthorizationService.AuthorizeAsync(User, Policies.RequireAdministratorRole)).Succeeded)
                                 {
                                     <button type="submit" class="btn btn-danger m-1"
-                                            asp-page-handler="Delete" asp-route-id="@item.Id">
+                                            asp-page-handler="Delete" asp-route-id="@item.Id" asp-route-name="@item.Name">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                                             <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                                         </svg>

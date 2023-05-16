@@ -12,7 +12,7 @@ public class ExecutableHeader
 
     public string? Path { get; set; }
 
-    public string? Name { get; set; }
+    public string Name { get; set; } = null!;
 
     public string? Version { get; set; }
 

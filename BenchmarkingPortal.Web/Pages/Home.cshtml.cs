@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Net;
 using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
@@ -141,7 +140,7 @@ public class Home : PageModel
     
     private readonly string _tempConfigDataListKey = "TempConfigDataList";
     private readonly string _tempConstraintDataListKey = "TempConstraintDataList";
-
+    
     public List<BenchmarkHeader> UnfinishedBenchmarks { get; set; } = new();
     public List<SelectListItem> Executables { get; set; } = new();
     public List<SelectListItem> SourceSets { get; set; } = new();
@@ -163,9 +162,11 @@ public class Home : PageModel
                 Finished = false
             })).ToList();
             
-            Executables = (await _mediator.Send(new GetAllExecutablesQuery())).Select(e => new SelectListItem(e.Name+"."+e.Version, e.Id.ToString())).ToList();
+            Executables = (await _mediator.Send(new GetAllExecutablesQuery()))
+                .Select(e => new SelectListItem( e.Name+":"+e.Version,e.Id.ToString())).ToList();
             
-            SourceSets = (await _mediator.Send(new GetAllSourceSetsQuery())).Select(s => new SelectListItem(s.Name+"."+s.Version, s.Id.ToString())).ToList();
+            SourceSets = (await _mediator.Send(new GetAllSourceSetsQuery()))
+                .Select(s => new SelectListItem(s.Name+":"+s.Version, s.Id.ToString())).ToList();
             
             return Page();
         }
@@ -189,7 +190,8 @@ public class Home : PageModel
             };
         }
 
-        var configurationItems = HttpContext.Session.GetComplexData<List<TempConfigData>>(_tempConfigDataListKey) ??
+        var configurationItems = HttpContext.Session
+                                     .GetComplexData<List<TempConfigData>>(_tempConfigDataListKey) ??
                                  new List<TempConfigData>();
             
         var newItem = new TempConfigData()
@@ -228,7 +230,8 @@ public class Home : PageModel
 
     public JsonResult OnPostDeleteConfigItem(Scope scope, string key, string value)
     {
-        var configurationItems = HttpContext.Session.GetComplexData<List<TempConfigData>>(_tempConfigDataListKey) ??
+        var configurationItems = HttpContext.Session
+                                     .GetComplexData<List<TempConfigData>>(_tempConfigDataListKey) ??
                                  new List<TempConfigData>();
         
         if(configurationItems.Remove(new TempConfigData()
@@ -257,7 +260,8 @@ public class Home : PageModel
             };
         }
 
-        var constraintItems = HttpContext.Session.GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey) ??
+        var constraintItems = HttpContext.Session
+                                  .GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey) ??
                               new List<TempConstraintData>();
             
         var newConstraint = new TempConstraintData()
@@ -296,7 +300,8 @@ public class Home : PageModel
     
     public JsonResult OnPostDeleteConstraint(string premise, string consequence)
     {
-        var constraintItems = HttpContext.Session.GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey) ??
+        var constraintItems = HttpContext.Session
+                                  .GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey) ??
                                  new List<TempConstraintData>();
         
         if(constraintItems.Remove(new TempConstraintData()
@@ -441,8 +446,12 @@ public class Home : PageModel
         
         try
         {
-            var configs = HttpContext.Session.GetComplexData<List<TempConfigData>>(_tempConfigDataListKey) ?? throw new ApplicationException("No configuration data found.");
-            var constraints = HttpContext.Session.GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey) ?? throw new ApplicationException("No constraint data found.");
+            var configs = HttpContext.Session
+                .GetComplexData<List<TempConfigData>>(_tempConfigDataListKey) ?? 
+                          throw new ApplicationException("No configuration data found.");
+            var constraints = HttpContext.Session
+                .GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey) ?? 
+                              throw new ApplicationException("No constraint data found.");
 
             HttpContext.Session.Remove(_tempConfigDataListKey);
             HttpContext.Session.Remove(_tempConstraintDataListKey);
