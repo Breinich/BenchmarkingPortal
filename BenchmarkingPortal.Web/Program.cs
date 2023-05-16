@@ -119,6 +119,7 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(GetAllUsersQuery).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(UpdateUserCommand).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(DeleteUserCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(GetAllExecutableNamesQuery).Assembly);
 });
 
 var app = builder.Build();
@@ -126,19 +127,16 @@ var app = builder.Build();
 await app.MigrateDatabaseAsync<BenchmarkingDbContext>();
 
 
-app.UseExceptionHandler("/Error");
-
 if (!app.Environment.IsDevelopment())
 {
-    
+    app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 else
 {
-    //app.UseDeveloperExceptionPage();
+    app.UseDeveloperExceptionPage();
 }
-
 
 
 app.UseHttpsRedirection();
