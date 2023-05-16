@@ -8,7 +8,7 @@ public class ExecutableEntityConfiguration : IEntityTypeConfiguration<Executable
 {
     public void Configure(EntityTypeBuilder<Executable> builder)
     {
-        builder.ToTable("Executable");
+        builder.ToTable("Executables");
 
         builder.HasKey(e => e.Id);
 
@@ -22,6 +22,7 @@ public class ExecutableEntityConfiguration : IEntityTypeConfiguration<Executable
 
         builder.HasOne(d => d.User).WithMany(p => p.Executables)
             .HasForeignKey(d => d.UserName)
+            .HasPrincipalKey(d => d.UserName)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_Executable_User");
 

@@ -8,7 +8,7 @@ public class ConstraintEntityConfiguration : IEntityTypeConfiguration<Constraint
 {
     public void Configure(EntityTypeBuilder<Constraint> builder)
     {
-        builder.ToTable("Constraint");
+        builder.ToTable("Constraints");
 
         builder.HasKey(e => new { e.Premise, e.Consequence, e.ConfigurationId });
 

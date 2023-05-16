@@ -79,7 +79,7 @@ public class DatabaseFixture : IAsyncLifetime
             Name = "TestWorker",
             Ram = 4,
             Cpu = 2,
-            Username = "TestUser",
+            Login = "TestUser",
             Password = "TestPassword",
             Storage = 40,
             Address = "192.168.0.0",

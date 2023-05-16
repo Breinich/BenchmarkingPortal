@@ -10,7 +10,7 @@ public partial class Worker
 
     public int Cpu { get; set; }
 
-    public string Username { get; set; } = null!;
+    public string Login { get; set; } = null!;
 
     public string Password { get; set; } = null!;
 

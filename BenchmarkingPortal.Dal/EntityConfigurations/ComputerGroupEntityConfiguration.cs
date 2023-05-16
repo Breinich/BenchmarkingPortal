@@ -8,7 +8,7 @@ public class ComputerGroupEntityConfiguration : IEntityTypeConfiguration<Compute
 {
     public void Configure(EntityTypeBuilder<ComputerGroup> builder)
     {
-        builder.ToTable("ComputerGroup");
+        builder.ToTable("ComputerGroups");
 
         builder.HasKey(e => e.Id);
 

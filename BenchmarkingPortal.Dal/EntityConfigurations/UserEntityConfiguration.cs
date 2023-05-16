@@ -10,6 +10,8 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
     {
         builder.ToTable("Users");
 
-        builder.Property(e => e.Subscription).IsRequired();
+        builder.Property(u => u.Subscription).IsRequired();
+
+        builder.HasAlternateKey(u => u.UserName);
     }
 }

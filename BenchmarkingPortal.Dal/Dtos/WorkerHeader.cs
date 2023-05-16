@@ -12,7 +12,7 @@ public class WorkerHeader
 
     public int Cpu { get; set; }
 
-    public string? Username { get; set; }
+    public string? Login { get; set; }
 
     public string? Password { get; set; }
 
@@ -41,7 +41,7 @@ public class WorkerHeader
         Ram = worker.Ram;
         Storage = worker.Storage;
         Name = worker.Name;
-        Username = worker.Username;
+        Login = worker.Login;
         Password = worker.Password;
         UserName = worker.UserName;
     }

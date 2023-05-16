@@ -8,7 +8,7 @@ public class ConfigurationEntityConfiguration : IEntityTypeConfiguration<Configu
 {
     public void Configure(EntityTypeBuilder<Configuration> builder)
     {
-        builder.ToTable("Configuration");
+        builder.ToTable("Configurations");
 
         builder.HasKey(e => e.Id);
 

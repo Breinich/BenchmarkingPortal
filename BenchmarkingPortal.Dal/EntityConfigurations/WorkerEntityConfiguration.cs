@@ -8,7 +8,7 @@ public class WorkerEntityConfiguration : IEntityTypeConfiguration<Worker>
 {
     public void Configure(EntityTypeBuilder<Worker> builder)
     {
-        builder.ToTable("Worker");
+        builder.ToTable("Workers");
 
         builder.HasKey(e => e.Id);
 
@@ -17,10 +17,11 @@ public class WorkerEntityConfiguration : IEntityTypeConfiguration<Worker>
         builder.Property(e => e.Address).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Name).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Password).HasMaxLength(50).IsRequired();
-        builder.Property(e => e.Username).HasMaxLength(50).IsRequired();
+        builder.Property(e => e.Login).HasMaxLength(50).IsRequired();
         
         builder.HasOne(w => w.User).WithMany()
             .HasForeignKey(w => w.UserName)
+            .HasPrincipalKey(u => u.UserName)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_Worker_User");
         

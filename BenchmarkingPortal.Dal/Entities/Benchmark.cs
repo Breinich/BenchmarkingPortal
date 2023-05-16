@@ -34,7 +34,7 @@ public partial class Benchmark
 
     public int ConfigurationId { get; set; }
     public string UserName { get; set; } = null!;
-
+    
     public virtual ComputerGroup ComputerGroup { get; set; } = null!;
 
     public virtual Configuration Configuration { get; set; } = null!;

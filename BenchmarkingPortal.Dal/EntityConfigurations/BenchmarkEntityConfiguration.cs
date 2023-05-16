@@ -8,7 +8,7 @@ public class BenchmarkEntityConfiguration : IEntityTypeConfiguration<Benchmark>
 {
     public void Configure(EntityTypeBuilder<Benchmark> builder)
     {
-        builder.ToTable("Benchmark");
+        builder.ToTable("Benchmarks");
 
         builder.HasKey(e => e.Id);
 
@@ -50,6 +50,7 @@ public class BenchmarkEntityConfiguration : IEntityTypeConfiguration<Benchmark>
 
         builder.HasOne(d => d.User).WithMany(p => p.Benchmarks)
             .HasForeignKey(d => d.UserName)
+            .HasPrincipalKey(d => d.UserName)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_Benchmark_User");
 
