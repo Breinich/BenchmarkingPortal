@@ -14,7 +14,6 @@
     <Folder Include="Features\SourceSet\QueryHandlers\" />
     <Folder Include="Features\Executable\CommandHandlers\" />
     <Folder Include="Features\Executable\Commands\" />
-    <Folder Include="Features\Executable\Queries\" />
     <Folder Include="Features\Constraint\CommandHandlers\" />
     <Folder Include="Features\Constraint\Commands\" />
     <Folder Include="Features\Constraint\Queries\" />

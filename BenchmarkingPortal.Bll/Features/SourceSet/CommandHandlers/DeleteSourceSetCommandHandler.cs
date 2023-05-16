@@ -23,7 +23,7 @@ public class DeleteSourceSetCommandHandler : IRequestHandler<DeleteSourceSetComm
         var sourceSet = await _context.SourceSets.FindAsync(request.SourceSetId, cancellationToken) ??
                         throw new ArgumentException(new ExceptionMessage<Dal.Entities.SourceSet>().ObjectNotFound);
 
-        if (sourceSet.User.UserName != request.InvokerName)
+        if (sourceSet.UserName != request.InvokerName)
         {
             var user = await _userManager.FindByIdAsync(request.InvokerName) ??
                        throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().ObjectNotFound);
