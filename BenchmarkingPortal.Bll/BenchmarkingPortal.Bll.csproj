@@ -25,8 +25,6 @@
         <Folder Include="Features\ConfigurationItem\Commands\" />
         <Folder Include="Features\ConfigurationItem\Queries\" />
         <Folder Include="Features\ConfigurationItem\QueryHandlers\" />
-        <Folder Include="Features\ComputerGroup\CommandHandlers\" />
-        <Folder Include="Features\ComputerGroup\Commands\" />
         <Folder Include="Features\Benchmark\CommandHandlers\" />
         <Folder Include="Exceptions\" />
     </ItemGroup>

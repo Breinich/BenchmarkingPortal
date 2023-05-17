@@ -119,6 +119,8 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(GetAllUsersQuery).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(UpdateUserCommand).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(DeleteUserCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(GetAllComputerGroupsWithStatsQuery).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(DeleteComputerGroupCommand).Assembly);
 });
 
 var app = builder.Build();
