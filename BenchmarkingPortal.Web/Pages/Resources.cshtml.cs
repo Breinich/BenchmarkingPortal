@@ -32,6 +32,8 @@ public class Resources : PageModel
 
     public List<ExecutableHeader> Executables { get; set; }
     public List<SourceSetHeader> SourceSets { get; set; }
+    public List<string> ExeHeaders { get; set; } = new();
+    public List<string> SourceHeaders { get; set; } = new();
 
     [BindProperty] public ExecutableInputModel ExecutableInput { get; set; }
 
@@ -41,12 +43,22 @@ public class Resources : PageModel
     {
         try
         {
+            ExeHeaders = new List<string>
+            {
+                "Name", "Owner Tool", "Uploaded Date", "Actions"
+            };
+            
+            SourceHeaders = new List<string>
+            {
+                "Name", "Uploaded Date", "Actions"
+            };
+            
             Executables = (await _mediator.Send(new GetAllExecutablesQuery())).ToList();
             SourceSets = (await _mediator.Send(new GetAllSourceSetsQuery())).ToList();
 
             return Page();
         }
-        catch (AggregateException e)
+        catch (Exception e)
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;
@@ -69,7 +81,7 @@ public class Resources : PageModel
 
             return RedirectToPage();
         }
-        catch (AggregateException e)
+        catch (Exception e)
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;
@@ -92,7 +104,7 @@ public class Resources : PageModel
 
             return RedirectToPage();
         }
-        catch (AggregateException e)
+        catch (Exception e)
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;
@@ -174,7 +186,7 @@ public class Resources : PageModel
 
             return RedirectToPage();
         }
-        catch (AggregateException e)
+        catch (Exception e)
         {
             SourceSetInput = new SourceSetInputModel();
 

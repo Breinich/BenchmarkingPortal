@@ -29,7 +29,7 @@ function addConfigItem(scope, keyId, valueId, inputId) {
 
         success: function (newItem) {
             $(inputId).before(
-                '<tr id="' + scope + '_' + newItem.Key + '_' + newItem.Value + '">' +
+                '<tr id="' + scope + '_' + newItem.Key + '_' + newItem.Value + '" class="generated">' +
                 '<td>' +
                 '<input readOnly value="' + newItem.Key + '" class="form-control-plaintext"/>' +
                 '</td>' +
@@ -98,7 +98,7 @@ function addConstraint(premiseId, consequenceId, inputId) {
 
         success: function (newItem) {
             $(inputId).before(
-                '<tr id="' + newItem.Premise + '_' + newItem.Consequence + '">' +
+                '<tr id="' + newItem.Premise + '_' + newItem.Consequence + '" class="generated">' +
                 '<td>' +
                 '<input readOnly value="' + newItem.Premise + '" class="form-control-plaintext"/>' +
                 '</td>' +
@@ -163,6 +163,7 @@ function deleteSession() {
         },
 
         success: function () {
+            $(".generated").remove();
         },
         failure: function (response) {
             alert("failure: " + response.responseText);

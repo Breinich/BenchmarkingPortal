@@ -2,6 +2,7 @@
 using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
+using BenchmarkingPortal.Bll.Features.ComputerGroup.Queries;
 using BenchmarkingPortal.Bll.Features.Configuration.Commands;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
 using BenchmarkingPortal.Bll.Features.SourceSet.Queries;
@@ -38,6 +39,8 @@ public class Home : PageModel
     public List<BenchmarkHeader> UnfinishedBenchmarks { get; set; } = new();
     public List<SelectListItem> Executables { get; set; } = new();
     public List<SelectListItem> SourceSets { get; set; } = new();
+    public List<SelectListItem> ComputerGroups { get; set; } = new();
+    public List<string> Headers { get; set; } = new();
 
 
     public async Task<IActionResult> OnGet()
@@ -45,21 +48,21 @@ public class Home : PageModel
         try
         {
             OnPostDeleteSession();
+            
+            Headers = new List<string>{
+                "Name","Started","Status","Priority","RAM","CPU","Group","Executable","Source Set","Progress","Actions"
+            };
 
             UnfinishedBenchmarks = (await _mediator.Send(new GetAllBenchmarksQuery
             {
                 Finished = false
             })).ToList();
 
-            Executables = (await _mediator.Send(new GetAllExecutablesQuery()))
-                .Select(e => new SelectListItem(e.Name + ":" + e.Version, e.Id.ToString())).ToList();
-
-            SourceSets = (await _mediator.Send(new GetAllSourceSetsQuery()))
-                .Select(s => new SelectListItem(s.Name + ":" + s.Version, s.Id.ToString())).ToList();
+            await LoadFormData();
 
             return Page();
         }
-        catch (AggregateException e)
+        catch (Exception e)
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;
@@ -215,7 +218,7 @@ public class Home : PageModel
 
             return RedirectToPage();
         }
-        catch (AggregateException e)
+        catch (Exception e)
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;
@@ -241,7 +244,7 @@ public class Home : PageModel
 
             return RedirectToPage();
         }
-        catch (AggregateException e)
+        catch (Exception e)
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;
@@ -267,7 +270,7 @@ public class Home : PageModel
 
             return RedirectToPage();
         }
-        catch (AggregateException e)
+        catch (Exception e)
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;
@@ -291,7 +294,7 @@ public class Home : PageModel
 
             return RedirectToPage();
         }
-        catch (AggregateException e)
+        catch (Exception e)
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;
@@ -306,7 +309,7 @@ public class Home : PageModel
         {
             return Page();
         }
-        catch (AggregateException e)
+        catch (Exception e)
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;
@@ -358,15 +361,37 @@ public class Home : PageModel
 
             return RedirectToPage();
         }
-        catch (AggregateException e)
+        catch (Exception e)
         {
             HttpContext.Session.Remove(_tempConfigDataListKey);
             HttpContext.Session.Remove(_tempConstraintDataListKey);
 
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;
+            
+            await LoadFormData();
 
             return Page();
+        }
+    }
+
+    private async Task LoadFormData()
+    {
+        try
+        {
+            Executables = (await _mediator.Send(new GetAllExecutablesQuery()))
+                .Select(eh => new SelectListItem(eh.Name + ":" + eh.Version, eh.Id.ToString())).ToList();
+
+            SourceSets = (await _mediator.Send(new GetAllSourceSetsQuery()))
+                .Select(sh => new SelectListItem(sh.Name + ":" + sh.Version, sh.Id.ToString())).ToList();
+            
+            ComputerGroups = (await _mediator.Send(new GetAllComputerGroupsQuery()))
+                .Select(c => new SelectListItem(c.Id+": "+c.Description, c.Id.ToString())).ToList();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex);
+            StatusMessage = "Error: " + (ex.InnerException ?? ex).Message;
         }
     }
 
@@ -428,6 +453,9 @@ public class Home : PageModel
         [StringLength(255)]
         [Display(Name = "Property File Path")]
         public string PropertyFilePath { get; set; } = null!;
+        
+        [Display(Name = "Computer Group to run on")]
+        public int ComputerGroupId { get; set; }
     }
 
     public class TempConfigData

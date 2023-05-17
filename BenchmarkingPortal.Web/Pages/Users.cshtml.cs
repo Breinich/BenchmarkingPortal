@@ -33,6 +33,7 @@ public class UsersModel : PageModel
 
     public IEnumerable<SelectListItem> Roles { get; set; }
     public List<UserHeader> UserList { get; set; }
+    public List<string> Headers { get; set; } = new();
 
     [BindProperty] public InputModel Input { get; set; }
 
@@ -40,6 +41,11 @@ public class UsersModel : PageModel
     {
         try
         {
+            Headers = new List<string>
+            {
+                "Username", "Email", "Subscription", "Role", "Actions"
+            };
+            
             Roles = await RoleManager.Roles.Select(x => new SelectListItem
             {
                 Text = x.ToString(),

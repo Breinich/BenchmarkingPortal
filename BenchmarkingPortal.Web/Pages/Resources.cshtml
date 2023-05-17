@@ -24,18 +24,12 @@
             <caption hidden>My Executables</caption>
             <thead class="table-dark">
             <tr>
-                <th>
-                    <div class="d-flex justify-content-center">Name</div>
-                </th>
-                <th>
-                    <div class="d-flex justify-content-center">Owner Tool</div>
-                </th>
-                <th>
-                    <div class="d-flex justify-content-center">Uploaded Date</div>
-                </th>
-                <th>
-                    <div class="d-flex justify-content-center">Operations</div>
-                </th>
+                @foreach (var header in Model.ExeHeaders)
+                {
+                    <th>
+                        <div class="d-flex justify-content-center">@header</div>
+                    </th>
+                }
             </tr>
             </thead>
             <tbody>
@@ -97,15 +91,12 @@
             <caption hidden>My Source Sets</caption>
             <thead class="table-dark">
             <tr>
-                <th>
-                    <div class="d-flex justify-content-center">Name</div>
-                </th>
-                <th>
-                    <div class="d-flex justify-content-center">Uploaded Date</div>
-                </th>
-                <th>
-                    <div class="d-flex justify-content-center">Operations</div>
-                </th>
+                @foreach (var header in Model.SourceHeaders)
+                {
+                    <th>
+                        <div class="d-flex justify-content-center">@header</div>
+                    </th>
+                }
             </tr>
             </thead>
             <tbody>
@@ -158,18 +149,12 @@
             <caption hidden>Others' Executables</caption>
             <thead class="table-dark">
             <tr>
-                <th>
-                    <div class="d-flex justify-content-center">Name</div>
-                </th>
-                <th>
-                    <div class="d-flex justify-content-center">Owner Tool</div>
-                </th>
-                <th>
-                    <div class="d-flex justify-content-center">Uploaded Date</div>
-                </th>
-                <th>
-                    <div class="d-flex justify-content-center">Operations</div>
-                </th>
+               @foreach (var header in Model.ExeHeaders)
+               {
+                   <th>
+                       <div class="d-flex justify-content-center">@header</div>
+                   </th>
+               }
             </tr>
             </thead>
             <tbody>
@@ -227,15 +212,12 @@
             <caption hidden>Others' Source Sets</caption>
             <thead class="table-dark">
             <tr>
-                <th>
-                    <div class="d-flex justify-content-center">Name</div>
-                </th>
-                <th>
-                    <div class="d-flex justify-content-center">Uploaded Date</div>
-                </th>
-                <th>
-                    <div class="d-flex justify-content-center">Operations</div>
-                </th>
+                @foreach (var header in Model.SourceHeaders)
+                {
+                    <th>
+                        <div class="d-flex justify-content-center">@header</div>
+                    </th>
+                }
             </tr>
             </thead>
             <tbody>

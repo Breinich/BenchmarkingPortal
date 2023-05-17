@@ -12,30 +12,12 @@
         <caption hidden>Table for own, not finished benchmarks</caption>
         <thead class="table-dark">
         <tr>
-            <th>
-                <div class="d-flex justify-content-center">Name</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">Started</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">RAM</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">CPU</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">Group</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">Executable</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">SourceSet</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">Operations</div>
-            </th>
+            @foreach(var header in Model.Headers)
+            {
+                <th>
+                    <div class="d-flex justify-content-center">@header</div>
+                </th>
+            }
         </tr>
         </thead>
         <tbody>
@@ -100,30 +82,12 @@
         <caption hidden>Table for others', not finished benchmarks</caption>
         <thead class="table-dark">
         <tr>
-            <th>
-                <div class="d-flex justify-content-center">Name</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">Started</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">RAM</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">CPU</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">Group</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">Executable</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">SourceSet</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">Operations</div>
-            </th>
+            @foreach(var header in Model.Headers)
+            {
+                <th>
+                    <div class="d-flex justify-content-center">@header</div>
+                </th>
+            }
         </tr>
         </thead>
         <tbody>

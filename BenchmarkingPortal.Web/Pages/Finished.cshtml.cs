@@ -26,14 +26,19 @@ public class Finished : PageModel
     [TempData] public string? StatusMessage { get; set; }
 
     public List<BenchmarkHeader> FinishedBenchmarks { get; set; } = new();
-
     public Dictionary<int, string> ExecutableNames { get; set; } = new();
     public Dictionary<int, string> SourceSetNames { get; set; } = new();
+    public List<string> Headers { get; set; } = new();
 
     public async Task<IActionResult> OnGet()
     {
         try
         {
+            Headers = new List<string>
+            {
+                "Name","Started","RAM","CPU","Group","Executable","SourceSet","Actions"
+            };
+            
             FinishedBenchmarks = (await _mediator.Send(new GetAllBenchmarksQuery
             {
                 Finished = true
@@ -47,7 +52,7 @@ public class Finished : PageModel
 
             return Page();
         }
-        catch (AggregateException e)
+        catch (Exception e)
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + e.InnerException?.Message;
@@ -70,7 +75,7 @@ public class Finished : PageModel
             StatusMessage = $"{name} deleted successfully.";
             return RedirectToPage();
         }
-        catch (AggregateException e)
+        catch (Exception e)
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + e.InnerException?.Message;
@@ -86,7 +91,7 @@ public class Finished : PageModel
             StatusMessage = "Download started.";
             return Page();
         }
-        catch (AggregateException e)
+        catch (Exception e)
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;

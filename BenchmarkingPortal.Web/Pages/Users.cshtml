@@ -13,21 +13,12 @@
         <caption hidden>Table for users waiting for approval</caption>
         <thead class="table-dark">
         <tr>
-            <th>
-                <div class="d-flex justify-content-center">Username</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">Email</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">Subscription</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">Role</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">Operations</div>
-            </th>
+            @foreach(var header in Model.Headers)
+            {
+                <th>
+                    <div class="d-flex justify-content-center">@header</div>
+                </th>
+            }
         </tr>
         </thead>
         <tbody>
@@ -86,21 +77,12 @@
         <caption hidden>Table for the already approved users</caption>
         <thead class="table-dark">
         <tr>
-            <th>
-                <div class="d-flex justify-content-center">Username</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">Email</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">Subscription</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">Role</div>
-            </th>
-            <th>
-                <div class="d-flex justify-content-center">Operations</div>
-            </th>
+            @foreach(var header in Model.Headers)
+            {
+                <th>
+                    <div class="d-flex justify-content-center">@header</div>
+                </th>
+            }
         </tr>
         </thead>
         <tbody>
