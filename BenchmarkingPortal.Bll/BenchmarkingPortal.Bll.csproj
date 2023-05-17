@@ -7,37 +7,36 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Features\Worker\CommandHandlers\"/>
-        <Folder Include="Features\Worker\Commands\"/>
-        <Folder Include="Features\Worker\Queries\"/>
-        <Folder Include="Features\Worker\QueryHandlers\"/>
-        <Folder Include="Features\SourceSet\QueryHandlers\"/>
-        <Folder Include="Features\Executable\CommandHandlers\"/>
-        <Folder Include="Features\Executable\Commands\"/>
-        <Folder Include="Features\Constraint\CommandHandlers\"/>
-        <Folder Include="Features\Constraint\Commands\"/>
-        <Folder Include="Features\Constraint\Queries\"/>
-        <Folder Include="Features\Constraint\QueryHandlers\"/>
-        <Folder Include="Features\Configuration\CommandHandlers\"/>
-        <Folder Include="Features\Configuration\Queries\"/>
-        <Folder Include="Features\Configuration\QueryHandlers\"/>
-        <Folder Include="Features\ConfigurationItem\CommandHandlers\"/>
-        <Folder Include="Features\ConfigurationItem\Commands\"/>
-        <Folder Include="Features\ConfigurationItem\Queries\"/>
-        <Folder Include="Features\ConfigurationItem\QueryHandlers\"/>
-        <Folder Include="Features\ComputerGroup\CommandHandlers\"/>
-        <Folder Include="Features\ComputerGroup\Commands\"/>
-        <Folder Include="Features\ComputerGroup\QueryHandlers\"/>
-        <Folder Include="Features\Benchmark\CommandHandlers\"/>
-        <Folder Include="Exceptions\"/>
+        <Folder Include="Features\Worker\CommandHandlers\" />
+        <Folder Include="Features\Worker\Commands\" />
+        <Folder Include="Features\Worker\Queries\" />
+        <Folder Include="Features\Worker\QueryHandlers\" />
+        <Folder Include="Features\SourceSet\QueryHandlers\" />
+        <Folder Include="Features\Executable\CommandHandlers\" />
+        <Folder Include="Features\Executable\Commands\" />
+        <Folder Include="Features\Constraint\CommandHandlers\" />
+        <Folder Include="Features\Constraint\Commands\" />
+        <Folder Include="Features\Constraint\Queries\" />
+        <Folder Include="Features\Constraint\QueryHandlers\" />
+        <Folder Include="Features\Configuration\CommandHandlers\" />
+        <Folder Include="Features\Configuration\Queries\" />
+        <Folder Include="Features\Configuration\QueryHandlers\" />
+        <Folder Include="Features\ConfigurationItem\CommandHandlers\" />
+        <Folder Include="Features\ConfigurationItem\Commands\" />
+        <Folder Include="Features\ConfigurationItem\Queries\" />
+        <Folder Include="Features\ConfigurationItem\QueryHandlers\" />
+        <Folder Include="Features\ComputerGroup\CommandHandlers\" />
+        <Folder Include="Features\ComputerGroup\Commands\" />
+        <Folder Include="Features\Benchmark\CommandHandlers\" />
+        <Folder Include="Exceptions\" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="MediatR" Version="12.0.1"/>
+        <PackageReference Include="MediatR" Version="12.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\BenchmarkingPortal.Dal\BenchmarkingPortal.Dal.csproj"/>
+        <ProjectReference Include="..\BenchmarkingPortal.Dal\BenchmarkingPortal.Dal.csproj" />
     </ItemGroup>
 
 </Project>
