@@ -26,18 +26,21 @@ public class UpdateComputerGroupCommandHandler : IRequestHandler<UpdateComputerG
         {
             throw new ArgumentException(new ExceptionMessage<Dal.Entities.ComputerGroup>().NoPrivilege);
         }
-
-        if (request.Description != null)
+        
+        var computerGroup = await _context.ComputerGroups.FindAsync(new object?[] { request.Id }, cancellationToken: cancellationToken);
+        if (computerGroup == null)
         {
-            var computerGroup = await _context.ComputerGroups.FindAsync(request.Id);
-            if (computerGroup == null)
-            {
-                throw new ArgumentException(new ExceptionMessage<Dal.Entities.ComputerGroup>().ObjectNotFound);
-            }
-            
-            computerGroup.Description = request.Description;
-            
-            await _context.SaveChangesAsync(cancellationToken);
+            throw new ArgumentException(new ExceptionMessage<Dal.Entities.ComputerGroup>().ObjectNotFound);
         }
+
+        if (request.Description == null)
+            return new ComputerGroupHeader(computerGroup);
+        
+        computerGroup.Description = request.Description;
+            
+        await _context.SaveChangesAsync(cancellationToken);
+            
+        return new ComputerGroupHeader(computerGroup);
+
     }
 }
