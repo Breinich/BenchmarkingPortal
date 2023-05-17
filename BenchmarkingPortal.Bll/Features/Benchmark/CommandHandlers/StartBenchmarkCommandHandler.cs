@@ -29,15 +29,15 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             throw new ArgumentOutOfRangeException(nameof(request), request.Name,
                 "A benchmark with the same name already exists.");
 
-        // Maximum available RAM amount is 16 GB
-        if (request.Ram is <= 0 or > 16)
+        // Maximum available RAM amount is not specified
+        if (request.Ram is <= 0)
             throw new ArgumentOutOfRangeException(nameof(request), request.Ram,
-                "The benchmark must use minimum 1 GB and maximum 16 GB amount of RAM.");
+                "The benchmark must use minimum 1 GB amount of RAM.");
 
-        // Maximum available CPU core count is 8
-        if (request.Cpu is <= 0 or > 8)
+        // Maximum available CPU core count is not specified
+        if (request.Cpu is <= 0)
             throw new ArgumentOutOfRangeException(nameof(request), request.Cpu,
-                "The benchmark must run on at least 1 CPU core and at most on 8 CPU cores.");
+                "The benchmark must run on at least 1 CPU core.");
 
         // Default value for TimeLimit is 900 seconds
         if (request.TimeLimit is 0) request.TimeLimit = 900;
