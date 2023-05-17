@@ -419,21 +419,21 @@ public class Home : PageModel
         public int Priority { get; set; }
 
         [Required]
-        [Range(1, int.MaxValue)]
-        [Display(Name = "RAM")]
+        [Range(1, 1000)]
+        [Display(Name = "RAM (GB)")]
         public int Ram { get; set; }
 
         [Required]
-        [Range(1, int.MaxValue)]
-        [Display(Name = "CPU")]
+        [Range(1, 100)]
+        [Display(Name = "CPU (cores)")]
         public int Cpu { get; set; }
 
-        [Range(1, int.MaxValue)]
-        [Display(Name = "Time Limit")]
+        [Range(1, 100000)]
+        [Display(Name = "Time Limit (seconds)")]
         public int TimeLimit { get; set; }
 
-        [Range(1, int.MaxValue)]
-        [Display(Name = "Hard Time Limit")]
+        [Range(1, 100000)]
+        [Display(Name = "Hard Time Limit (seconds)")]
         public int HardTimeLimit { get; set; }
 
         [Required]
