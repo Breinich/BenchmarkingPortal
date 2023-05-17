@@ -3,6 +3,7 @@ using BenchmarkingPortal.Bll.Features.ComputerGroup.Commands;
 using BenchmarkingPortal.Dal;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.ComputerGroup.CommandHandlers;
 
@@ -26,7 +27,25 @@ public class DeleteComputerGroupCommandHandler : IRequestHandler<DeleteComputerG
             throw new ArgumentException(new ExceptionMessage<Dal.Entities.ComputerGroup>().NoPrivilege);
         }
 
-        var computerGroup = await _context.ComputerGroups.FindAsync(request.Id);
+        var computerGroup = await _context.ComputerGroups.FindAsync(request.Id, cancellationToken);
+        
+        var workersCount = await _context.Workers
+            .CountAsync(w => w.ComputerGroupId == request.Id, cancellationToken);
+        var benchmarksCount = await _context.Benchmarks
+            .CountAsync(b => b.ComputerGroupId == request.Id, cancellationToken);
+        
+        if (benchmarksCount > 0)
+        {
+            throw new ArgumentException(
+                "Cannot delete computer group with running benchmarks, first please wait for them to finish!");
+        }
+        
+        if (workersCount > 0)
+        {
+            throw new ArgumentException(
+                "Cannot delete computer group with attached workers, first please move them to another group!");
+        }
+        
         _context.ComputerGroups.Remove(computerGroup ?? 
                                        throw new ArgumentException(new ExceptionMessage<Dal.Entities.ComputerGroup>()
                                            .ObjectNotFound));
