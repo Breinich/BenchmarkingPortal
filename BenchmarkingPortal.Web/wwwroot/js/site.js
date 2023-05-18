@@ -182,10 +182,10 @@ if(editComputerGroupModal){
         const computerGroupDesc = button.getAttribute('data-bs-desc');
         const modalTitle = editComputerGroupModal.querySelector('.modal-title');
         const modalBodyInput = editComputerGroupModal.querySelector('.modal-body #editDesc');
-        const modalSaveButton = editComputerGroupModal.querySelector('.modal-footer #saveEdit');
+        const modalEditId = editComputerGroupModal.querySelector('.modal-body #editId');
 
         modalTitle.textContent = 'Edit Computer Group: ' + computerGroupId;
         modalBodyInput.value = computerGroupDesc;
-        modalSaveButton.setAttribute('asp-route-id', computerGroupId);
+        modalEditId.value = computerGroupId;
     });
 }

@@ -2,12 +2,6 @@ html {
     font-size: 14px;
 }
 
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
-}
-
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #98041c;
 }
@@ -68,13 +62,7 @@ h3 {
     border-color: black;
 }
 
-.btn-primary:active, .btn-primary:focus {
-    background-color: black;
-    border-color: black;
-    outline: none;
-}
-
-.btn-primary:focus:active {
+.btn-primary:active, .btn-primary:focus, .btn-primary:focus:active {
     background-color: black;
     border-color: black;
     outline: none;
@@ -138,9 +126,9 @@ h3 {
     font-size: .75rem;
 }
 
-.rounded-circle {
-    width: 2rem;
-    height: 2rem;
+.short-number{
+    max-width: 76px;
+    padding: 0.25rem;
 }
 
 .bi-github {
@@ -164,6 +152,8 @@ footer {
     background-color: white;
 }
 
-.col-1 > button {
-    margin: 0.75rem;
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
 }
