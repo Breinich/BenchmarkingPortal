@@ -307,6 +307,8 @@ public class Home : PageModel
     {
         try
         {
+            StatusMessage = "Connected to the benchmark's console.";
+            
             return Page();
         }
         catch (Exception e)
@@ -325,19 +327,26 @@ public class Home : PageModel
         try
         {
             var configs = HttpContext.Session
-                              .GetComplexData<List<TempConfigData>>(_tempConfigDataListKey) ??
-                          throw new ApplicationException("No configuration data found.");
+                              .GetComplexData<List<TempConfigData>>(_tempConfigDataListKey);;
             var constraints = HttpContext.Session
-                                  .GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey) ??
-                              throw new ApplicationException("No constraint data found.");
+                .GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey);
 
             HttpContext.Session.Remove(_tempConfigDataListKey);
             HttpContext.Session.Remove(_tempConstraintDataListKey);
 
+            List<(Scope, string, string)>? configList = null;
+            List<(string, string)>? constraintList = null;
+            
+            if (configs != null)
+                configList = configs.Select(c => (c.Scope, c.Key, c.Value)).ToList();
+            
+            if (constraints != null)
+                constraintList = constraints.Select(c => (c.Premise, c.Consequence)).ToList();
+
             var config = await _mediator.Send(new CreateConfigurationCommand
             {
-                Configurations = configs.Select(c => (c.Scope, c.Key, c.Value)).ToList(),
-                Constraints = constraints.Select(c => (c.Premise, c.Consequence)).ToList()
+                Configurations = configList,
+                Constraints = constraintList,
             });
 
             var benchmark = await _mediator.Send(new StartBenchmarkCommand

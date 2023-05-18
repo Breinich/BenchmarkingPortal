@@ -10,8 +10,8 @@
         <div class="col-11">
             <h3>My benchmarks</h3>
         </div>
-        <div class="col-1 d-flex justify-content-end ">
-            <button type="button" class="btn btn-primary d-flex justify-content-center align-items-center rounded-circle p-0" data-bs-toggle="modal" data-bs-target="#newBenchmark" onclick="deleteSession()">
+        <div class="col-1 d-flex justify-content-end align-items-center">
+            <button type="button" class="btn btn-primary d-flex justify-content-center align-items-center m-1 p-2" data-bs-toggle="modal" data-bs-target="#newBenchmark" onclick="deleteSession()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
                 </svg>
@@ -71,7 +71,7 @@
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">
-                                <input asp-for="EditInput.Priority" class="form-control"/>
+                                <input asp-for="EditInput.Priority" class="form-control short-number m-1" placeholder="priority"/>
                                 @if (item.Status == Status.Running)
                                 {
                                     <button type="submit" class="btn btn-warning m-1" asp-page-handler="Pause"
@@ -171,9 +171,10 @@
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">
-                                @if (!(await AuthorizationService.AuthorizeAsync(User, Policies.RequireAdministratorRole)).Succeeded)
+                                @if ((await AuthorizationService.AuthorizeAsync(User, Policies.RequireAdministratorRole)).Succeeded)
                                 {
                                     <input asp-for="EditInput.Priority" class="form-control"/>
+                                    <label asp-for="EditInput.Priority" class="form-label"></label>
                                     if (item.Status == Status.Running)
                                     {
                                         <button type="submit" class="btn btn-warning m-1" asp-page-handler="Pause"
@@ -228,7 +229,6 @@
                     <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteSession()"></button>
                 </div>
                 <div class="modal-body">
-                    <partial name="~/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" for="StatusMessage"/>
                     <div class="form-floating mb-4">
                         <input asp-for="CreateInput.Name" class="form-control" placeholder="new benchmark's unique name"/>
                         <label asp-for="CreateInput.Name" class="form-label">Benchmark Name</label>
