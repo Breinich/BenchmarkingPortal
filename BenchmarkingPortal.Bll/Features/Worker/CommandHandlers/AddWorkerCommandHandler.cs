@@ -28,7 +28,8 @@ public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerH
             Storage = request.Storage,
             Name = request.Name,
             Login = request.Username,
-            Password = request.Password
+            Password = request.Password,
+            UserName = request.InvokerName
         };
 
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -50,7 +51,8 @@ public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerH
             Storage = request.Storage,
             Name = request.Name,
             Login = request.Username,
-            Password = request.Password
+            Password = request.Password,
+            UserName = request.InvokerName
         };
 
         await _context.Workers.AddAsync(worker, cancellationToken);

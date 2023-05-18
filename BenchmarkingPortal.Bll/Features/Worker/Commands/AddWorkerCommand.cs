@@ -15,4 +15,5 @@ public class AddWorkerCommand : IRequest<WorkerHeader>
     public int Port { get; set; }
     public int ComputerGroupId { get; set; }
     public DateTime AddedDate { get; set; }
+    public string InvokerName { get; set; } = null!;
 }
