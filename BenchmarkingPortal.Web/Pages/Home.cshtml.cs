@@ -377,10 +377,8 @@ public class Home : PageModel
 
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;
-            
-            await LoadFormData();
 
-            return Page();
+            return RedirectToPage();
         }
     }
 
