@@ -4,3 +4,252 @@
 @{
     ViewData["Title"] = "Workers";
 }
+<partial name="~/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" for="StatusMessage"/>
+<div class="container">
+    <div class="row">
+        <div class="col-11">
+            <h3>Virtual Machines</h3>
+        </div>
+        <div class="col-1 d-flex justify-content-end align-items-center">
+            <button type="button" class="btn btn-primary d-flex justify-content-center align-items-center m-1 p-2" data-bs-toggle="modal" data-bs-target="#newVM">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="tableFixHead">
+    <table class="table table-striped align-middle">
+        <caption hidden>Virtual Machines</caption>
+        <thead class="table-dark">
+        <tr>
+            @foreach (var header in Model.WorkerModelHeaders)
+            {
+                <th>
+                    <div class="d-flex justify-content-center">@header</div>
+                </th>
+            }
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.WorkerList)
+        {
+            <tr>
+                <form class="form" method="post">
+                    <td>
+                        <div class="d-flex justify-content-center">@item.Name</div>
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-center">@item.Address:@item.Port</div>
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-center">
+                            <select class="rounded-3" asp-for="@item.ComputerGroupId" asp-items="Model.ComputerGroupSelectList" disabled></select>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+                            </svg>
+                            <select class="rounded-3" asp-for="ChangeComputerGroupId" asp-items="Model.ComputerGroupSelectList"></select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-center">
+                            <input type="submit" value="Save" class="btn btn-primary m-1"
+                                   asp-page-handler="SaveWorker" asp-route-id="@item.Id"/>
+                            <button type="submit" class="btn btn-danger m-1"
+                                    asp-page-handler="DeleteWorker" asp-route-id="@item.Id">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </form>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-11">
+            <h3>Computer Groups</h3>
+        </div>
+        <div class="col-1 d-flex justify-content-end align-items-center">
+            <button type="button" class="btn btn-primary d-flex justify-content-center align-items-center m-1 p-2" data-bs-toggle="modal" data-bs-target="#newCG">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="tableFixHead">
+    <table class="table table-striped align-middle">
+        <caption hidden>Virtual Machines</caption>
+        <thead class="table-dark">
+        <tr>
+            @foreach (var header in Model.CompGroupModelHeaders)
+            {
+                <th>
+                    <div class="d-flex justify-content-center">@header</div>
+                </th>
+            }
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.ComputerGroupList)
+        {
+            <tr>
+                <form class="form" method="post">
+                    <td>
+                        <div class="d-flex justify-content-center">@item.Id</div>
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-center">@item.Description</div>
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-center">@item.WorkerCount</div>
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-center">@item.BenchmarkCount</div>
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-center">
+                            <button type="button" class="btn btn-primary m-1" data-bs-toggle="modal" data-bs-id="@item.Id" data-bs-desc="@item.Description" data-bs-target="#editCG">
+                                Edit
+                            </button>
+                            <button type="submit" class="btn btn-danger m-1"
+                                    asp-page-handler="DeleteComputerGroup" asp-route-id="@item.Id">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </form>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal -->
+<form method="post">
+    <div class="modal fade" id="newVM" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticVMBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticVMBackdropLabel">Connect a new Virtual Machine</h5>
+                    <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-4">
+                        <input asp-for="WorkerWorkerInput.Name" class="form-control" placeholder="the VM's unique name"/>
+                        <label asp-for="WorkerWorkerInput.Name" class="form-label"></label>
+                        <span asp-validation-for="WorkerWorkerInput.Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input asp-for="WorkerWorkerInput.Ram" class="form-control" placeholder="the VM's RAM amount"/>
+                        <label asp-for="WorkerWorkerInput.Ram" class="form-label"></label>
+                        <span asp-validation-for="WorkerWorkerInput.Ram" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input asp-for="WorkerWorkerInput.Cpu" class="form-control" placeholder="the VM's CPU amount"/>
+                        <label asp-for="WorkerWorkerInput.Cpu" class="form-label"></label>
+                        <span asp-validation-for="WorkerWorkerInput.Cpu" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input asp-for="WorkerWorkerInput.Storage" class="form-control" placeholder="the VM's Storage amount"/>
+                        <label asp-for="WorkerWorkerInput.Storage" class="form-label"></label>
+                        <span asp-validation-for="WorkerWorkerInput.Storage" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input asp-for="WorkerWorkerInput.Address" class="form-control" placeholder="the IP address of the VM"/>
+                        <label asp-for="WorkerWorkerInput.Address" class="form-label"></label>
+                        <span asp-validation-for="WorkerWorkerInput.Address" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input asp-for="WorkerWorkerInput.Port" class="form-control" placeholder="the port number of the VM"/>
+                        <label asp-for="WorkerWorkerInput.Port" class="form-label"></label>
+                        <span asp-validation-for="WorkerWorkerInput.Port" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input asp-for="WorkerWorkerInput.Username" class="form-control" placeholder="the username to access the VM with"/>
+                        <label asp-for="WorkerWorkerInput.Username" class="form-label"></label>
+                        <span asp-validation-for="WorkerWorkerInput.Username" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input asp-for="WorkerWorkerInput.Password" class="form-control" placeholder="the password to access the VM with"/>
+                        <label asp-for="WorkerWorkerInput.Password" class="form-label"></label>
+                        <span asp-validation-for="WorkerWorkerInput.Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <select asp-for="WorkerWorkerInput.ComputerGroupId" asp-items="Model.ComputerGroupSelectList" class="form-control"></select>
+                        <label asp-for="WorkerWorkerInput.ComputerGroupId" class="form-label"></label>
+                        <span asp-validation-for="WorkerWorkerInput.ComputerGroupId" class="text-danger"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" asp-page-handler="AddWorker" class="btn btn-primary">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Modal -->
+<form method="post">
+    <div class="modal fade" id="newCG" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticCGBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticCGBackdropLabel">Create a new Computer Group</h5>
+                    <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-4">
+                        <input asp-for="ComputerGroupInput.Description" class="form-control" placeholder="the new computer group's description"/>
+                        <label asp-for="ComputerGroupInput.Description" class="form-label"></label>
+                        <span asp-validation-for="ComputerGroupInput.Description" class="text-danger"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" asp-page-handler="AddComputerGroup" class="btn btn-primary">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Modal -->
+<form id="editComputerGroupForm" method="post">
+    <div class="modal fade" id="editCG" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticEditCGBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticEditCGBackdropLabel">Create a new Computer Group</h5>
+                    <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input id="editId" hidden asp-for="ChangeId"/>
+                    <div class="form-floating mb-4">
+                        <input id="editDesc" asp-for="ChangeDescription" class="form-control" placeholder="the computer group's description"/>
+                        <label asp-for="ChangeDescription" class="form-label">Edit Description</label>
+                        <span asp-validation-for="ChangeDescription" class="text-danger"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" id="saveEdit" asp-page-handler="EditComputerGroup" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
+}
