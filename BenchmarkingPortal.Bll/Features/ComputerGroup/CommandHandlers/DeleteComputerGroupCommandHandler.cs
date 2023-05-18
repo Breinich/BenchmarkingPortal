@@ -49,5 +49,7 @@ public class DeleteComputerGroupCommandHandler : IRequestHandler<DeleteComputerG
         _context.ComputerGroups.Remove(computerGroup ?? 
                                        throw new ArgumentException(new ExceptionMessage<Dal.Entities.ComputerGroup>()
                                            .ObjectNotFound));
+
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }
