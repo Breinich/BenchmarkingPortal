@@ -146,6 +146,7 @@ h3 {
 }
 
 footer {
+    position: fixed;
     height: 60px;
     bottom: 0;
     width: 100%;
