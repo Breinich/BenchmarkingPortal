@@ -1,17 +1,21 @@
 ﻿using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.User.Commands;
+using BenchmarkingPortal.Dal;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.User.CommandHandlers;
 
 public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand>
 {
     private readonly UserManager<Dal.Entities.User> _userManager;
+    private readonly BenchmarkingDbContext _context;
 
-    public DeleteUserCommandHandler(UserManager<Dal.Entities.User> userManager)
+    public DeleteUserCommandHandler(UserManager<Dal.Entities.User> userManager, BenchmarkingDbContext context)
     {
         _userManager = userManager;
+        _context = context;
     }
 
 
@@ -21,9 +25,30 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand>
 
         if (invoker != null && await _userManager.IsInRoleAsync(invoker, Roles.Admin))
         {
-            var user = await _userManager.FindByNameAsync(request.UserName) ??
+            var user = await _context.Users.
+                           Include(u => u.Executables).
+                            Include(u => u.SourceSets).
+                           Include(u => u.Benchmarks).
+                           Where(u => u.UserName == request.UserName).FirstOrDefaultAsync(cancellationToken) ??
                        throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().ObjectNotFound);
 
+            foreach (var executable in user.Executables)
+            {
+                executable.User = invoker;
+            }
+            
+            foreach (var sourceSet in user.SourceSets)
+            {
+                sourceSet.User = invoker;
+            }
+
+            foreach (var benchmark in user.Benchmarks)
+            {
+                benchmark.User = invoker;
+            }
+            
+            await _context.SaveChangesAsync(cancellationToken);
+    
             await _userManager.DeleteAsync(user);
         }
         else
