@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text;
 using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
@@ -10,6 +11,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using tusdotnet.Interfaces;
+using tusdotnet.Models;
 
 namespace BenchmarkingPortal.Web.Pages;
 
@@ -17,10 +20,12 @@ namespace BenchmarkingPortal.Web.Pages;
 public class Resources : PageModel
 {
     private readonly IMediator _mediator;
+    private readonly DefaultTusConfiguration _config;
 
-    public Resources(IMediator mediator)
+    public Resources(IMediator mediator, DefaultTusConfiguration config)
     {
         _mediator = mediator;
+        _config = config;
         Executables = new List<ExecutableHeader>();
         SourceSets = new List<SourceSetHeader>();
 
@@ -113,36 +118,65 @@ public class Resources : PageModel
         }
     }
 
-    public IActionResult OnPostDownload(string path)
+    public async Task<IActionResult> OnPostDownloadAsync(string fileId, CancellationToken cancellationToken)
     {
         try
         {
-            StatusMessage = "Download started.";
+            if (_config.Store is not ITusReadableStore store)
+            {
+                return RedirectToPage();
+            }
+        
+            var file = await store.GetFileAsync(fileId, cancellationToken);
 
-            return RedirectToPage();
+            if (file == null)
+            {
+                StatusMessage = $"Error: File with id {fileId} was not found.";
+                return RedirectToPage();
+            }
+
+            var fileStream = await file.GetContentAsync(cancellationToken);
+            var metadata = await file.GetMetadataAsync(cancellationToken);
+            
+            StatusMessage = "Download started.";
+        
+            return new FileStreamResult(fileStream, GetContentTypeOrDefault(metadata))
+            {
+                FileDownloadName = metadata.TryGetValue("name", out var nameMeta)
+                    ? nameMeta.GetString(Encoding.UTF8)
+                    : "download"
+            };
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + e.Message;
-
+            
             return RedirectToPage();
         }
+    }
+
+    private static string GetContentTypeOrDefault(Dictionary<string, Metadata> metadata)
+    {
+        if (metadata.TryGetValue("contentType", out var contentType))
+        {
+            return contentType.GetString(Encoding.UTF8);
+        }
+
+        return "application/octet-stream";
     }
 
     public async Task<IActionResult> OnPostUploadExecutableAsync()
     {
         try
         {
-            var path = "\\executables\\" + ExecutableInput.Name + "." + (ExecutableInput.Version ??= "1.0");
-
             var newExecutable = await _mediator.Send(new UploadNewExecutableCommand
             {
                 Name = ExecutableInput.Name,
                 Version = ExecutableInput.Version,
                 OwnerTool = ExecutableInput.OwnerTool,
                 ToolVersion = ExecutableInput.ToolVersion,
-                Path = path,
+                Path = ExecutableInput.FileUrl,
                 UploadedDate = DateTime.Now,
                 InvokerName = User.Identity?.Name ??
                               throw new ApplicationException(new ExceptionMessage<Executable>().NoPrivilege)
@@ -169,12 +203,11 @@ public class Resources : PageModel
     {
         try
         {
-            var path = "\\sourcesets\\" + SourceSetInput.Name + "." + SourceSetInput.Version;
             var newSourceSet = await _mediator.Send(new UploadNewSourceSetCommand
             {
                 Name = SourceSetInput.Name,
                 Version = SourceSetInput.Version,
-                Path = path,
+                Path = SourceSetInput.FileUrl,
                 UploadedDate = DateTime.Now,
                 InvokerName = User.Identity?.Name ??
                               throw new ApplicationException(new ExceptionMessage<SourceSet>().NoPrivilege)
@@ -213,6 +246,9 @@ public class Resources : PageModel
         [Required]
         [Display(Name = "Tool Version")]
         public string ToolVersion { get; set; } = null!;
+        
+        [Required(ErrorMessage = "Please select a file.")]
+        public string FileUrl { get; set; } = null!;
     }
 
     public class SourceSetInputModel
@@ -223,5 +259,8 @@ public class Resources : PageModel
         public string Name { get; set; } = null!;
 
         [Display(Name = "Source Set Version")] public string? Version { get; set; } = null!;
+        
+        [Required(ErrorMessage = "Please select a file.")]
+        public string FileUrl { get; set; }
     }
 }

@@ -1,0 +1,15 @@
+﻿namespace BenchmarkingPortal.Web;
+
+public class TusDiskStorageOptionHelper
+{
+    public string StorageDiskPath { get; }
+
+    public TusDiskStorageOptionHelper()
+    {
+        string path = Path.Combine(Environment.CurrentDirectory, "App_Data", "tusfiles");
+        if (!File.Exists(path))
+            Directory.CreateDirectory(path);
+
+        StorageDiskPath = path;
+    }
+}

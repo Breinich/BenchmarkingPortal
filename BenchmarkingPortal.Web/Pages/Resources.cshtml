@@ -51,14 +51,14 @@
                             <td>
                                 <div class="d-flex justify-content-center">
                                     <button type="submit" class="btn btn-primary m-1" asp-page-handler="Download"
-                                            asp-route-path="@item.Path">
+                                            asp-route-fileId="@item.Path">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
                                             <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
                                             <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
                                         </svg>
                                     </button>
                                     <button type="submit" class="btn btn-danger m-1"
-                                            asp-page-handler="DeleteExecutable" asp-route-id="@item.Id">
+                                            asp-page-handler="DeleteExecutable" asp-route-id="@item.Id" asp-route-name="@item.Name">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                                             <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                                         </svg>
@@ -115,14 +115,14 @@
                             <td>
                                 <div class="d-flex justify-content-center">
                                     <button type="submit" class="btn btn-primary m-1" asp-page-handler="Download"
-                                            asp-route-path="@item.Path">
+                                            asp-route-fileId="@item.Path">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
                                             <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
                                             <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
                                         </svg>
                                     </button>
                                     <button type="submit" class="btn btn-danger m-1"
-                                            asp-page-handler="DeleteSourceSet" asp-route-id="@item.Id">
+                                            asp-page-handler="DeleteSourceSet" asp-route-id="@item.Id" asp-route-name="@item.Name">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                                             <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                                         </svg>
@@ -176,7 +176,7 @@
                             <td>
                                 <div class="d-flex justify-content-center">
                                     <button type="submit" class="btn btn-primary m-1" asp-page-handler="Download"
-                                            asp-route-path="@item.Path">
+                                            asp-route-fileId="@item.Path">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
                                             <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
                                             <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
@@ -185,7 +185,7 @@
                                     @if ((await AuthorizationService.AuthorizeAsync(User, Policies.RequireAdministratorRole)).Succeeded)
                                     {
                                         <button type="submit" class="btn btn-danger m-1"
-                                                asp-page-handler="DeleteExecutable" asp-route-id="@item.Id">
+                                                asp-page-handler="DeleteExecutable" asp-route-id="@item.Id" asp-route-name="@item.Name">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                                                 <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                                             </svg>
@@ -236,7 +236,7 @@
                             <td>
                                 <div class="d-flex justify-content-center">
                                     <button type="submit" class="btn btn-primary m-1" asp-page-handler="Download"
-                                            asp-route-path="@item.Path">
+                                            asp-route-fileId="@item.Path">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
                                             <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
                                             <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
@@ -245,7 +245,7 @@
                                     @if ((await AuthorizationService.AuthorizeAsync(User, Policies.RequireAdministratorRole)).Succeeded)
                                     {
                                         <button type="submit" class="btn btn-danger m-1"
-                                                asp-page-handler="DeleteSourceSet" asp-route-id="@item.Id">
+                                                asp-page-handler="DeleteSourceSet" asp-route-id="@item.Id" asp-route-name="@item.Name">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                                                 <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                                             </svg>
@@ -270,7 +270,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticExeBackdropLabel">Upload a new Executable</h5>
-                    <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="resetLocalCache()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-floating mb-4">
@@ -293,9 +293,23 @@
                         <label asp-for="ExecutableInput.ToolVersion" class="form-label"></label>
                         <span asp-validation-for="ExecutableInput.ToolVersion" class="text-danger"></span>
                     </div>
+                    <div class="form-floating mb-4">
+                        <input asp-for="ExecutableInput.FileUrl" id="filePath1" hidden/>
+                        <div class="row">
+                            <div class="col-6">
+                                <input type="file" name="droppedFile1" id="droppedFile1" class="form-control"/>
+                            </div>
+                            <div class="col-6">
+                                <input type="button" id="uploadButton1" class="btn btn-primary m-1" value="Upload" onclick="uploadFile(1)"/>
+                                <input type="button" id="cancelUploadButton1" value="Cancel" class="btn btn-secondary m-1" onclick="cancelUpload()" disabled/>
+                            </div>
+                        </div>
+                        <progress value="0" max="100" id="uploadProgress1" style="display:none"></progress>
+                        <span asp-validation-for="ExecutableInput.FileUrl" class="text-danger"></span>
+                    </div>
                     <div class="modal-footer">
-                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" asp-page-handler="UploadExecutable" class="btn btn-primary">Upload</button>
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetLocalCache()">Cancel</button>
+                        <button type="submit" asp-page-handler="UploadExecutable" class="btn btn-primary">Add</button>
                     </div>
                 </div>
             </div>
@@ -323,6 +337,20 @@
                         <label asp-for="SourceSetInput.Version" class="form-label"></label>
                         <span asp-validation-for="SourceSetInput.Version" class="text-danger"></span>
                     </div>
+                    <div class="form-floating mb-4">
+                        <input asp-for="SourceSetInput.FileUrl" id="filePath2" hidden/>
+                        <div class="row">
+                            <div class="col-6">
+                                <input type="file" name="droppedFile1" id="droppedFile2" class="form-control"/>
+                            </div>
+                            <div class="col-6">
+                                <input type="button" id="uploadButton2" class="btn btn-primary m-1" value="Upload" onclick="uploadFile(1)"/>
+                                <input type="button" id="cancelUploadButton2" value="Cancel" class="btn btn-secondary m-1" onclick="cancelUpload()" disabled/>
+                            </div>
+                        </div>
+                        <progress value="0" max="100" id="uploadProgress2" style="display:none"></progress>
+                        <span asp-validation-for="ExecutableInput.FileUrl" class="text-danger"></span>
+                    </div>
                     <div class="modal-footer">
                         <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" asp-page-handler="UploadSourceSet" class="btn btn-primary">Upload</button>
@@ -335,4 +363,6 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial"/>
+    <script src="~/js/tus.min.js"></script>
+    <script src="~/js/resources.js"></script>
 }
