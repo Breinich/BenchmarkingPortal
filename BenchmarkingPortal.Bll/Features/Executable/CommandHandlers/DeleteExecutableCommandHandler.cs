@@ -3,6 +3,8 @@ using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Dal;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using tusdotnet.Interfaces;
+using tusdotnet.Models;
 
 namespace BenchmarkingPortal.Bll.Features.Executable.CommandHandlers;
 
@@ -10,11 +12,14 @@ public class DeleteExecutableCommandHandler : IRequestHandler<DeleteExecutableCo
 {
     private readonly BenchmarkingDbContext _context;
     private readonly UserManager<Dal.Entities.User> _userManager;
+    private readonly ITusTerminationStore _terminationStore;
 
-    public DeleteExecutableCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager)
+    public DeleteExecutableCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager, 
+        DefaultTusConfiguration config)
     {
         _context = context;
         _userManager = userManager;
+        _terminationStore = (ITusTerminationStore)config.Store;
     }
 
 
@@ -36,5 +41,6 @@ public class DeleteExecutableCommandHandler : IRequestHandler<DeleteExecutableCo
 
         _context.Remove(exe);
         await _context.SaveChangesAsync(cancellationToken);
+        await _terminationStore.DeleteFileAsync(request.FileId, cancellationToken);
     }
 }
