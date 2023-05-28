@@ -9,8 +9,8 @@ namespace BenchmarkingPortal.Bll.Features.User.CommandHandlers;
 
 public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand>
 {
-    private readonly UserManager<Dal.Entities.User> _userManager;
     private readonly BenchmarkingDbContext _context;
+    private readonly UserManager<Dal.Entities.User> _userManager;
 
     public DeleteUserCommandHandler(UserManager<Dal.Entities.User> userManager, BenchmarkingDbContext context)
     {
@@ -25,30 +25,19 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand>
 
         if (invoker != null && await _userManager.IsInRoleAsync(invoker, Roles.Admin))
         {
-            var user = await _context.Users.
-                           Include(u => u.Executables).
-                            Include(u => u.SourceSets).
-                           Include(u => u.Benchmarks).
-                           Where(u => u.UserName == request.UserName).FirstOrDefaultAsync(cancellationToken) ??
+            var user = await _context.Users.Include(u => u.Executables).Include(u => u.SourceSets)
+                           .Include(u => u.Benchmarks).Where(u => u.UserName == request.UserName)
+                           .FirstOrDefaultAsync(cancellationToken) ??
                        throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().ObjectNotFound);
 
-            foreach (var executable in user.Executables)
-            {
-                executable.User = invoker;
-            }
-            
-            foreach (var sourceSet in user.SourceSets)
-            {
-                sourceSet.User = invoker;
-            }
+            foreach (var executable in user.Executables) executable.User = invoker;
 
-            foreach (var benchmark in user.Benchmarks)
-            {
-                benchmark.User = invoker;
-            }
-            
+            foreach (var sourceSet in user.SourceSets) sourceSet.User = invoker;
+
+            foreach (var benchmark in user.Benchmarks) benchmark.User = invoker;
+
             await _context.SaveChangesAsync(cancellationToken);
-    
+
             await _userManager.DeleteAsync(user);
         }
         else
