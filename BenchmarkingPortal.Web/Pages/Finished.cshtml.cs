@@ -36,9 +36,9 @@ public class Finished : PageModel
         {
             Headers = new List<string>
             {
-                "Name","Started","RAM","CPU","Group","Executable","SourceSet","Actions"
+                "Name", "Started", "RAM", "CPU", "Group", "Executable", "SourceSet", "Actions"
             };
-            
+
             FinishedBenchmarks = (await _mediator.Send(new GetAllBenchmarksQuery
             {
                 Finished = true

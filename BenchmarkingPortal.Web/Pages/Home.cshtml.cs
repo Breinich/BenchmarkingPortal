@@ -48,9 +48,11 @@ public class Home : PageModel
         try
         {
             OnPostDeleteSession();
-            
-            Headers = new List<string>{
-                "Name","Started","Status","Priority","RAM","CPU","Group","Executable","Source Set","Progress","Actions"
+
+            Headers = new List<string>
+            {
+                "Name", "Started", "Status", "Priority", "RAM", "CPU", "Group", "Executable", "Source Set", "Progress",
+                "Actions"
             };
 
             UnfinishedBenchmarks = (await _mediator.Send(new GetAllBenchmarksQuery
@@ -303,12 +305,12 @@ public class Home : PageModel
         }
     }
 
-    public async Task<IActionResult> OnPostConnectAsync(int id)
+    public IActionResult OnPostConnectAsync(int id)
     {
         try
         {
             StatusMessage = "Connected to the benchmark's console.";
-            
+
             return Page();
         }
         catch (Exception e)
@@ -327,7 +329,8 @@ public class Home : PageModel
         try
         {
             var configs = HttpContext.Session
-                              .GetComplexData<List<TempConfigData>>(_tempConfigDataListKey);;
+                .GetComplexData<List<TempConfigData>>(_tempConfigDataListKey);
+            ;
             var constraints = HttpContext.Session
                 .GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey);
 
@@ -336,17 +339,17 @@ public class Home : PageModel
 
             List<(Scope, string, string)>? configList = null;
             List<(string, string)>? constraintList = null;
-            
+
             if (configs != null)
                 configList = configs.Select(c => (c.Scope, c.Key, c.Value)).ToList();
-            
+
             if (constraints != null)
                 constraintList = constraints.Select(c => (c.Premise, c.Consequence)).ToList();
 
             var config = await _mediator.Send(new CreateConfigurationCommand
             {
                 Configurations = configList,
-                Constraints = constraintList,
+                Constraints = constraintList
             });
 
             var benchmark = await _mediator.Send(new StartBenchmarkCommand
@@ -391,11 +394,11 @@ public class Home : PageModel
 
             SourceSets = (await _mediator.Send(new GetAllSourceSetsQuery()))
                 .Select(sh => new SelectListItem(sh.Name + ":" + sh.Version, sh.Id.ToString())).ToList();
-            
+
             ComputerGroups = (await _mediator.Send(new GetAllComputerGroupsQuery()))
-                .Select(c => new SelectListItem(c.Id+": "+c.Description, c.Id.ToString())).ToList();
+                .Select(c => new SelectListItem(c.Id + ": " + c.Description, c.Id.ToString())).ToList();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex);
             StatusMessage = "Error: " + (ex.InnerException ?? ex).Message;
@@ -460,7 +463,7 @@ public class Home : PageModel
         [StringLength(255)]
         [Display(Name = "Property File Path")]
         public string PropertyFilePath { get; set; } = null!;
-        
+
         [Display(Name = "Computer Group to run on")]
         public int ComputerGroupId { get; set; }
     }

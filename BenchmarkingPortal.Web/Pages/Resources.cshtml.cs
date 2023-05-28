@@ -19,8 +19,8 @@ namespace BenchmarkingPortal.Web.Pages;
 [Authorize(Policy = Policies.RequireApprovedUser)]
 public class Resources : PageModel
 {
-    private readonly IMediator _mediator;
     private readonly DefaultTusConfiguration _config;
+    private readonly IMediator _mediator;
 
     public Resources(IMediator mediator, DefaultTusConfiguration config)
     {
@@ -52,12 +52,12 @@ public class Resources : PageModel
             {
                 "Name", "Owner Tool", "Uploaded Date", "Actions"
             };
-            
+
             SourceHeaders = new List<string>
             {
                 "Name", "Uploaded Date", "Actions"
             };
-            
+
             Executables = (await _mediator.Send(new GetAllExecutablesQuery())).ToList();
             SourceSets = (await _mediator.Send(new GetAllSourceSetsQuery())).ToList();
 
@@ -122,11 +122,8 @@ public class Resources : PageModel
     {
         try
         {
-            if (_config.Store is not ITusReadableStore store)
-            {
-                return RedirectToPage();
-            }
-        
+            if (_config.Store is not ITusReadableStore store) return RedirectToPage();
+
             var file = await store.GetFileAsync(fileId, cancellationToken);
 
             if (file == null)
@@ -137,9 +134,9 @@ public class Resources : PageModel
 
             var fileStream = await file.GetContentAsync(cancellationToken);
             var metadata = await file.GetMetadataAsync(cancellationToken);
-            
+
             StatusMessage = "Download started.";
-        
+
             return new FileStreamResult(fileStream, GetContentTypeOrDefault(metadata))
             {
                 FileDownloadName = metadata.TryGetValue("name", out var nameMeta)
@@ -151,17 +148,14 @@ public class Resources : PageModel
         {
             Console.WriteLine(e);
             StatusMessage = "Error: " + e.Message;
-            
+
             return RedirectToPage();
         }
     }
 
     private static string GetContentTypeOrDefault(Dictionary<string, Metadata> metadata)
     {
-        if (metadata.TryGetValue("contentType", out var contentType))
-        {
-            return contentType.GetString(Encoding.UTF8);
-        }
+        if (metadata.TryGetValue("contentType", out var contentType)) return contentType.GetString(Encoding.UTF8);
 
         return "application/octet-stream";
     }
@@ -246,7 +240,7 @@ public class Resources : PageModel
         [Required]
         [Display(Name = "Tool Version")]
         public string ToolVersion { get; set; } = null!;
-        
+
         [Required(ErrorMessage = "Please select a file.")]
         public string FileUrl { get; set; } = null!;
     }
@@ -259,8 +253,8 @@ public class Resources : PageModel
         public string Name { get; set; } = null!;
 
         [Display(Name = "Source Set Version")] public string? Version { get; set; } = null!;
-        
+
         [Required(ErrorMessage = "Please select a file.")]
-        public string FileUrl { get; set; }
+        public string FileUrl { get; set; } = null!;
     }
 }

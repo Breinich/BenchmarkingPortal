@@ -45,7 +45,7 @@ public class UsersModel : PageModel
             {
                 "Username", "Email", "Subscription", "Role", "Actions"
             };
-            
+
             Roles = await RoleManager.Roles.Select(x => new SelectListItem
             {
                 Text = x.ToString(),
