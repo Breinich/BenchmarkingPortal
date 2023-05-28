@@ -160,7 +160,7 @@ function deleteSession() {
 }
 
 const editComputerGroupModal = document.getElementById('editCG');
-if(editComputerGroupModal){
+if (editComputerGroupModal) {
     editComputerGroupModal.addEventListener('show.bs.modal', function (event) {
         const button = event.relatedTarget;
         const computerGroupId = button.getAttribute('data-bs-id');

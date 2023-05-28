@@ -5,10 +5,10 @@ let filePath;
 let upload;
 
 function uploadFile(num) {
-    uploadProgress = document.getElementById('uploadProgress'+num);
-    cancelUploadButton = document.getElementById('cancelUploadButton'+num);
-    uploadButton = document.getElementById('uploadButton'+num);
-    filePath = document.getElementById('filePath'+num);
+    uploadProgress = document.getElementById('uploadProgress' + num);
+    cancelUploadButton = document.getElementById('cancelUploadButton' + num);
+    uploadButton = document.getElementById('uploadButton' + num);
+    filePath = document.getElementById('filePath' + num);
 
     const file = document.getElementById('droppedFile' + num).files[0];
 
