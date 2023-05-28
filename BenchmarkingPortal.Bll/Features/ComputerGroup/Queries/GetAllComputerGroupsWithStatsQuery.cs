@@ -3,4 +3,6 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.ComputerGroup.Queries;
 
-public class GetAllComputerGroupsWithStatsQuery : IRequest<IEnumerable<ComputerGroupHeader>> { }
+public class GetAllComputerGroupsWithStatsQuery : IRequest<IEnumerable<ComputerGroupHeader>>
+{
+}

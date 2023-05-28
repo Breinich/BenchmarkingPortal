@@ -22,7 +22,7 @@ public class CreateConfigurationCommandHandler : IRequestHandler<CreateConfigura
         // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         // config check needed based on the constraints
         // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        
+
         var config = new Dal.Entities.Configuration();
 
         await _context.Configurations.AddAsync(config, cancellationToken);
