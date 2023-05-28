@@ -10,10 +10,7 @@ public class DownloadFileEndpoint
     {
         var config = context.RequestServices.GetRequiredService<DefaultTusConfiguration>();
 
-        if (config.Store is not ITusReadableStore store)
-        {
-            return;
-        }
+        if (config.Store is not ITusReadableStore store) return;
 
         var fileId = (string?)context.Request.RouteValues["fileId"];
         var file = await store.GetFileAsync(fileId, context.RequestAborted);
@@ -32,10 +29,8 @@ public class DownloadFileEndpoint
         context.Response.ContentLength = fileStream.Length;
 
         if (metadata.TryGetValue("name", out var nameMeta))
-        {
             context.Response.Headers.Add("Content-Disposition",
                 new[] { $"attachment; filename=\"{nameMeta.GetString(Encoding.UTF8)}\"" });
-        }
 
         using (fileStream)
         {
@@ -45,10 +40,7 @@ public class DownloadFileEndpoint
 
     private static string GetContentTypeOrDefault(Dictionary<string, Metadata> metadata)
     {
-        if (metadata.TryGetValue("contentType", out var contentType))
-        {
-            return contentType.GetString(Encoding.UTF8);
-        }
+        if (metadata.TryGetValue("contentType", out var contentType)) return contentType.GetString(Encoding.UTF8);
 
         return "application/octet-stream";
     }

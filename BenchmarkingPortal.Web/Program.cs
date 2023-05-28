@@ -24,8 +24,6 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
 using tusdotnet;
 using tusdotnet.Models;
 using tusdotnet.Models.Concatenation;
@@ -144,7 +142,7 @@ builder.Services.Configure<FormOptions>(x =>
     x.MultipartHeadersLengthLimit = int.MaxValue;
 });
 
-builder.Services.Configure<KestrelServerOptions>( o => o.Limits.MaxRequestBodySize = 1024L * 1024 * 1024 * 100);
+builder.Services.Configure<KestrelServerOptions>(o => o.Limits.MaxRequestBodySize = 1024L * 1024 * 1024 * 100);
 
 builder.Services.AddSingleton<TusDiskStorageOptionHelper>();
 builder.Services.AddSingleton(services => CreateTusConfigurationForCleanupService(services));
@@ -178,7 +176,6 @@ app.UseAuthorization();
 app.UseSession();
 
 
-
 // Handle downloads (must be set before MapTus)
 app.MapGet("/files/{fileId}", DownloadFileEndpoint.HandleRoute);
 
@@ -209,7 +206,7 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
 
     var config = new DefaultTusConfiguration
     {
-        Store = new TusDiskStore(diskStorePath, deletePartialFilesOnConcat: true),
+        Store = new TusDiskStore(diskStorePath, true),
         MetadataParsingStrategy = MetadataParsingStrategy.AllowEmptyValues,
         UsePipelinesIfAvailable = true,
         Events = new Events
@@ -219,7 +216,7 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
                 // Note: This event is called even if RequireAuthorization is called on the endpoint.
                 // In that case this event is not required but can be used as fine-grained authorization control.
                 // This event can also be used as a "on request started" event to prefetch data or similar.
-                
+
                 var user = ctx.HttpContext.User;
                 if (!user.IsInRole(Roles.Admin) && !user.IsInRole(Roles.User))
                 {
@@ -246,8 +243,6 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
                         break;
                     case IntentType.GetOptions:
                         break;
-                    default:
-                        break;
                 }
 
                 return Task.CompletedTask;
@@ -257,20 +252,13 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
             {
                 // Partial files are not complete so we do not need to validate
                 // the metadata in our example.
-                if (ctx.FileConcatenation is FileConcatPartial)
-                {
-                    return Task.CompletedTask;
-                }
+                if (ctx.FileConcatenation is FileConcatPartial) return Task.CompletedTask;
 
                 if (!ctx.Metadata.ContainsKey("name") || ctx.Metadata["name"].HasEmptyValue)
-                {
                     ctx.FailRequest("name metadata must be specified. ");
-                }
 
                 if (!ctx.Metadata.ContainsKey("contentType") || ctx.Metadata["contentType"].HasEmptyValue)
-                {
                     ctx.FailRequest("contentType metadata must be specified. ");
-                }
 
                 return Task.CompletedTask;
             },
