@@ -1,29 +1,28 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿#nullable disable
 
-#nullable disable
+using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace BenchmarkingPortal.Migrations.Base.Migrations
+namespace BenchmarkingPortal.Migrations.Base.Migrations;
+
+/// <inheritdoc />
+public partial class RemoveUserId : Migration
 {
     /// <inheritdoc />
-    public partial class RemoveUserId : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "UserId",
-                table: "Benchmarks");
-        }
+        migrationBuilder.DropColumn(
+            "UserId",
+            "Benchmarks");
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AddColumn<int>(
-                name: "UserId",
-                table: "Benchmarks",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-        }
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.AddColumn<int>(
+            "UserId",
+            "Benchmarks",
+            "int",
+            nullable: false,
+            defaultValue: 0);
     }
 }
