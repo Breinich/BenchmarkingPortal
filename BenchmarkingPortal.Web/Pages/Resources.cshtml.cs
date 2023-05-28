@@ -72,13 +72,14 @@ public class Resources : PageModel
         }
     }
 
-    public async Task<IActionResult> OnPostDeleteExecutableAsync(int id, string name)
+    public async Task<IActionResult> OnPostDeleteExecutableAsync(int id, string name, string fileId)
     {
         try
         {
             await _mediator.Send(new DeleteExecutableCommand
             {
                 ExecutableId = id,
+                FileId = fileId,
                 InvokerName = User.Identity?.Name ??
                               throw new ApplicationException(new ExceptionMessage<Executable>().NoPrivilege)
             });
@@ -95,13 +96,14 @@ public class Resources : PageModel
         }
     }
 
-    public async Task<IActionResult> OnPostDeleteSourceSetAsync(int id, string name)
+    public async Task<IActionResult> OnPostDeleteSourceSetAsync(int id, string name, string fileId)
     {
         try
         {
             await _mediator.Send(new DeleteSourceSetCommand
             {
                 SourceSetId = id,
+                FileId = fileId,
                 InvokerName = User.Identity?.Name ??
                               throw new ApplicationException(new ExceptionMessage<SourceSet>().NoPrivilege)
             });
