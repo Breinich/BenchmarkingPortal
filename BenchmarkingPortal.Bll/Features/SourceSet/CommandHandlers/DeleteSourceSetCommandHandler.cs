@@ -3,6 +3,8 @@ using BenchmarkingPortal.Bll.Features.SourceSet.Commands;
 using BenchmarkingPortal.Dal;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using tusdotnet.Interfaces;
+using tusdotnet.Models;
 
 namespace BenchmarkingPortal.Bll.Features.SourceSet.CommandHandlers;
 
@@ -10,11 +12,14 @@ public class DeleteSourceSetCommandHandler : IRequestHandler<DeleteSourceSetComm
 {
     private readonly BenchmarkingDbContext _context;
     private readonly UserManager<Dal.Entities.User> _userManager;
+    private readonly ITusTerminationStore _terminationStore;
 
-    public DeleteSourceSetCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager)
+    public DeleteSourceSetCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager, 
+        DefaultTusConfiguration config)
     {
         _context = context;
         _userManager = userManager;
+        _terminationStore = (ITusTerminationStore)config.Store;
     }
 
 
@@ -35,5 +40,6 @@ public class DeleteSourceSetCommandHandler : IRequestHandler<DeleteSourceSetComm
 
         _context.Remove(sourceSet);
         await _context.SaveChangesAsync(cancellationToken);
+        await _terminationStore.DeleteFileAsync(request.FileId, cancellationToken);
     }
 }

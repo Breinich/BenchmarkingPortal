@@ -6,4 +6,5 @@ public class DeleteSourceSetCommand : IRequest
 {
     public int SourceSetId { get; set; }
     public string InvokerName { get; set; } = null!;
+    public string FileId { get; set; } = null!;
 }
