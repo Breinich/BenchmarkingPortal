@@ -1,9 +1,9 @@
-html {
-    font-size: 14px;
+:root {
+    --ftsrg: #98041c;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #98041c;
+html {
+    font-size: 14px;
 }
 
 html {
@@ -28,17 +28,17 @@ body > .container, body > .container > .pb-3 {
 .nav-pills {
     font-weight: bold;
     background-color: white;
-    color: #98041c;
+    color: var(--ftsrg);
 }
 
 .nav-pills .nav-link:not(.active) {
     font-weight: bold;
     background-color: white;
-    color: #98041c;
+    color: var(--ftsrg);
 }
 
 .nav-pills .nav-link.active {
-    background-color: #98041c;
+    background-color: var(--ftsrg);
     color: white !important;
     border-radius: 50rem;
 }
@@ -50,9 +50,13 @@ h3 {
     margin: 0.75rem;
 }
 
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #98041c;
+}
+
 .btn-primary {
-    background-color: #98041c;
-    border-color: #98041c;
+    background-color: var(--ftsrg);
+    border-color: var(--ftsrg);
     border-radius: 50rem;
     font-weight: bold;
 }
@@ -85,20 +89,20 @@ h3 {
 }
 
 .btn-danger:hover {
-    background-color: #98041c;
-    border-color: #98041c;
+    background-color: var(--ftsrg);
+    border-color: var(--ftsrg);
     color: black;
 }
 
 .btn-danger:active {
-    background-color: #98041c;
-    border-color: #98041c;
+    background-color: var(--ftsrg);
+    border-color: var(--ftsrg);
     color: black;
 }
 
 .btn-danger:focus {
-    background-color: #98041c;
-    border-color: #98041c;
+    background-color: var(--ftsrg);
+    border-color: var(--ftsrg);
     color: black;
 }
 
@@ -109,13 +113,13 @@ h3 {
 }
 
 .form-check-input:active {
-    background-color: #98041c;
-    border-color: #98041c;
+    background-color: var(--ftsrg);
+    border-color: var(--ftsrg);
 }
 
 .form-check-input:checked {
-    background-color: #98041c;
-    border-color: #98041c;
+    background-color: var(--ftsrg);
+    border-color: var(--ftsrg);
 }
 
 .invalid-tooltip {
