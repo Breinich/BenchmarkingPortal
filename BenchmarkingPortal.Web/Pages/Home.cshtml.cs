@@ -439,11 +439,11 @@ public class Home : PageModel
         public int Cpu { get; set; }
 
         [Range(1, 100000)]
-        [Display(Name = "Time Limit (seconds)")]
+        [Display(Name = "Time Limit (s)")]
         public int TimeLimit { get; set; }
 
         [Range(1, 100000)]
-        [Display(Name = "Hard Time Limit (seconds)")]
+        [Display(Name = "Hard Time Limit (s)")]
         public int HardTimeLimit { get; set; }
 
         [Required]
