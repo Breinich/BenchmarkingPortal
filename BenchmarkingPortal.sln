@@ -7,13 +7,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenchmarkingPortal.Web", "B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenchmarkingPortal.Dal", "BenchmarkingPortal.Dal\BenchmarkingPortal.Dal.csproj", "{FEA3F586-146D-40BD-9365-7C63F982F9BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BenchmarkingPortal.Bll", "BenchmarkingPortal.Bll\BenchmarkingPortal.Bll.csproj", "{348387CE-8C8C-4C4F-AAFB-DAEA1165DD6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenchmarkingPortal.Bll", "BenchmarkingPortal.Bll\BenchmarkingPortal.Bll.csproj", "{348387CE-8C8C-4C4F-AAFB-DAEA1165DD6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BenchmarkingPortal.Test", "BenchmarkingPortal.Test\BenchmarkingPortal.Test.csproj", "{09991CB6-3860-40DD-B63E-FEF5E8477D11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenchmarkingPortal.Test", "BenchmarkingPortal.Test\BenchmarkingPortal.Test.csproj", "{09991CB6-3860-40DD-B63E-FEF5E8477D11}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BenchmarkingPortal.Migrations.Base", "BenchmarkingPortal.Migrations.Base\BenchmarkingPortal.Migrations.Base.csproj", "{86772306-7E90-4378-A7C2-711C0FEB650E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenchmarkingPortal.Migrations.Base", "BenchmarkingPortal.Migrations.Base\BenchmarkingPortal.Migrations.Base.csproj", "{86772306-7E90-4378-A7C2-711C0FEB650E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BenchmarkingPortal.Migrations.Test", "BenchmarkingPortal.Migrations.Test\BenchmarkingPortal.Migrations.Test.csproj", "{5A9BDAEC-77DB-427A-B104-957D2475063F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenchmarkingPortal.Migrations.Test", "BenchmarkingPortal.Migrations.Test\BenchmarkingPortal.Migrations.Test.csproj", "{5A9BDAEC-77DB-427A-B104-957D2475063F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{11B77430-412E-4F39-B238-6B2CC9260AE2}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{C2CE1FBA-7AA9-4066-9CE9-7F4C7F44823F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +49,10 @@ Global
 		{5A9BDAEC-77DB-427A-B104-957D2475063F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A9BDAEC-77DB-427A-B104-957D2475063F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A9BDAEC-77DB-427A-B104-957D2475063F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2CE1FBA-7AA9-4066-9CE9-7F4C7F44823F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2CE1FBA-7AA9-4066-9CE9-7F4C7F44823F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2CE1FBA-7AA9-4066-9CE9-7F4C7F44823F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2CE1FBA-7AA9-4066-9CE9-7F4C7F44823F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
