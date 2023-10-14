@@ -48,7 +48,7 @@ public class UserSeedService : IUserSeedService
                                                        .Select(e => e.Description)));
         }
 
-        await SeedTestUsersAsync();
+        //await SeedTestUsersAsync();
     }
 
     private async Task SeedTestUsersAsync()
