@@ -17,7 +17,7 @@ public class BenchmarkEntityConfiguration : IEntityTypeConfiguration<Benchmark>
         builder.Property(e => e.PropertyFilePath).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Result).HasMaxLength(50);
         builder.Property(e => e.SetFilePath).HasMaxLength(50).IsRequired();
-        builder.Property(e => e.StartedDate).HasColumnType("datetime").IsRequired();
+        builder.Property(e => e.StartedDate).IsRequired();
         builder.Property(e => e.Cpu).IsRequired();
         builder.Property(e => e.Ram).IsRequired();
         builder.Property(e => e.Status).HasConversion(s => s.ToString(),
