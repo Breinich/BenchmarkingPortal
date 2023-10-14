@@ -20,6 +20,7 @@ using BenchmarkingPortal.Dal.SeedService;
 using BenchmarkingPortal.Web;
 using BenchmarkingPortal.Web.Endpoints;
 using BenchmarkingPortal.Web.Hosting;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -36,7 +37,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-builder.Services.AddSession(options => { options.IdleTimeout = TimeSpan.FromMinutes(30); });
+builder.Services.AddSession(options => { options.IdleTimeout = TimeSpan.FromDays(1); });
 builder.Services.AddMemoryCache();
 
 builder.Services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
@@ -55,7 +56,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 6;
     options.Password.RequiredUniqueChars = 1;
 // Lockout settings
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
 // User settings
@@ -65,17 +66,36 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 builder.Services.AddDbContext<BenchmarkingDbContext>(
-    o => o.UseSqlServer(builder.Configuration.GetConnectionString(nameof(BenchmarkingDbContext)),
+    o => o.UseNpgsql(builder.Configuration.GetConnectionString("PostgressConnString"),
         x => x.MigrationsAssembly("BenchmarkingPortal.Migrations.Base")));
 
 builder.Services.AddScoped<IRoleSeedService, RoleSeedService>();
 builder.Services.AddScoped<IUserSeedService, UserSeedService>();
 
-builder.Services.AddAuthentication().AddCookie(o =>
-    {
-        o.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-        o.SlidingExpiration = true;
-    })
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.Cookie.HttpOnly = true;
+    options.ExpireTimeSpan = TimeSpan.FromDays(1);
+    options.LoginPath = "/Identity/Account/Login";
+    // ReturnUrlParameter requires 
+    //using Microsoft.AspNetCore.Authentication.Cookies;
+    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+    options.SlidingExpiration = true;
+});
+
+builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+{
+    options.ValidationInterval = TimeSpan.FromDays(1);
+});
+
+builder.Services.AddAuthentication().AddCookie(
+        option =>
+        {
+            option.ExpireTimeSpan = TimeSpan.FromDays(1);
+            option.Cookie.HttpOnly = true;
+            option.SlidingExpiration = true;
+        })
     .AddGitHub(options =>
     {
         options.ClientId = builder.Configuration["GitHub:ClientId"] ?? throw new InvalidOperationException();
@@ -84,6 +104,7 @@ builder.Services.AddAuthentication().AddCookie(o =>
         options.Scope.Add("read:user");
         options.Scope.Add("user:email");
         options.Scope.Add("read:org");
+        options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     });
 
 builder.Services.AddAuthorization(options =>
@@ -138,11 +159,11 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.Configure<FormOptions>(x =>
 {
     x.ValueLengthLimit = int.MaxValue;
-    x.MultipartBodyLengthLimit = 1024L * 1024 * 1024 * 100;
+    x.MultipartBodyLengthLimit = 1024L * 1024 * 1024 * 10;
     x.MultipartHeadersLengthLimit = int.MaxValue;
 });
 
-builder.Services.Configure<KestrelServerOptions>(o => o.Limits.MaxRequestBodySize = 1024L * 1024 * 1024 * 100);
+builder.Services.Configure<KestrelServerOptions>(o => o.Limits.MaxRequestBodySize = 1024L * 1024 * 1024 * 10);
 
 builder.Services.AddSingleton<TusDiskStorageOptionHelper>();
 builder.Services.AddSingleton(services => CreateTusConfigurationForCleanupService(services));
@@ -151,7 +172,6 @@ builder.Services.AddHostedService<ExpiredFilesCleanupService>();
 var app = builder.Build();
 
 await app.MigrateDatabaseAsync<BenchmarkingDbContext>();
-
 
 if (!app.Environment.IsDevelopment())
 {
@@ -163,7 +183,6 @@ else
 {
     app.UseDeveloperExceptionPage();
 }
-
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
