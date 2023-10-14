@@ -54,7 +54,7 @@ public class DatabaseFixture : IAsyncLifetime
             Path = "C:\\TestTool",
             Name = "TestToolAlpha",
             Version = "1.0",
-            UploadedDate = DateTime.Now,
+            UploadedDate = DateTime.UtcNow,
             UserName = user.UserName
         };
         await Context.Executables.AddAsync(executable);
@@ -65,7 +65,7 @@ public class DatabaseFixture : IAsyncLifetime
             Name = "TestSourceSet",
             Path = "C:\\TestSourceSet",
             Version = "1.0",
-            UploadedDate = DateTime.Now,
+            UploadedDate = DateTime.UtcNow,
             UserName = user.UserName
         };
         await Context.SourceSets.AddAsync(sourceSet);
@@ -90,7 +90,7 @@ public class DatabaseFixture : IAsyncLifetime
             Address = "192.168.0.0",
             Port = 8080,
             ComputerGroupId = computerGroup.Id,
-            AddedDate = DateTime.Now
+            AddedDate = DateTime.UtcNow
         };
         await Context.Workers.AddAsync(worker);
         await Context.SaveChangesAsync();
@@ -100,7 +100,7 @@ public class DatabaseFixture : IAsyncLifetime
             Name = "TestBenchmark",
             Priority = 0,
             Status = Status.Running,
-            StartedDate = DateTime.Now,
+            StartedDate = DateTime.UtcNow,
             Ram = 1,
             Cpu = 1,
             TimeLimit = 900,
