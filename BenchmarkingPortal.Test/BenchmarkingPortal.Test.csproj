@@ -10,19 +10,20 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MediatR" Version="12.0.1"/>
+        <PackageReference Include="MediatR" Version="12.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.5">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2"/>
-        <PackageReference Include="Moq" Version="4.18.4"/>
-        <PackageReference Include="xunit" Version="2.4.2"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+        <PackageReference Include="Moq" Version="4.18.4" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
+        <PackageReference Include="xunit" Version="2.4.2" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
@@ -34,16 +35,16 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\BenchmarkingPortal.Dal\BenchmarkingPortal.Dal.csproj"/>
-        <ProjectReference Include="..\BenchmarkingPortal.Migrations.Test\BenchmarkingPortal.Migrations.Test.csproj"/>
+        <ProjectReference Include="..\BenchmarkingPortal.Dal\BenchmarkingPortal.Dal.csproj" />
+        <ProjectReference Include="..\BenchmarkingPortal.Migrations.Test\BenchmarkingPortal.Migrations.Test.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Features\ComputerGroup\"/>
-        <Folder Include="Features\Configuration\"/>
-        <Folder Include="Features\Executable\"/>
-        <Folder Include="Features\SourceSet\"/>
-        <Folder Include="Features\Worker\"/>
+        <Folder Include="Features\ComputerGroup\" />
+        <Folder Include="Features\Configuration\" />
+        <Folder Include="Features\Executable\" />
+        <Folder Include="Features\SourceSet\" />
+        <Folder Include="Features\Worker\" />
     </ItemGroup>
 
 </Project>
