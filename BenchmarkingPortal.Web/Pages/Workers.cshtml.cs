@@ -135,7 +135,7 @@ public class Workers : PageModel
                 Address = WorkerWorkerInput.Address,
                 Port = WorkerWorkerInput.Port,
                 ComputerGroupId = WorkerWorkerInput.ComputerGroupId,
-                AddedDate = DateTime.Now,
+                AddedDate = DateTime.UtcNow,
                 InvokerName = User.Identity?.Name ??
                               throw new ApplicationException(new ExceptionMessage<Worker>().NoPrivilege)
             });
