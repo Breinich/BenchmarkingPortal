@@ -1,0 +1,3 @@
+[submodule "verifiercloud"]
+	path = verifiercloud
+	url = https://github.com/Breinich/verifiercolud
