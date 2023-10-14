@@ -17,7 +17,7 @@ public class ExecutableEntityConfiguration : IEntityTypeConfiguration<Executable
         builder.Property(e => e.OwnerTool).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Path).HasMaxLength(50).IsRequired();
         builder.Property(e => e.ToolVersion).HasMaxLength(50).IsRequired();
-        builder.Property(e => e.UploadedDate).HasColumnType("datetime").IsRequired();
+        builder.Property(e => e.UploadedDate).IsRequired();
         builder.Property(e => e.Version).HasMaxLength(50).IsRequired();
 
         builder.HasOne(d => d.User).WithMany(p => p.Executables)
