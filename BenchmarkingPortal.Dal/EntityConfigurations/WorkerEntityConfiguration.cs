@@ -13,7 +13,7 @@ public class WorkerEntityConfiguration : IEntityTypeConfiguration<Worker>
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
-        builder.Property(e => e.AddedDate).HasColumnType("datetime").IsRequired();
+        builder.Property(e => e.AddedDate).IsRequired();
         builder.Property(e => e.Address).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Name).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Password).HasMaxLength(50).IsRequired();
