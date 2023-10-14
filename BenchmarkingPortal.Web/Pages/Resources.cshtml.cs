@@ -173,7 +173,7 @@ public class Resources : PageModel
                 OwnerTool = ExecutableInput.OwnerTool,
                 ToolVersion = ExecutableInput.ToolVersion,
                 Path = ExecutableInput.FileUrl,
-                UploadedDate = DateTime.Now,
+                UploadedDate = DateTime.UtcNow,
                 InvokerName = User.Identity?.Name ??
                               throw new ApplicationException(new ExceptionMessage<Executable>().NoPrivilege)
             });
@@ -204,7 +204,7 @@ public class Resources : PageModel
                 Name = SourceSetInput.Name,
                 Version = SourceSetInput.Version,
                 Path = SourceSetInput.FileUrl,
-                UploadedDate = DateTime.Now,
+                UploadedDate = DateTime.UtcNow,
                 InvokerName = User.Identity?.Name ??
                               throw new ApplicationException(new ExceptionMessage<SourceSet>().NoPrivilege)
             });
