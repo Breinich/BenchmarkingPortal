@@ -14,6 +14,7 @@ public class UserHeader
         UserName = u.UserName;
         Email = u.Email;
         Subscription = u.Subscription;
+        StorageLocation = u.StorageLocation;
     }
 
     public int Id { get; set; }
@@ -22,4 +23,6 @@ public class UserHeader
     public List<string> Roles { get; set; } = new();
 
     public bool Subscription { get; set; }
+
+    public string StorageLocation { get; set; }
 }
