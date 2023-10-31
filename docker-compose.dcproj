@@ -12,4 +12,7 @@
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="portal_with_vcloud.Dockerfile" />
+  </ItemGroup>
 </Project>

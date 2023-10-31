@@ -16,7 +16,10 @@ RUN chown vcloud:vcloud . -R
 USER vcloud
 
 COPY verifiercloud verifiercloud
+COPY .git .git
+COPY .gitattributes .gitignore .gitmodules ./
 RUN sudo chown vcloud:vcloud verifiercloud -R
+RUN git config --global --add safe.directory /vcloud/verifiercloud
 WORKDIR /vcloud/verifiercloud
 RUN ant jar-big
 

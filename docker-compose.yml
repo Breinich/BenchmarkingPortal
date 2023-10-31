@@ -1,11 +1,11 @@
 version: '3.4'
 
 services:
-  benchmarkingportal.web:
-    image: ${DOCKER_REGISTRY-}benchmarkingportalweb
+  master:
+    image: benchmarkingportal
     build:
       context: .
-      dockerfile: BenchmarkingPortal.Web/Dockerfile
+      dockerfile: portal_with_vcloud.Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - "ConnectionStrings__PostgressConnString=host=stackupPostgres;Port=5432;Database=Stackup;User Id=BossDude;Password=?7o#&mT39KST6BM8;"
@@ -16,6 +16,26 @@ services:
     # Replace the values on the left by the values on your launchSettings.json
       - "8000:80"
       - "8001:443"
+      - "15140:15140"
+    command: bash -c "while ! ssh -o StrictHostKeyChecking=no worker 'exit'; do sleep 1; done && java -jar vcloud.jar master 1>/dev/null 2>&1"
+
+  client:
+    build: 
+      context: .
+      dockerfile: main.Dockerfile
+    links:
+      - "master"
+    command: bash -c "while ! (echo >/dev/tcp/master/15140) &>/dev/null; do sleep 1; echo "Retrying.."; done && (echo 'auth USER'; sleep 1; echo 'run trivial') | java -jar vcloud.jar client"
+
+  worker:
+    build: 
+      context: .
+      dockerfile: worker.Dockerfile
+    expose:
+      - "22"
+    volumes:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+
   stackupPostgres:
     image: postgres
     container_name: stackupPostgres

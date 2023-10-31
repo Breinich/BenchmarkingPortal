@@ -12,6 +12,6 @@
 
 fured: !config
   userLoginCheck: true # whether worker may be unavailable on user login
-  useReverseTunnel: true # set to true if workers cannot connect reach master  
+  useReverseTunnel: false # set to true if workers cannot connect reach master  
   workerHosts:
     - worker

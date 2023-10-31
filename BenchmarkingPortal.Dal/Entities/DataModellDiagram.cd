@@ -3,7 +3,7 @@
   <Class Name="BenchmarkingPortal.Dal.Entities.Benchmark">
     <Position X="4" Y="5.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAADDAAEQAAQiAAEAAAAAgwAAAAAAUABgCAAAACAAEQ=</HashCode>
+      <HashCode>AAADDAAEQAAQiAAEAAAAAgQAAAAAAUABgSAAAACAAEQ=</HashCode>
       <FileName>Entities\Benchmark.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -51,7 +51,7 @@
   <Class Name="BenchmarkingPortal.Dal.Entities.Executable">
     <Position X="0.75" Y="7" Width="2" />
     <TypeIdentifier>
-      <HashCode>IAADAAAIAAAAgAIAAAEAAAwAAAAAAAAAAAAAACAAAAA=</HashCode>
+      <HashCode>IAADAAAIAAAAgAIAAAEAAAQAAAAAAAAAAQAAACAAAAA=</HashCode>
       <FileName>Entities\Executable.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -61,14 +61,14 @@
   <Class Name="BenchmarkingPortal.Dal.Entities.SourceSet">
     <Position X="7.5" Y="7.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>IAADAAAAAAAAgAIAAAAAAAwAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>IAADAAAAAAAAgAIAAAAAAAQAAAAAAAAAAQAAAAAAAAA=</HashCode>
       <FileName>Entities\SourceSet.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="BenchmarkingPortal.Dal.Entities.Worker">
     <Position X="0.5" Y="10.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAACAAAAQAAAAQACAAAAQACAAgAAACAAgA=</HashCode>
+      <HashCode>AAADCAAAAAAACAAAAAAAAAQACAAAAQACAQgQAACAAgA=</HashCode>
       <FileName>Entities\Worker.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -81,17 +81,19 @@
     </AssociationLine>
     <AssociationLine Name="SourceSets" Type="BenchmarkingPortal.Dal.Entities.SourceSet" ManuallyRouted="true">
       <Path>
-        <Point X="2.5" Y="5.432" />
-        <Point X="5.948" Y="5.432" Type="JumpStart" />
-        <Point X="6.115" Y="5.432" Type="JumpEnd" />
-        <Point X="7.62" Y="5.432" />
+        <Point X="2.5" Y="5.616" />
+        <Point X="4.19" Y="5.616" />
+        <Point X="4.19" Y="5.356" />
+        <Point X="5.948" Y="5.356" Type="JumpStart" />
+        <Point X="6.115" Y="5.356" Type="JumpEnd" />
+        <Point X="7.62" Y="5.356" />
         <Point X="7.62" Y="5.623" />
         <Point X="8.75" Y="5.623" />
         <Point X="8.75" Y="7.25" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAIAAAAAAAAEAAAQAAAABAAAYAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAIAgAAAAAAEAAAAAAAABAAAQAAAAAAAAAAA=</HashCode>
       <FileName>Entities\User.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
