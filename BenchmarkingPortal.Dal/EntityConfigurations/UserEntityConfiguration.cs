@@ -11,7 +11,6 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable("Users");
 
         builder.Property(u => u.Subscription).IsRequired();
-        builder.Property(u => u.StorageLocation).IsRequired();
 
         builder.HasAlternateKey(u => u.UserName);
     }
