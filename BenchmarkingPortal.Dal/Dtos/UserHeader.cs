@@ -24,5 +24,5 @@ public class UserHeader
 
     public bool Subscription { get; set; }
 
-    public string StorageLocation { get; set; }
+    public string? StorageLocation { get; set; }
 }

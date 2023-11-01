@@ -330,7 +330,7 @@ public class Home : PageModel
         {
             var configs = HttpContext.Session
                 .GetComplexData<List<TempConfigData>>(_tempConfigDataListKey);
-            ;
+            
             var constraints = HttpContext.Session
                 .GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey);
 
