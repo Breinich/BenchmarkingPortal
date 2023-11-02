@@ -66,7 +66,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 builder.Services.AddDbContext<BenchmarkingDbContext>(
-    o => o.UseNpgsql(builder.Configuration.GetConnectionString("PostgressConnString"),
+    o => o.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnString"),
         x => x.MigrationsAssembly("BenchmarkingPortal.Migrations.Base")));
 
 builder.Services.AddScoped<IRoleSeedService, RoleSeedService>();

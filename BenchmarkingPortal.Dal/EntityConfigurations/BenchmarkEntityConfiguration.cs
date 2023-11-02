@@ -14,9 +14,9 @@ public class BenchmarkEntityConfiguration : IEntityTypeConfiguration<Benchmark>
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
         builder.Property(e => e.Name).HasMaxLength(50).IsRequired();
-        builder.Property(e => e.PropertyFilePath).HasMaxLength(50).IsRequired();
-        builder.Property(e => e.Result).HasMaxLength(50);
-        builder.Property(e => e.SetFilePath).HasMaxLength(50).IsRequired();
+        builder.Property(e => e.PropertyFilePath).HasMaxLength(250).IsRequired();
+        builder.Property(e => e.ResultPath).HasMaxLength(250);
+        builder.Property(e => e.SetFilePath).HasMaxLength(250).IsRequired();
         builder.Property(e => e.StartedDate).IsRequired();
         builder.Property(e => e.Cpu).IsRequired();
         builder.Property(e => e.Ram).IsRequired();
@@ -24,7 +24,7 @@ public class BenchmarkEntityConfiguration : IEntityTypeConfiguration<Benchmark>
             v => (Status)Enum.Parse(typeof(Status), v)).IsRequired();
         builder.Property(e => e.TimeLimit).IsRequired();
         builder.Property(e => e.HardTimeLimit).IsRequired();
-        builder.Property(e => e.HardTimeLimit).IsRequired();
+        builder.Property(e => e.CpuModel).HasMaxLength(50).IsRequired();
 
         builder.HasIndex(e => e.Name).IsUnique();
 

@@ -28,7 +28,7 @@ public class GetResultPathQueryHandler : IRequestHandler<GetResultPathQuery, str
                 "The benchmark hasn't been finished yet.");
 
 
-        return benchmark.Result ??
+        return benchmark.ResultPath ??
                throw new ApplicationException("Somehow this finished benchmark doesn't store the results' path.");
     }
 }

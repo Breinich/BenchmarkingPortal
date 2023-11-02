@@ -16,9 +16,10 @@ public class BenchmarkHeader
         Status = b.Status;
         Ram = b.Ram;
         Cpu = b.Cpu;
-        Result = b.Result;
+        ResultPath = b.ResultPath;
         TimeLimit = b.TimeLimit;
         HardTimeLimit = b.HardTimeLimit;
+        CpuModel = b.CpuModel;
         ComputerGroupId = b.ComputerGroupId;
         ExecutableId = b.ExecutableId;
         SourceSetId = b.SourceSetId;
@@ -41,11 +42,13 @@ public class BenchmarkHeader
 
     public int Cpu { get; set; }
 
-    public string? Result { get; set; }
+    public string? ResultPath { get; set; }
 
     public int TimeLimit { get; set; }
 
     public int HardTimeLimit { get; set; }
+    
+    public string? CpuModel { get; set; }
 
     public int ComputerGroupId { get; set; }
 

@@ -16,6 +16,8 @@ public class StartBenchmarkCommand : IRequest<BenchmarkHeader>
     public int TimeLimit { get; set; }
 
     public int HardTimeLimit { get; set; }
+    
+    public string CpuModel { get; set; } = null!;
 
     public int ExecutableId { get; set; }
 

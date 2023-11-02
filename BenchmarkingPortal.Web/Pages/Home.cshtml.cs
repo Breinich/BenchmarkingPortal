@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
@@ -364,6 +365,7 @@ public class Home : PageModel
                 Cpu = CreateInput.Cpu,
                 TimeLimit = CreateInput.TimeLimit,
                 HardTimeLimit = CreateInput.HardTimeLimit,
+                CpuModel = CreateInput.CpuModel,
                 ConfigurationId = config.Id,
                 InvokerName = User.Identity?.Name ??
                               throw new ApplicationException(new ExceptionMessage<Benchmark>().NoPrivilege)
@@ -421,6 +423,7 @@ public class Home : PageModel
     public class CreateInputModel
     {
         [Required]
+        [StringLength(50)]
         [Display(Name = "Benchmark Name")]
         public string Name { get; set; } = null!;
 
@@ -455,17 +458,22 @@ public class Home : PageModel
         public int SourceSetId { get; set; }
 
         [Required]
-        [StringLength(255)]
+        [StringLength(250)]
         [Display(Name = "Set File Path")]
         public string SetFilePath { get; set; } = null!;
 
         [Required]
-        [StringLength(255)]
+        [StringLength(250)]
         [Display(Name = "Property File Path")]
         public string PropertyFilePath { get; set; } = null!;
 
         [Display(Name = "Computer Group to run on")]
         public int ComputerGroupId { get; set; }
+        
+        [DefaultValue("")]
+        [StringLength(50)]
+        [Display(Name = "CPU Model to run on")]
+        public string CpuModel { get; set; } = null!;
     }
 
     public class TempConfigData
