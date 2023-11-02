@@ -4,6 +4,7 @@
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Security.Claims;
 using BenchmarkingPortal.Dal.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -97,7 +98,7 @@ public class ExternalLoginModel : PageModel
         var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false, true);
         if (result.Succeeded)
         {
-            _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name,
+            _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity!.Name,
                 info.LoginProvider);
             return LocalRedirect(returnUrl);
         }
