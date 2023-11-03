@@ -1,9 +1,9 @@
 ﻿using BenchmarkingPortal.Dal.Dtos;
 using MediatR;
 
-namespace BenchmarkingPortal.Bll.Features.SourceSet.Commands;
+namespace BenchmarkingPortal.Bll.Features.SetFile.Commands;
 
-public class UploadNewSourceSetCommand : IRequest<SourceSetHeader>
+public class UploadNewSetFileCommand : IRequest<SetFileHeader>
 {
     public string Name { get; set; } = null!;
     public string Path { get; set; } = null!;

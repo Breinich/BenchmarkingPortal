@@ -56,7 +56,6 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             HardTimeLimit = request.HardTimeLimit,
             CpuModel = request.CpuModel,
             ExecutableId = request.ExecutableId,
-            SourceSetId = request.SourceSetId,
             SetFilePath = request.SetFilePath,
             PropertyFilePath = request.PropertyFilePath,
             ConfigurationId = request.ConfigurationId,
@@ -95,7 +94,6 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             // TODO need to be fixed
             ComputerGroupId = computerGroupId,
             ExecutableId = request.ExecutableId,
-            SourceSetId = request.SourceSetId,
             SetFilePath = request.SetFilePath,
             PropertyFilePath = request.PropertyFilePath,
             // TODO need to be fixed

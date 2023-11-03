@@ -21,8 +21,6 @@ public class StartBenchmarkCommand : IRequest<BenchmarkHeader>
 
     public int ExecutableId { get; set; }
 
-    public int SourceSetId { get; set; }
-
     public string SetFilePath { get; set; } = null!;
 
     public string PropertyFilePath { get; set; } = null!;
