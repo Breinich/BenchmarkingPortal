@@ -51,6 +51,7 @@ public class UserSeedService : IUserSeedService
         //await SeedTestUsersAsync();
     }
 
+    // ReSharper disable once UnusedMember.Local
     private async Task SeedTestUsersAsync()
     {
         if (_userManager.Users.Count() < 10)

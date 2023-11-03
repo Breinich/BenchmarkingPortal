@@ -18,6 +18,7 @@ public class ConstraintEntityConfiguration : IEntityTypeConfiguration<Constraint
         SampleData(builder);
     }
 
+    // ReSharper disable once UnusedParameter.Local
     private void SampleData(EntityTypeBuilder<Constraint> builder)
     {
         // Load test data here

@@ -27,6 +27,7 @@ public class SetFileEntityConfiguration : IEntityTypeConfiguration<SetFile>
         SampleData(builder);
     }
 
+    // ReSharper disable once UnusedParameter.Local
     private void SampleData(EntityTypeBuilder<SetFile> builder)
     {
         // Load test data here

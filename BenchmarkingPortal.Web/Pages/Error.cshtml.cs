@@ -29,11 +29,16 @@ public class ErrorModel : PageModel
         var exceptionHandlerPathFeature =
             HttpContext.Features.Get<IExceptionHandlerPathFeature>();
 
-        if (exceptionHandlerPathFeature?.Error is FileNotFoundException) ExceptionMessage = "The file was not found.";
+        switch (exceptionHandlerPathFeature?.Error)
+        {
+            case FileNotFoundException:
+                ExceptionMessage = "The file was not found.";
+                break;
+            case UnauthorizedAccessException:
+                return RedirectToPage("/Identity /Account/AccessDenied");
+        }
 
-        if (exceptionHandlerPathFeature?.Error is UnauthorizedAccessException)
-            return RedirectToPage("/Identity /Account/AccessDenied");
-
+        // ReSharper disable once InvertIf
         if (exceptionHandlerPathFeature?.Path == "/")
         {
             ExceptionMessage ??= string.Empty;

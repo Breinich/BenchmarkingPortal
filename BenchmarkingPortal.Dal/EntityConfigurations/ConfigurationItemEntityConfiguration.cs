@@ -20,6 +20,7 @@ public class ConfigurationItemEntityConfiguration : IEntityTypeConfiguration<Con
         SampleData(builder);
     }
 
+    // ReSharper disable once UnusedParameter.Local
     private void SampleData(EntityTypeBuilder<ConfigurationItem> builder)
     {
         // Load test data here

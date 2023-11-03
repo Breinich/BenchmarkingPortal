@@ -25,6 +25,7 @@ public sealed class ExpiredFilesCleanupService : IHostedService, IDisposable
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (_expiration == null)
         {
             _logger.LogInformation("Not running cleanup job as no expiration has been set.");
@@ -32,7 +33,8 @@ public sealed class ExpiredFilesCleanupService : IHostedService, IDisposable
         }
 
         await RunCleanup(cancellationToken);
-        _timer = new Timer(async e => await RunCleanup((CancellationToken)e), cancellationToken, TimeSpan.Zero,
+        // ReSharper disable once AsyncVoidLambda
+        _timer = new Timer(async e => await RunCleanup((CancellationToken)(e ?? throw new ArgumentNullException(nameof(e)))), cancellationToken, TimeSpan.Zero,
             _expiration.Timeout);
     }
 

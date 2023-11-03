@@ -253,8 +253,11 @@ public class Resources : PageModel
         [RegularExpression(@"^[^\\/?%*:|""<>\.]+$")]
         [Display(Name = "Source Set Name")]
         public string Name { get; set; } = null!;
+        
 
-        [Display(Name = "Source Set Version")] public string? Version { get; set; } = null!;
+        [Display(Name = "Source Set Version")] 
+        public string? Version { get; set; }
+        
 
         [Required(ErrorMessage = "Please select a file.")]
         public string FileUrl { get; set; } = null!;

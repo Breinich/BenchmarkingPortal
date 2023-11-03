@@ -33,6 +33,7 @@ public class WorkerEntityConfiguration : IEntityTypeConfiguration<Worker>
         SampleData(builder);
     }
 
+    // ReSharper disable once UnusedParameter.Local
     private void SampleData(EntityTypeBuilder<Worker> builder)
     {
         // Load test data here

@@ -4,7 +4,6 @@
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Security.Claims;
 using BenchmarkingPortal.Dal.Entities;
 using Microsoft.AspNetCore.Authorization;

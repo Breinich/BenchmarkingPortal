@@ -56,6 +56,7 @@ public class BenchmarkingDbContext : IdentityDbContext<User, IdentityRole<int>, 
         SeedData(builder);
     }
 
+    // ReSharper disable once UnusedParameter.Local
     private void SeedData(ModelBuilder modelBuilder)
     {
         //Add seed data here, if not at the configurations

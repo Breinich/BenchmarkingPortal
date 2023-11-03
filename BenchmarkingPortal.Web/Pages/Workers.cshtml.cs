@@ -85,7 +85,7 @@ public class Workers : PageModel
                 ComputerGroupId = ChangeComputerGroupId
             });
 
-            StatusMessage = $"Worker {id} updated successfully";
+            StatusMessage = $"Worker {result.Id} updated successfully";
 
             return RedirectToPage();
         }
@@ -140,7 +140,7 @@ public class Workers : PageModel
                               throw new ApplicationException(new ExceptionMessage<Worker>().NoPrivilege)
             });
 
-            StatusMessage = "Worker added successfully";
+            StatusMessage = $"Worker with id:{result.Id} added successfully";
 
             return RedirectToPage();
         }
@@ -162,7 +162,7 @@ public class Workers : PageModel
                 Description = ComputerGroupInput.Description
             });
 
-            StatusMessage = "Computer Group added successfully";
+            StatusMessage = $"Computer Group with id:{result.Id} added successfully";
 
             return RedirectToPage();
         }

@@ -1,4 +1,5 @@
-﻿namespace BenchmarkingPortal;
+﻿// ReSharper disable CheckNamespace
+namespace BenchmarkingPortal;
 
 public class Roles
 {

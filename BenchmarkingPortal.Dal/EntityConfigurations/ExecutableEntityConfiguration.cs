@@ -29,6 +29,7 @@ public class ExecutableEntityConfiguration : IEntityTypeConfiguration<Executable
         SampleData(builder);
     }
 
+    // ReSharper disable once UnusedParameter.Local
     private void SampleData(EntityTypeBuilder<Executable> builder)
     {
         // Load test data here

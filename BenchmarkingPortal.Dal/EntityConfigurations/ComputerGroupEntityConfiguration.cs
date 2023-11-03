@@ -23,6 +23,7 @@ public class ComputerGroupEntityConfiguration : IEntityTypeConfiguration<Compute
         SampleData(builder);
     }
 
+    // ReSharper disable once UnusedParameter.Local
     private void SampleData(EntityTypeBuilder<ComputerGroup> builder)
     {
         // Load test data here

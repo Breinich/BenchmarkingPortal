@@ -52,6 +52,7 @@ public class BenchmarkEntityConfiguration : IEntityTypeConfiguration<Benchmark>
         SampleData(builder);
     }
 
+    // ReSharper disable once UnusedParameter.Local
     private void SampleData(EntityTypeBuilder<Benchmark> builder)
     {
         // Load test data here

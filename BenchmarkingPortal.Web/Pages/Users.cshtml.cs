@@ -82,7 +82,7 @@ public class UsersModel : PageModel
                               throw new ApplicationException(new ExceptionMessage<User>().NoPrivilege)
             });
 
-            StatusMessage = $"{name} updated";
+            StatusMessage = $"{updatedUser.UserName} updated";
             return RedirectToPage();
         }
         catch (AggregateException e)
