@@ -1,4 +1,4 @@
-﻿function addConfigItem(scope, keyId, valueId, inputId) {
+function addConfigItem(scope, keyId, valueId, inputId) {
     const key = $(keyId).val();
     const value = $(valueId).val();
 
@@ -44,7 +44,6 @@
 }
 
 function deleteConfigItem(scope, key, value) {
-    debugger;
     $.ajax({
         type: "POST",
         url: "/Home?scope=" + scope + "&key=" + key + "&value=" + value + "&handler=DeleteConfigItem",
