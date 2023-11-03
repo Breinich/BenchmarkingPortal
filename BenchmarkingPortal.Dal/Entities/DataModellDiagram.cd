@@ -3,7 +3,7 @@
   <Class Name="BenchmarkingPortal.Dal.Entities.Benchmark">
     <Position X="4" Y="5.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>IAADDAAEQAAQiAAEAAAAEgQAAAAAAUABgSAAAACAAEQ=</HashCode>
+      <HashCode>IAADCAAEQAAQiAAEAAAAEgQAAAAAAUABgQAAAACAAEQ=</HashCode>
       <FileName>Entities\Benchmark.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -58,11 +58,11 @@
       <Property Name="Benchmarks" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="BenchmarkingPortal.Dal.Entities.SourceSet">
+  <Class Name="BenchmarkingPortal.Dal.Entities.SetFile">
     <Position X="7.5" Y="7.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>IAADAAAAAAAAgAIAAAAAAAQAAAAAAAAAAQAAAAAAAAA=</HashCode>
-      <FileName>Entities\SourceSet.cs</FileName>
+      <FileName>Entities\SetFile.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="BenchmarkingPortal.Dal.Entities.Worker">
@@ -79,7 +79,7 @@
         <Position X="-1.535" Y="0.038" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="SourceSets" Type="BenchmarkingPortal.Dal.Entities.SourceSet" ManuallyRouted="true">
+    <AssociationLine Name="SetFiles" Type="BenchmarkingPortal.Dal.Entities.SetFile" ManuallyRouted="true">
       <Path>
         <Point X="2.5" Y="5.432" />
         <Point X="4.19" Y="5.432" />
@@ -99,7 +99,7 @@
     <ShowAsCollectionAssociation>
       <Property Name="Benchmarks" />
       <Property Name="Executables" />
-      <Property Name="SourceSets" />
+      <Property Name="SetFiles" />
     </ShowAsCollectionAssociation>
   </Class>
   <Font Name="Segoe UI" Size="9" />

@@ -14,7 +14,6 @@ public class Benchmark
     public string? CpuModel { get; set; }
     public int ComputerGroupId { get; set; }
     public int ExecutableId { get; set; }
-    public int SourceSetId { get; set; }
     public string SetFilePath { get; set; } = null!;
     public string PropertyFilePath { get; set; } = null!;
     public DateTime StartedDate { get; set; }
@@ -23,6 +22,5 @@ public class Benchmark
     public virtual ComputerGroup ComputerGroup { get; set; } = null!;
     public virtual Configuration Configuration { get; set; } = null!;
     public virtual Executable Executable { get; set; } = null!;
-    public virtual SourceSet SourceSet { get; set; } = null!;
     public virtual User User { get; set; } = null!;
 }

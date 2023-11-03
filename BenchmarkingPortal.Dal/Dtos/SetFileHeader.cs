@@ -2,13 +2,13 @@
 
 namespace BenchmarkingPortal.Dal.Dtos;
 
-public class SourceSetHeader
+public class SetFileHeader
 {
-    public SourceSetHeader()
+    public SetFileHeader()
     {
     }
 
-    public SourceSetHeader(SourceSet s)
+    public SetFileHeader(SetFile s)
     {
         Id = s.Id;
         Name = s.Name;

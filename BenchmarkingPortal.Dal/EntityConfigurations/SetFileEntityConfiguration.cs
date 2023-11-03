@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BenchmarkingPortal.Dal.EntityConfigurations;
 
-public class SourceSetEntityConfiguration : IEntityTypeConfiguration<SourceSet>
+public class SetFileEntityConfiguration : IEntityTypeConfiguration<SetFile>
 {
-    public void Configure(EntityTypeBuilder<SourceSet> builder)
+    public void Configure(EntityTypeBuilder<SetFile> builder)
     {
-        builder.ToTable("SourceSets");
+        builder.ToTable("SetFiles");
 
         builder.HasKey(e => e.Id);
 
@@ -18,16 +18,16 @@ public class SourceSetEntityConfiguration : IEntityTypeConfiguration<SourceSet>
         builder.Property(e => e.UploadedDate).IsRequired();
         builder.Property(e => e.Version).HasMaxLength(50).IsRequired();
 
-        builder.HasOne(d => d.User).WithMany(p => p.SourceSets)
+        builder.HasOne(d => d.User).WithMany(p => p.SetFiles)
             .HasForeignKey(d => d.UserName)
             .HasPrincipalKey(d => d.UserName)
             .OnDelete(DeleteBehavior.ClientSetNull)
-            .HasConstraintName("FK_SourceSet_User");
+            .HasConstraintName("FK_SetFile_User");
 
         SampleData(builder);
     }
 
-    private void SampleData(EntityTypeBuilder<SourceSet> builder)
+    private void SampleData(EntityTypeBuilder<SetFile> builder)
     {
         // Load test data here
     }

@@ -1,6 +1,6 @@
 ﻿namespace BenchmarkingPortal.Dal.Entities;
 
-public class SourceSet
+public class SetFile
 {
     public int Id { get; set; }
 

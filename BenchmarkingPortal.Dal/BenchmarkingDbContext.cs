@@ -25,7 +25,7 @@ public class BenchmarkingDbContext : IdentityDbContext<User, IdentityRole<int>, 
 
     public virtual DbSet<Executable> Executables => Set<Executable>();
 
-    public virtual DbSet<SourceSet> SourceSets => Set<SourceSet>();
+    public virtual DbSet<SetFile> SetFiles => Set<SetFile>();
 
     public virtual DbSet<Worker> Workers => Set<Worker>();
 
@@ -46,7 +46,7 @@ public class BenchmarkingDbContext : IdentityDbContext<User, IdentityRole<int>, 
 
         builder.ApplyConfiguration(new ExecutableEntityConfiguration());
 
-        builder.ApplyConfiguration(new SourceSetEntityConfiguration());
+        builder.ApplyConfiguration(new SetFileEntityConfiguration());
 
         builder.ApplyConfiguration(new WorkerEntityConfiguration());
 
