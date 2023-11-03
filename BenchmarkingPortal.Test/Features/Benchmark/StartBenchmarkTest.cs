@@ -30,7 +30,6 @@ public class StartBenchmarkTest : IClassFixture<DatabaseFixture>, IDisposable
             TimeLimit = 900,
             HardTimeLimit = 960,
             ExecutableId = 1,
-            SourceSetId = 1,
             SetFilePath = "C:\\Users\\User\\Desktop\\test.txt",
             PropertyFilePath = "C:\\Users\\User\\Desktop\\test.txt",
             ConfigurationId = 1,

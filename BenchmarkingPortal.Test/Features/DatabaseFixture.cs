@@ -60,15 +60,15 @@ public class DatabaseFixture : IAsyncLifetime
         await Context.Executables.AddAsync(executable);
         await Context.SaveChangesAsync();
 
-        var sourceSet = new SourceSet
+        var setFile = new SetFile
         {
-            Name = "TestSourceSet",
-            Path = "C:\\TestSourceSet",
+            Name = "TestSetFile",
+            Path = "C:\\TestSetFile",
             Version = "1.0",
             UploadedDate = DateTime.UtcNow,
             UserName = user.UserName
         };
-        await Context.SourceSets.AddAsync(sourceSet);
+        await Context.SetFiles.AddAsync(setFile);
         await Context.SaveChangesAsync();
 
         var configuration = new Configuration();
@@ -108,9 +108,8 @@ public class DatabaseFixture : IAsyncLifetime
             ComputerGroupId = computerGroup.Id,
             ExecutableId = executable.Id,
             UserName = user.UserName,
-            SourceSetId = sourceSet.Id,
-            SetFilePath = "C:\\TestSourceSet\\test.txt",
-            PropertyFilePath = "C:\\TestSourceSet\\test.properties",
+            SetFilePath = "C:\\TestSetFile\\test.txt",
+            PropertyFilePath = "C:\\TestSetFile\\test.properties",
             ConfigurationId = configuration.Id
         });
         await Context.SaveChangesAsync();

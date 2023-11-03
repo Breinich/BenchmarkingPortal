@@ -43,7 +43,7 @@
         <Folder Include="Features\ComputerGroup\" />
         <Folder Include="Features\Configuration\" />
         <Folder Include="Features\Executable\" />
-        <Folder Include="Features\SourceSet\" />
+        <Folder Include="Features\SetFile\" />
         <Folder Include="Features\Worker\" />
     </ItemGroup>
 
