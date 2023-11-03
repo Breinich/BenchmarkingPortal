@@ -39,6 +39,11 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     b.Property<int>("Cpu")
                         .HasColumnType("integer");
 
+                    b.Property<string>("CpuModel")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
                     b.Property<int>("ExecutableId")
                         .HasColumnType("integer");
 
@@ -55,23 +60,20 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
 
                     b.Property<string>("PropertyFilePath")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
 
                     b.Property<int>("Ram")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Result")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                    b.Property<string>("ResultPath")
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
 
                     b.Property<string>("SetFilePath")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<int>("SourceSetId")
-                        .HasColumnType("integer");
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
 
                     b.Property<DateTime>("StartedDate")
                         .HasColumnType("timestamp with time zone");
@@ -97,8 +99,6 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
 
                     b.HasIndex("Name")
                         .IsUnique();
-
-                    b.HasIndex("SourceSetId");
 
                     b.HasIndex("UserName");
 
@@ -225,7 +225,7 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     b.ToTable("Executables", (string)null);
                 });
 
-            modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.SourceSet", b =>
+            modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.SetFile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -259,7 +259,7 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
 
                     b.HasIndex("UserName");
 
-                    b.ToTable("SourceSets", (string)null);
+                    b.ToTable("SetFiles", (string)null);
                 });
 
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.User", b =>
@@ -544,12 +544,6 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Benchmark_Executable");
 
-                    b.HasOne("BenchmarkingPortal.Dal.Entities.SourceSet", "SourceSet")
-                        .WithMany()
-                        .HasForeignKey("SourceSetId")
-                        .IsRequired()
-                        .HasConstraintName("FK_Benchmark_SourceSet");
-
                     b.HasOne("BenchmarkingPortal.Dal.Entities.User", "User")
                         .WithMany("Benchmarks")
                         .HasForeignKey("UserName")
@@ -562,8 +556,6 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     b.Navigation("Configuration");
 
                     b.Navigation("Executable");
-
-                    b.Navigation("SourceSet");
 
                     b.Navigation("User");
                 });
@@ -598,14 +590,14 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.SourceSet", b =>
+            modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.SetFile", b =>
                 {
                     b.HasOne("BenchmarkingPortal.Dal.Entities.User", "User")
-                        .WithMany("SourceSets")
+                        .WithMany("SetFiles")
                         .HasForeignKey("UserName")
                         .HasPrincipalKey("UserName")
                         .IsRequired()
-                        .HasConstraintName("FK_SourceSet_User");
+                        .HasConstraintName("FK_SetFile_User");
 
                     b.Navigation("User");
                 });
@@ -706,7 +698,7 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
 
                     b.Navigation("Executables");
 
-                    b.Navigation("SourceSets");
+                    b.Navigation("SetFiles");
                 });
 #pragma warning restore 612, 618
         }
