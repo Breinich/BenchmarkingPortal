@@ -46,7 +46,7 @@ function uploadFile(num) {
 }
 
 function cancelUpload() {
-    upload && upload.abort();
+    upload?.abortt();
     setProgressTest('Upload aborted');
     uploadProgress.value = 0;
     enableUpload();
