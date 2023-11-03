@@ -6,7 +6,7 @@ using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
 using BenchmarkingPortal.Bll.Features.ComputerGroup.Queries;
 using BenchmarkingPortal.Bll.Features.Configuration.Commands;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
-using BenchmarkingPortal.Bll.Features.SourceSet.Queries;
+using BenchmarkingPortal.Bll.Features.SetFile.Queries;
 using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
 using MediatR;
@@ -39,7 +39,7 @@ public class Home : PageModel
 
     public List<BenchmarkHeader> UnfinishedBenchmarks { get; set; } = new();
     public List<SelectListItem> Executables { get; set; } = new();
-    public List<SelectListItem> SourceSets { get; set; } = new();
+    public List<SelectListItem> SetFiles { get; set; } = new();
     public List<SelectListItem> ComputerGroups { get; set; } = new();
     public List<string> Headers { get; set; } = new();
 
@@ -52,7 +52,7 @@ public class Home : PageModel
 
             Headers = new List<string>
             {
-                "Name", "Started", "Status", "Priority", "RAM", "CPU", "Group", "Executable", "Source Set", "Progress",
+                "Name", "Started", "Status", "Priority", "RAM", "CPU", "Group", "Executable", "Set File", "Progress",
                 "Actions"
             };
 
@@ -357,7 +357,6 @@ public class Home : PageModel
             {
                 Name = CreateInput.Name,
                 ExecutableId = CreateInput.ExecutableId,
-                SourceSetId = CreateInput.SourceSetId,
                 SetFilePath = CreateInput.SetFilePath,
                 PropertyFilePath = CreateInput.PropertyFilePath,
                 Priority = CreateInput.Priority,
@@ -394,7 +393,7 @@ public class Home : PageModel
             Executables = (await _mediator.Send(new GetAllExecutablesQuery()))
                 .Select(eh => new SelectListItem(eh.Name + ":" + eh.Version, eh.Id.ToString())).ToList();
 
-            SourceSets = (await _mediator.Send(new GetAllSourceSetsQuery()))
+            SetFiles = (await _mediator.Send(new GetAllSetFilesQuery()))
                 .Select(sh => new SelectListItem(sh.Name + ":" + sh.Version, sh.Id.ToString())).ToList();
 
             ComputerGroups = (await _mediator.Send(new GetAllComputerGroupsQuery()))
@@ -454,10 +453,6 @@ public class Home : PageModel
         public int ExecutableId { get; set; }
 
         [Required]
-        [Display(Name = "Source Set")]
-        public int SourceSetId { get; set; }
-
-        [Required]
         [StringLength(250)]
         [Display(Name = "Set File Path")]
         public string SetFilePath { get; set; } = null!;
@@ -470,7 +465,7 @@ public class Home : PageModel
         [Display(Name = "Computer Group to run on")]
         public int ComputerGroupId { get; set; }
         
-        [DefaultValue("")]
+        [DefaultValue("-")]
         [StringLength(50)]
         [Display(Name = "CPU Model to run on")]
         public string CpuModel { get; set; } = null!;

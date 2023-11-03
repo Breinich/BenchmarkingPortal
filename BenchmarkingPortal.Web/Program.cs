@@ -7,8 +7,8 @@ using BenchmarkingPortal.Bll.Features.ComputerGroup.Queries;
 using BenchmarkingPortal.Bll.Features.Configuration.Commands;
 using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
-using BenchmarkingPortal.Bll.Features.SourceSet.Commands;
-using BenchmarkingPortal.Bll.Features.SourceSet.Queries;
+using BenchmarkingPortal.Bll.Features.SetFile.Commands;
+using BenchmarkingPortal.Bll.Features.SetFile.Queries;
 using BenchmarkingPortal.Bll.Features.User.Commands;
 using BenchmarkingPortal.Bll.Features.User.Queries;
 using BenchmarkingPortal.Bll.Features.Worker.Commands;
@@ -127,34 +127,34 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddMediatR(cfg =>
-{
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(DeleteBenchmarkCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(StartBenchmarkCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(UpdateBenchmarkCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(GetAllBenchmarksQuery).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(GetResultPathQuery).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(CreateComputerGroupCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(GetAllComputerGroupsQuery).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(CreateConfigurationCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(DeleteExecutableCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(UploadNewExecutableCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(GetAllExecutablesQuery).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(DeleteSourceSetCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(UploadNewSourceSetCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(GetAllSourceSetsQuery).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(AddWorkerCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(RemoveWorkerCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(UpdateWorkerCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(GetAllWorkersQuery).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(GetAllUsersQuery).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(UpdateUserCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(DeleteUserCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(GetAllComputerGroupsWithStatsQuery).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(DeleteComputerGroupCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(UpdateComputerGroupCommand).Assembly);
-});
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
+        typeof(Program).Assembly,
+        typeof(DeleteBenchmarkCommand).Assembly,
+        typeof(StartBenchmarkCommand).Assembly,
+        typeof(UpdateBenchmarkCommand).Assembly,
+        typeof(GetAllBenchmarksQuery).Assembly,
+        typeof(GetResultPathQuery).Assembly,
+        typeof(CreateComputerGroupCommand).Assembly,
+        typeof(GetAllComputerGroupsQuery).Assembly,
+        typeof(CreateConfigurationCommand).Assembly,
+        typeof(DeleteExecutableCommand).Assembly,
+        typeof(UploadNewExecutableCommand).Assembly,
+        typeof(GetAllExecutablesQuery).Assembly,
+        typeof(DeleteSetFileCommand).Assembly,
+        typeof(UploadNewSetFileCommand).Assembly,
+        typeof(GetAllSetFilesQuery).Assembly,
+        typeof(AddWorkerCommand).Assembly,
+        typeof(RemoveWorkerCommand).Assembly,
+        typeof(UpdateWorkerCommand).Assembly,
+        typeof(GetAllWorkersQuery).Assembly,
+        typeof(GetAllUsersQuery).Assembly,
+        typeof(UpdateUserCommand).Assembly,
+        typeof(DeleteUserCommand).Assembly,
+        typeof(GetAllComputerGroupsWithStatsQuery).Assembly,
+        typeof(DeleteComputerGroupCommand).Assembly,
+        typeof(UpdateComputerGroupCommand).Assembly,
+        typeof(GetAllSetFileNamesQuery).Assembly
+    ));
 
 builder.Services.Configure<FormOptions>(x =>
 {

@@ -3,8 +3,8 @@ using System.Text;
 using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
-using BenchmarkingPortal.Bll.Features.SourceSet.Commands;
-using BenchmarkingPortal.Bll.Features.SourceSet.Queries;
+using BenchmarkingPortal.Bll.Features.SetFile.Commands;
+using BenchmarkingPortal.Bll.Features.SetFile.Queries;
 using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
 using MediatR;
@@ -27,22 +27,22 @@ public class Resources : PageModel
         _mediator = mediator;
         _config = config;
         Executables = new List<ExecutableHeader>();
-        SourceSets = new List<SourceSetHeader>();
+        SetFiles = new List<SetFileHeader>();
 
         ExecutableInput = new ExecutableInputModel();
-        SourceSetInput = new SourceSetInputModel();
+        SetFileInput = new SetFileInputModel();
     }
 
     [TempData] public string? StatusMessage { get; set; }
 
     public List<ExecutableHeader> Executables { get; set; }
-    public List<SourceSetHeader> SourceSets { get; set; }
+    public List<SetFileHeader> SetFiles { get; set; }
     public List<string> ExeHeaders { get; set; } = new();
     public List<string> SourceHeaders { get; set; } = new();
 
     [BindProperty] public ExecutableInputModel ExecutableInput { get; set; }
 
-    [BindProperty] public SourceSetInputModel SourceSetInput { get; set; }
+    [BindProperty] public SetFileInputModel SetFileInput { get; set; }
 
     public async Task<IActionResult> OnGetAsync()
     {
@@ -59,7 +59,7 @@ public class Resources : PageModel
             };
 
             Executables = (await _mediator.Send(new GetAllExecutablesQuery())).ToList();
-            SourceSets = (await _mediator.Send(new GetAllSourceSetsQuery())).ToList();
+            SetFiles = (await _mediator.Send(new GetAllSetFilesQuery())).ToList();
 
             return Page();
         }
@@ -96,16 +96,16 @@ public class Resources : PageModel
         }
     }
 
-    public async Task<IActionResult> OnPostDeleteSourceSetAsync(int id, string name, string fileId)
+    public async Task<IActionResult> OnPostDeleteSetFileAsync(int id, string name, string fileId)
     {
         try
         {
-            await _mediator.Send(new DeleteSourceSetCommand
+            await _mediator.Send(new DeleteSetFileCommand
             {
-                SourceSetId = id,
+                SetFileId = id,
                 FileId = fileId,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(new ExceptionMessage<SourceSet>().NoPrivilege)
+                              throw new ApplicationException(new ExceptionMessage<SetFile>().NoPrivilege)
             });
             StatusMessage = $"{name} deleted successfully.";
 
@@ -195,29 +195,29 @@ public class Resources : PageModel
         }
     }
 
-    public async Task<IActionResult> OnPostUploadSourceSetAsync()
+    public async Task<IActionResult> OnPostUploadSetFileAsync()
     {
         try
         {
-            var newSourceSet = await _mediator.Send(new UploadNewSourceSetCommand
+            var newSetFile = await _mediator.Send(new UploadNewSetFileCommand
             {
-                Name = SourceSetInput.Name,
-                Version = SourceSetInput.Version,
-                Path = SourceSetInput.FileUrl,
+                Name = SetFileInput.Name,
+                Version = SetFileInput.Version,
+                Path = SetFileInput.FileUrl,
                 UploadedDate = DateTime.UtcNow,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(new ExceptionMessage<SourceSet>().NoPrivilege)
+                              throw new ApplicationException(new ExceptionMessage<SetFile>().NoPrivilege)
             });
 
-            SourceSetInput = new SourceSetInputModel();
+            SetFileInput = new SetFileInputModel();
 
-            StatusMessage = $"{newSourceSet.Name} uploaded successfully.";
+            StatusMessage = $"{newSetFile.Name} uploaded successfully.";
 
             return RedirectToPage();
         }
         catch (Exception e)
         {
-            SourceSetInput = new SourceSetInputModel();
+            SetFileInput = new SetFileInputModel();
 
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;
@@ -247,7 +247,7 @@ public class Resources : PageModel
         public string FileUrl { get; set; } = null!;
     }
 
-    public class SourceSetInputModel
+    public class SetFileInputModel
     {
         [Required]
         [RegularExpression(@"^[^\\/?%*:|""<>\.]+$")]

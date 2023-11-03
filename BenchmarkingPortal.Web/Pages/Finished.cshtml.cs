@@ -2,7 +2,6 @@
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
-using BenchmarkingPortal.Bll.Features.SourceSet.Queries;
 using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
 using MediatR;
@@ -27,7 +26,6 @@ public class Finished : PageModel
 
     public List<BenchmarkHeader> FinishedBenchmarks { get; set; } = new();
     public Dictionary<int, string> ExecutableNames { get; set; } = new();
-    public Dictionary<int, string> SourceSetNames { get; set; } = new();
     public List<string> Headers { get; set; } = new();
 
     public async Task<IActionResult> OnGet()
@@ -36,7 +34,7 @@ public class Finished : PageModel
         {
             Headers = new List<string>
             {
-                "Name", "Started", "RAM", "CPU", "Group", "Executable", "SourceSet", "Actions"
+                "Name", "Started", "RAM", "CPU", "CpuGroup", "Executable", "SetFile", "Actions"
             };
 
             FinishedBenchmarks = (await _mediator.Send(new GetAllBenchmarksQuery
@@ -46,9 +44,6 @@ public class Finished : PageModel
 
             ExecutableNames = (await _mediator.Send(new GetAllExecutablesQuery()))
                 .ToDictionary(x => x.Id, x => x.Name + ":" + x.Version);
-
-            SourceSetNames = (await _mediator.Send(new GetAllSourceSetsQuery()))
-                .ToDictionary(x => x.Id, x => x.Name + ": " + x.Version);
 
             return Page();
         }

@@ -41,7 +41,7 @@
                             <div class="d-flex justify-content-center">@item.Cpu Cores</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.ComputerGroupId</div>
+                            <div class="d-flex justify-content-center">@item.CpuModel</div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">
@@ -50,7 +50,7 @@
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">
-                                @Model.SourceSetNames.GetValueOrDefault(item.SourceSetId)
+                                @item.SetFilePath
                             </div>
                         </td>
                         <td>
@@ -111,7 +111,7 @@
                             <div class="d-flex justify-content-center">@item.Cpu Cores</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.ComputerGroupId</div>
+                            <div class="d-flex justify-content-center">@item.CpuModel</div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">
@@ -120,7 +120,7 @@
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">
-                                @Model.SourceSetNames.GetValueOrDefault(item.SourceSetId)
+                                @item.SetFilePath
                             </div>
                         </td>
                         <td>
