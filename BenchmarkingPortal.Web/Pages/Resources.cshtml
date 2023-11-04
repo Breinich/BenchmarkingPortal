@@ -294,10 +294,11 @@
                         <span asp-validation-for="ExecutableInput.ToolVersion" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-4">
+                        <input id="rootPath1" hidden value="@User."/>
                         <input asp-for="ExecutableInput.FileUrl" id="filePath1" hidden/>
                         <div class="row">
                             <div class="col-6">
-                                <input type="file" name="droppedFile1" id="droppedFile1" class="form-control"/>
+                                <input type="file" name="droppedFile1" id="droppedFile1" class="form-control" accept="application/zip,zip"/>
                             </div>
                             <div class="col-6">
                                 <input type="button" id="uploadButton1" class="btn btn-primary m-1" value="Upload" onclick="uploadFile(1)"/>

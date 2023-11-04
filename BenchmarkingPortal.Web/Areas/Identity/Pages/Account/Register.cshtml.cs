@@ -4,7 +4,10 @@
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
+using BenchmarkingPortal.Bll.Features.User.Commands;
+using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,15 +20,18 @@ public class RegisterModel : PageModel
     private readonly ILogger<RegisterModel> _logger;
     private readonly SignInManager<User> _signInManager;
     private readonly UserManager<User> _userManager;
+    private readonly IMediator _mediator;
 
     public RegisterModel(
         UserManager<User> userManager,
         SignInManager<User> signInManager,
-        ILogger<RegisterModel> logger)
+        ILogger<RegisterModel> logger,
+        IMediator mediator)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _logger = logger;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -60,24 +66,25 @@ public class RegisterModel : PageModel
         ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         if (ModelState.IsValid)
         {
-            var user = new User { UserName = Input.UserName, Email = Input.Email };
-
-            var result = await _userManager.CreateAsync(user, Input.Password);
-
-            if (result.Succeeded)
+            try
             {
-                await _userManager.AddToRoleAsync(user, Roles.Guest);
+                UserHeader result = await _mediator.Send(new CreateUserCommand()
+                {
+                    UserName = Input.UserName,
+                    Email = Input.Email,
+                    Password = Input.Password
+                });
 
-                _logger.LogInformation("User created a new account with password.");
+                _logger.LogInformation($"User ({result.UserName}) created a new account with password.");
 
-                await _signInManager.SignInAsync(user, false);
                 return LocalRedirect(returnUrl);
             }
-
-            foreach (var error in result.Errors) ModelState.AddModelError(string.Empty, error.Description);
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                _logger.LogError(e, "Error while creating user");
+            }
         }
-
-        // If we got this far, something failed, redisplay form
         return Page();
     }
 

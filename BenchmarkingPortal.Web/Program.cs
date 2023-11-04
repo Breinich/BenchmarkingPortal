@@ -153,7 +153,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
         typeof(GetAllComputerGroupsWithStatsQuery).Assembly,
         typeof(DeleteComputerGroupCommand).Assembly,
         typeof(UpdateComputerGroupCommand).Assembly,
-        typeof(GetAllSetFileNamesQuery).Assembly
+        typeof(GetAllSetFileNamesQuery).Assembly,
+        typeof(CreateUserCommand).Assembly
     ));
 
 builder.Services.Configure<FormOptions>(x =>

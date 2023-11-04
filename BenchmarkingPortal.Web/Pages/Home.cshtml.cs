@@ -393,8 +393,8 @@ public class Home : PageModel
             Executables = (await _mediator.Send(new GetAllExecutablesQuery()))
                 .Select(eh => new SelectListItem(eh.Name + ":" + eh.Version, eh.Id.ToString())).ToList();
 
-            SetFiles = (await _mediator.Send(new GetAllSetFilesQuery()))
-                .Select(sh => new SelectListItem(sh.Name + ":" + sh.Version, sh.Id.ToString())).ToList();
+            SetFiles = (await _mediator.Send(new GetAllSetFileNamesQuery()))
+                .Select(sh => new SelectListItem(sh, sh)).ToList();
 
             ComputerGroups = (await _mediator.Send(new GetAllComputerGroupsQuery()))
                 .Select(c => new SelectListItem(c.Id + ": " + c.Description, c.Id.ToString())).ToList();
