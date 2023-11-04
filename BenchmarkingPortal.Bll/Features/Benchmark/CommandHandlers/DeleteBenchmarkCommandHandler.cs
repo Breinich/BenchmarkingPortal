@@ -51,6 +51,7 @@ public class DeleteBenchmarkCommandHandler : IRequestHandler<DeleteBenchmarkComm
 
         // Somehow remove the results of the benchmark, maybe ask a service
         // If this uses the whole object, BenchmarkHeader should be used
+        throw new NotImplementedException();
 
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 

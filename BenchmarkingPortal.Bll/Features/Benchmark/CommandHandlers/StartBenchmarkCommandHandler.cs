@@ -68,6 +68,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
         // Delegating the benchmark to the scheduler and starting it on one or more VMs
+        throw new NotImplementedException();
 
         // The scheduler sends back the assigned ComputerGroup's Id and the start time, these are ONLY TEMPORARY
         var startedDate = DateTime.UtcNow;

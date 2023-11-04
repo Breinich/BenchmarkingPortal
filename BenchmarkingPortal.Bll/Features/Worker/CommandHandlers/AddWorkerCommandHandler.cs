@@ -33,6 +33,8 @@ public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerH
         };
 
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        
+        throw new NotImplementedException();
 
         // The scheduler connects to the VM and checks the provided data (ram, cpu, storage, username, password)
 

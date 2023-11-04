@@ -21,6 +21,7 @@ public class CreateConfigurationCommandHandler : IRequestHandler<CreateConfigura
     {
         // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         // config check needed based on the constraints
+        throw new NotImplementedException();
         // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
         var config = new Dal.Entities.Configuration();

@@ -27,6 +27,9 @@ public class UploadNewSetFileCommandHandler : IRequestHandler<UploadNewSetFileCo
             UploadedDate = request.UploadedDate,
             Version = request.Version
         };
+        
+        // TODO check the file location
+        throw new NotImplementedException();
 
         await _context.SetFiles.AddAsync(setFile, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);

@@ -52,7 +52,7 @@ public class Home : PageModel
 
             Headers = new List<string>
             {
-                "Name", "Started", "Status", "Priority", "RAM", "CPU", "Group", "Executable", "Set File", "Progress",
+                "Name", "Started", "Status", "Priority", "RAM", "CPU", "CPU model", "Executable", "Set File", "Progress",
                 "Actions"
             };
 
@@ -427,6 +427,7 @@ public class Home : PageModel
         public string Name { get; set; } = null!;
 
         [Required]
+        [DefaultValue(0)]
         [Display(Name = "Priority")]
         public int Priority { get; set; }
 

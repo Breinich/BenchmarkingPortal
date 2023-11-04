@@ -28,6 +28,7 @@ public class UpdateWorkerCommandHandler : IRequestHandler<UpdateWorkerCommand, W
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
         // Assign the worker to an other computer group
+        throw new NotImplementedException();
 
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 

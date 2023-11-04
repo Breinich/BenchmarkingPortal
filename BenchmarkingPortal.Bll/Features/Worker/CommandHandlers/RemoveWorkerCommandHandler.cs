@@ -24,6 +24,8 @@ public class RemoveWorkerCommandHandler : IRequestHandler<RemoveWorkerCommand>
         var workerDto = new WorkerHeader(worker);
 
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        
+        throw new NotImplementedException();
 
         // The scheduler checks, whether the worker has any tasks running, and if not, removes it
         // and redelegates the tasks among the workers left at the according computer group
