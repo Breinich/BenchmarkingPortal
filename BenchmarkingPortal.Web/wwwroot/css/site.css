@@ -21,6 +21,18 @@ body > .container, body > .container > .pb-3 {
     min-height: 100%;
 }
 
+a {
+    color: var(--ftsrg);
+}
+
+a:hover {
+    color: black;
+}
+
+a:active {
+    color: black;
+}
+
 .navbar {
     font-weight: bold;
 }
@@ -35,6 +47,7 @@ body > .container, body > .container > .pb-3 {
     font-weight: bold;
     background-color: white;
     color: var(--ftsrg);
+    border-radius: 50rem;
 }
 
 .nav-pills .nav-link.active {
@@ -94,13 +107,7 @@ h3 {
     color: black;
 }
 
-.btn-danger:active {
-    background-color: var(--ftsrg);
-    border-color: var(--ftsrg);
-    color: black;
-}
-
-.btn-danger:focus {
+.btn-danger:active, .btn-danger:focus, .btn-danger:focus:active {
     background-color: var(--ftsrg);
     border-color: var(--ftsrg);
     color: black;
@@ -120,6 +127,11 @@ h3 {
 .form-check-input:checked {
     background-color: var(--ftsrg);
     border-color: var(--ftsrg);
+}
+
+.danger {
+    color: var(--ftsrg);
+    font-weight: bold;
 }
 
 .invalid-tooltip {

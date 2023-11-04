@@ -8,19 +8,19 @@
 }
 
 <header>
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">You do not have access to this resource.</p>
+    <h2 class="danger">@ViewData["Title"]</h2>
+    <p class="danger">You do not have access to this resource.</p>
 
     @if (SignInManager.IsSignedIn(User) && User.IsInRole(Roles.Guest))
     {
         <hr/>
-        <a asp-area="Identity" asp-page="/Account/Manage/Index">View your account.</a>
-        <p class="text-danger">You are currently logged in as a guest. Please contact the <a href=@($"mailto:{Configuration["Users:AdminPublicEmail"]}")>administrator</a> to request access.</p>
+        <a asp-area="Identity" asp-page="/Account/Manage/Index" class="danger">View your account.</a>
+        <p class="danger">You are currently logged in as a guest. Please contact the <a href=@($"mailto:{Configuration["Users:AdminPublicEmail"]}")>administrator</a> to request access.</p>
     }
     else if (!SignInManager.IsSignedIn(User))
     {
         <hr/>
-        <a asp-area="Identity" asp-page="/Account/Login">Log in.</a>
-        <p class="text-danger">You are currently not logged in. Please log in to request access.</p>
+        <a asp-area="Identity" asp-page="/Account/Login" class="danger">Log in.</a>
+        <p class="danger">You are currently not logged in. Please log in to request access.</p>
     }
 </header>
