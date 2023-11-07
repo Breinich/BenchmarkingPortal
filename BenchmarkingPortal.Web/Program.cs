@@ -1,4 +1,6 @@
+using System.IO.Compression;
 using System.Net;
+using System.Text;
 using BenchmarkingPortal;
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
@@ -13,24 +15,25 @@ using BenchmarkingPortal.Bll.Features.User.Commands;
 using BenchmarkingPortal.Bll.Features.User.Queries;
 using BenchmarkingPortal.Bll.Features.Worker.Commands;
 using BenchmarkingPortal.Bll.Features.Worker.Queries;
+using BenchmarkingPortal.Bll.Tus;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Entities;
 using BenchmarkingPortal.Dal.SeedInterfaces;
 using BenchmarkingPortal.Dal.SeedService;
-using BenchmarkingPortal.Web;
 using BenchmarkingPortal.Web.Endpoints;
 using BenchmarkingPortal.Web.Hosting;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
 using tusdotnet;
 using tusdotnet.Models;
 using tusdotnet.Models.Concatenation;
 using tusdotnet.Models.Configuration;
 using tusdotnet.Models.Expiration;
-using tusdotnet.Stores;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,7 +64,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.AllowedForNewUsers = true;
 // User settings
     options.User.AllowedUserNameCharacters =
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
     options.User.RequireUniqueEmail = false;
 });
 
@@ -154,7 +157,11 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
         typeof(DeleteComputerGroupCommand).Assembly,
         typeof(UpdateComputerGroupCommand).Assembly,
         typeof(GetAllSetFileNamesQuery).Assembly,
-        typeof(CreateUserCommand).Assembly
+        typeof(CreateUserCommand).Assembly,
+        typeof(SetFileExistsByNameQuery).Assembly,
+        typeof(ExecutableExistsByNameQuery).Assembly,
+        typeof(GetExecutableByPathQuery).Assembly,
+        typeof(GetSetFileByPathQuery).Assembly
     ));
 
 builder.Services.Configure<FormOptions>(x =>
@@ -165,10 +172,6 @@ builder.Services.Configure<FormOptions>(x =>
 });
 
 builder.Services.Configure<KestrelServerOptions>(o => o.Limits.MaxRequestBodySize = 1024L * 1024 * 1024 * 10);
-
-builder.Services.AddSingleton<TusDiskStorageOptionHelper>();
-builder.Services.AddSingleton(services => CreateTusConfigurationForCleanupService(services));
-builder.Services.AddHostedService<ExpiredFilesCleanupService>();
 
 var app = builder.Build();
 
@@ -206,27 +209,23 @@ app.MapRazorPages();
 
 app.Run();
 
-static DefaultTusConfiguration CreateTusConfigurationForCleanupService(IServiceProvider services)
-{
-    var path = services.GetRequiredService<TusDiskStorageOptionHelper>().StorageDiskPath;
-
-    // Simplified configuration just for the ExpiredFilesCleanupService to show load order of configs.
-    return new DefaultTusConfiguration
-    {
-        Store = new TusDiskStore(path),
-        Expiration = new SlidingExpiration(TimeSpan.FromMinutes(5))
-    };
-}
-
 static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpContext)
 {
     var logger = httpContext.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger<Program>();
 
-    var diskStorePath = httpContext.RequestServices.GetRequiredService<TusDiskStorageOptionHelper>().StorageDiskPath;
+    if (httpContext.Request.Headers["root"] == StringValues.Empty)
+    {
+        throw new ApplicationException("Missing root path from request headers");
+    }
+    var diskStorePath = httpContext.Request.Headers["root"][0] ?? 
+                        throw new ApplicationException("Missing root path value from request headers");
+    
+    if (!Directory.Exists(diskStorePath))
+        Directory.CreateDirectory(diskStorePath);
 
     var config = new DefaultTusConfiguration
     {
-        Store = new TusDiskStore(diskStorePath, true),
+        Store = new CustomTusDiskStore(diskStorePath, httpContext.RequestServices.GetRequiredService<IMediator>()),
         MetadataParsingStrategy = MetadataParsingStrategy.AllowEmptyValues,
         UsePipelinesIfAvailable = true,
         Events = new Events
@@ -268,19 +267,32 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
                 return Task.CompletedTask;
             },
 
-            OnBeforeCreateAsync = ctx =>
+            OnBeforeCreateAsync = async ctx =>
             {
-                // Partial files are not complete so we do not need to validate
-                // the metadata in our example.
-                if (ctx.FileConcatenation is FileConcatPartial) return Task.CompletedTask;
+                // Partial files are not complete so we do not need to validate the metadata
+                if (ctx.FileConcatenation is FileConcatPartial) return;
 
                 if (!ctx.Metadata.ContainsKey("name") || ctx.Metadata["name"].HasEmptyValue)
-                    ctx.FailRequest("name metadata must be specified. ");
-
-                if (!ctx.Metadata.ContainsKey("contentType") || ctx.Metadata["contentType"].HasEmptyValue)
-                    ctx.FailRequest("contentType metadata must be specified. ");
-
-                return Task.CompletedTask;
+                    ctx.FailRequest("#Name metadata must be specified.#");
+                
+                var mediator = ctx.HttpContext.RequestServices.GetRequiredService<IMediator>();
+                var fileName = ctx.Metadata["name"].GetString(Encoding.UTF8);
+                
+                if(await mediator.Send(new SetFileExistsByNameQuery
+                   {
+                       FileName = fileName
+                   }) 
+                   || 
+                   await mediator.Send(new ExecutableExistsByNameQuery
+                   {
+                       FileName = fileName
+                   })
+                   || 
+                   File.Exists(diskStorePath + Path.DirectorySeparatorChar + fileName))
+                    ctx.FailRequest("#File with this name already exists.#");
+                
+                if (!fileName.EndsWith(".zip") && !fileName.EndsWith(".set"))
+                    ctx.FailRequest("#Invalid file extension.#");
             },
             OnCreateCompleteAsync = ctx =>
             {
@@ -295,6 +307,10 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
             OnDeleteCompleteAsync = ctx =>
             {
                 logger.LogInformation($"Deleted file {ctx.FileId} using {ctx.Store.GetType().FullName}");
+                if (ctx.FileId.Split(".").Last() == "zip")
+                {
+                    Directory.Delete(diskStorePath + Path.DirectorySeparatorChar + ctx.FileId.TrimEnd(".zip".ToCharArray()));
+                }
                 return Task.CompletedTask;
             },
             OnFileCompleteAsync = ctx =>
@@ -302,7 +318,19 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
                 logger.LogInformation($"Upload of {ctx.FileId} completed using {ctx.Store.GetType().FullName}");
                 // If the store implements ITusReadableStore one could access the completed file here.
                 // The default TusDiskStore implements this interface:
-                //var file = await ctx.GetFileAsync();
+                // var file = await ctx.GetFileAsync();
+
+                if (ctx.FileId.Split(".").Last() == "zip")
+                {
+                    ZipFile.ExtractToDirectory(diskStorePath + Path.DirectorySeparatorChar + ctx.FileId,
+                        diskStorePath, true);
+                }
+                
+                File.Delete(diskStorePath + Path.DirectorySeparatorChar + ctx.FileId + ".uploadlength");
+                File.Delete(diskStorePath + Path.DirectorySeparatorChar + ctx.FileId + ".chunkstart");
+                File.Delete(diskStorePath + Path.DirectorySeparatorChar + ctx.FileId + ".chunkcomplete");
+                File.Delete(diskStorePath + Path.DirectorySeparatorChar + ctx.FileId + ".expiration");
+
                 return Task.CompletedTask;
             }
         },
