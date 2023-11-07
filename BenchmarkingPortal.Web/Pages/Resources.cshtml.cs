@@ -1,17 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
 using BenchmarkingPortal.Bll.Features.SetFile.Commands;
 using BenchmarkingPortal.Bll.Features.SetFile.Queries;
+using BenchmarkingPortal.Bll.Tus;
 using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using tusdotnet.Interfaces;
 using tusdotnet.Models;
 
 namespace BenchmarkingPortal.Web.Pages;
@@ -19,16 +20,15 @@ namespace BenchmarkingPortal.Web.Pages;
 [Authorize(Policy = Policies.RequireApprovedUser)]
 public class Resources : PageModel
 {
-    private readonly DefaultTusConfiguration _config;
     private readonly IMediator _mediator;
+    private readonly IConfiguration _configuration;
 
-    public Resources(IMediator mediator, DefaultTusConfiguration config)
+    public Resources(IMediator mediator, IConfiguration configuration)
     {
         _mediator = mediator;
-        _config = config;
         Executables = new List<ExecutableHeader>();
         SetFiles = new List<SetFileHeader>();
-
+        _configuration = configuration;
         ExecutableInput = new ExecutableInputModel();
         SetFileInput = new SetFileInputModel();
     }
@@ -120,12 +120,64 @@ public class Resources : PageModel
         }
     }
 
-    public async Task<IActionResult> OnPostDownloadAsync(string fileId, CancellationToken cancellationToken)
+    public async Task<IActionResult> OnPostDownloadSetFileAsync(string fileId, CancellationToken cancellationToken)
     {
         try
         {
-            if (_config.Store is not ITusReadableStore store) return RedirectToPage();
+            var path = (_configuration["Storage:SV-Benchmarks"] ?? 
+                      throw new ApplicationException("Missing SV-Benchmark path configuration")) 
+                     + Path.DirectorySeparatorChar + "c";
+            var store = new CustomTusDiskStore(path, _mediator);
+            
+            var file = await store.GetFileAsync(fileId, cancellationToken);
 
+            if (file == null)
+            {
+                StatusMessage = $"Error: File with id {fileId} was not found.";
+                return RedirectToPage();
+            }
+
+            var fileStream = await file.GetContentAsync(cancellationToken);
+            var metadata = await file.GetMetadataAsync(cancellationToken);
+
+            StatusMessage = "Download started.";
+
+            return new FileStreamResult(fileStream, GetContentTypeOrDefault(metadata))
+            {
+                FileDownloadName = metadata.TryGetValue("name", out var nameMeta)
+                    ? nameMeta.GetString(Encoding.UTF8)
+                    : "download"
+            };
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            StatusMessage = "Error: " + e.Message;
+
+            return RedirectToPage();
+        }
+    }
+    
+    public async Task<IActionResult> OnPostDownloadExecutableAsync(string fileId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var exe = await _mediator.Send(new GetExecutableByPathQuery
+            {
+                FileId = fileId
+            }, cancellationToken);
+            
+            if (exe == null)
+            {
+                StatusMessage = $"Error: File with id {fileId} was not found.";
+                return RedirectToPage();
+            }
+            
+            var path = (_configuration["Storage:Root"] ??
+                        throw new ApplicationException("Missing SV-Benchmark path configuration"))
+                       + Path.DirectorySeparatorChar + exe.UserName;
+            var store = new CustomTusDiskStore(path, _mediator);
+            
             var file = await store.GetFileAsync(fileId, cancellationToken);
 
             if (file == null)
@@ -168,7 +220,7 @@ public class Resources : PageModel
         {
             var newExecutable = await _mediator.Send(new UploadNewExecutableCommand
             {
-                Name = ExecutableInput.Name,
+                Name = ExecutableInput.Name.TrimEnd(".zip".ToCharArray()),
                 Version = ExecutableInput.Version,
                 OwnerTool = ExecutableInput.OwnerTool,
                 ToolVersion = ExecutableInput.ToolVersion,
@@ -201,7 +253,7 @@ public class Resources : PageModel
         {
             var newSetFile = await _mediator.Send(new UploadNewSetFileCommand
             {
-                Name = SetFileInput.Name,
+                Name = SetFileInput.Name.TrimEnd(".set".ToCharArray()),
                 Version = SetFileInput.Version,
                 Path = SetFileInput.FileUrl,
                 UploadedDate = DateTime.UtcNow,
@@ -229,11 +281,14 @@ public class Resources : PageModel
     public class ExecutableInputModel
     {
         [Required]
-        [RegularExpression(@"^[^\\/?%*:|""<>\.]+$")]
+        [RegularExpression(@"[A-Za-z0-9._-]+:[A-Za-z0-9._-]+\.zip$")]
         [Display(Name = "Executable Name")]
         public string Name { get; set; } = null!;
 
-        [Display(Name = "Executable Version")] public string? Version { get; set; }
+        [Required]
+        [Display(Name = "Executable Version")] 
+        [DefaultValue("1.0")]
+        public string? Version { get; set; }
 
         [Required]
         [Display(Name = "Owner Tool Name")]
@@ -244,22 +299,27 @@ public class Resources : PageModel
         public string ToolVersion { get; set; } = null!;
 
         [Required(ErrorMessage = "Please select a file.")]
+        [Display(Name = "Executable Zip")]
+        [RegularExpression(@".*\.zip$")]
         public string FileUrl { get; set; } = null!;
     }
 
     public class SetFileInputModel
     {
         [Required]
-        [RegularExpression(@"^[^\\/?%*:|""<>\.]+$")]
+        [RegularExpression(@"[A-Za-z0-9._-]+:[A-Za-z0-9._-]+\.set$")]
         [Display(Name = "Set File Name")]
         public string Name { get; set; } = null!;
         
-
+        [Required]
         [Display(Name = "Set File Version")] 
+        [DefaultValue("1.0")]
         public string? Version { get; set; }
         
 
         [Required(ErrorMessage = "Please select a file.")]
+        [Display(Name = "Set File")]
+        [RegularExpression(@".*\.set$")]
         public string FileUrl { get; set; } = null!;
     }
 }
