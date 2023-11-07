@@ -364,4 +364,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
 /BenchmarkingPortal.Web/appsettings.json
+/storage/
+/BenchmarkingPortal.Web/App_Data/tusfiles/
+/BenchmarkingPortal.Migrations.Base/Migrations/
