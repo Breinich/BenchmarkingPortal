@@ -2,20 +2,24 @@
 let cancelUploadButton;
 let uploadButton;
 let filePath;
+let fileName;
 let upload;
+let fileVersion;
 
 function uploadFile(num) {
     uploadProgress = document.getElementById('uploadProgress' + num);
     cancelUploadButton = document.getElementById('cancelUploadButton' + num);
     uploadButton = document.getElementById('uploadButton' + num);
     filePath = document.getElementById('filePath' + num);
+    fileName = document.getElementById('fileName' + num);
 
     const file = document.getElementById('droppedFile' + num).files[0];
+    const rootPath = document.getElementById('rootPath' + num).value;
+    fileVersion = document.getElementById('fileVersion' + num).value;
 
     uploadProgress.value = 0;
     uploadProgress.removeAttribute('data');
     uploadProgress.style.display = 'block';
-
     disableUpload();
 
     upload = new tus.Upload(file,
@@ -25,14 +29,17 @@ function uploadFile(num) {
             onProgress: onTusProgress,
             onSuccess: onTusSuccess,
             metadata: {
-                name: file.name,
+                name: fileVersion + '+' + file.name,
                 contentType: file.type || 'application/octet-stream',
                 emptyMetaKey: ''
+            },
+            headers: {
+                'root': rootPath
             }
         });
 
     setProgressTest('Starting upload...');
-
+    
     upload.findPreviousUploads().then(function (previousUploads) {
 
         if (previousUploads.length) {
@@ -46,7 +53,7 @@ function uploadFile(num) {
 }
 
 function cancelUpload() {
-    upload?.abortt();
+    upload?.abort();
     setProgressTest('Upload aborted');
     uploadProgress.value = 0;
     enableUpload();
@@ -59,7 +66,7 @@ function resetLocalCache(e) {
 }
 
 function onTusError(error) {
-    alert(error);
+    alert(error.message.split('#')[1]);
     enableUpload();
 }
 
@@ -70,6 +77,7 @@ function onTusProgress(bytesUploaded, bytesTotal) {
 
 function onTusSuccess() {
     filePath.value = upload.url.split('/').pop();
+    fileName.value = upload.file.name;
     enableUpload();
 }
 
