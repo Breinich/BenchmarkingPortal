@@ -25,6 +25,8 @@ public class ExecutableEntityConfiguration : IEntityTypeConfiguration<Executable
             .HasPrincipalKey(d => d.UserName)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_Executable_User");
+        
+        builder.HasIndex(e => new {e.Name, e.Version}).IsUnique();
 
         SampleData(builder);
     }
