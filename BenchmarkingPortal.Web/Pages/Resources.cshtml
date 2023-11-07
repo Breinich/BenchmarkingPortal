@@ -1,6 +1,7 @@
 ﻿@page
 @model Resources
 @inject IAuthorizationService AuthorizationService
+@inject IConfiguration Configuration
 @{
     ViewData["Title"] = "Resources";
 }
@@ -50,7 +51,7 @@
                             </td>
                             <td>
                                 <div class="d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="Download"
+                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="DownloadExecutable"
                                             asp-route-fileId="@item.Path">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
                                             <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
@@ -114,7 +115,7 @@
                             </td>
                             <td>
                                 <div class="d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="Download"
+                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="DownloadSetFile"
                                             asp-route-fileId="@item.Path">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
                                             <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
@@ -175,7 +176,7 @@
                             </td>
                             <td>
                                 <div class="d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="Download"
+                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="DownloadExecutable"
                                             asp-route-fileId="@item.Path">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
                                             <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
@@ -235,7 +236,7 @@
                             </td>
                             <td>
                                 <div class="d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="Download"
+                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="DownloadSetFile"
                                             asp-route-fileId="@item.Path">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
                                             <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
@@ -274,12 +275,10 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-floating mb-4">
-                        <input asp-for="ExecutableInput.Name" class="form-control" placeholder="new executable's unique name"/>
-                        <label asp-for="ExecutableInput.Name" class="form-label"></label>
-                        <span asp-validation-for="ExecutableInput.Name" class="text-danger"></span>
+                        <input asp-for="ExecutableInput.Name" class="form-control" id="fileName1" placeholder="new executable's unique name" hidden/>
                     </div>
                     <div class="form-floating mb-4">
-                        <input asp-for="ExecutableInput.Version" class="form-control" placeholder="the version number for the executable"/>
+                        <input asp-for="ExecutableInput.Version" class="form-control" id="fileVersion1" placeholder="the version of the executable" value="1.0"/>
                         <label asp-for="ExecutableInput.Version" class="form-label"></label>
                         <span asp-validation-for="ExecutableInput.Version" class="text-danger"></span>
                     </div>
@@ -294,7 +293,8 @@
                         <span asp-validation-for="ExecutableInput.ToolVersion" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-4">
-                        <input id="rootPath1" hidden value="@User."/>
+                        <!-- we will use username as root path for each user, because it's unique -->
+                        <input id="rootPath1" hidden value="@(Configuration["Storage:Root"] + System.IO.Path.DirectorySeparatorChar + User.Identity?.Name)"/>
                         <input asp-for="ExecutableInput.FileUrl" id="filePath1" hidden/>
                         <div class="row">
                             <div class="col-6">
@@ -329,20 +329,20 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-floating mb-4">
-                        <input asp-for="SetFileInput.Name" class="form-control" placeholder="new source set's unique name"/>
-                        <label asp-for="SetFileInput.Name" class="form-label"></label>
-                        <span asp-validation-for="SetFileInput.Name" class="text-danger"></span>
+                        <input asp-for="SetFileInput.Name" class="form-control" id="fileName2" placeholder="new set file's unique name" hidden/>
                     </div>
                     <div class="form-floating mb-4">
-                        <input asp-for="SetFileInput.Version" class="form-control" placeholder="the version number for the source set"/>
+                        <input asp-for="SetFileInput.Version" class="form-control" id="fileVersion2" placeholder="the version of the set file" value="1.0"/>
                         <label asp-for="SetFileInput.Version" class="form-label"></label>
                         <span asp-validation-for="SetFileInput.Version" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-4">
+                        <!-- the root path for set files is within the sv-benchmarks directory -->
+                        <input id="rootPath2" hidden value="@(Configuration["Storage:SV-Benchmarks"] + System.IO.Path.DirectorySeparatorChar + "c")"/>
                         <input asp-for="SetFileInput.FileUrl" id="filePath2" hidden/>
                         <div class="row">
                             <div class="col-6">
-                                <input type="file" name="droppedFile1" id="droppedFile2" class="form-control"/>
+                                <input type="file" name="droppedFile2" id="droppedFile2" class="form-control" accept=".set"/>
                             </div>
                             <div class="col-6">
                                 <input type="button" id="uploadButton2" class="btn btn-primary m-1" value="Upload" onclick="uploadFile(2)"/>
