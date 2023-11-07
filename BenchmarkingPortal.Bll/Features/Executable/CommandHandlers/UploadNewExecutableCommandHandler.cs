@@ -29,9 +29,6 @@ public class UploadNewExecutableCommandHandler : IRequestHandler<UploadNewExecut
             UploadedDate = request.UploadedDate,
             UserName = request.InvokerName
         };
-        
-        // TODO check the file location, unzip it
-        throw new NotImplementedException();
 
         await _context.Executables.AddAsync(exe, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);

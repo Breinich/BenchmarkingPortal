@@ -1,10 +1,10 @@
 ﻿using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Executable.Commands;
+using BenchmarkingPortal.Bll.Tus;
 using BenchmarkingPortal.Dal;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using tusdotnet.Interfaces;
-using tusdotnet.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace BenchmarkingPortal.Bll.Features.Executable.CommandHandlers;
 
@@ -12,14 +12,16 @@ public class DeleteExecutableCommandHandler : IRequestHandler<DeleteExecutableCo
 {
     private readonly BenchmarkingDbContext _context;
     private readonly UserManager<Dal.Entities.User> _userManager;
-    private readonly ITusTerminationStore _terminationStore;
+    private readonly IConfiguration _configuration;
+    private readonly IMediator _mediator;
 
     public DeleteExecutableCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager, 
-        DefaultTusConfiguration config)
+        IConfiguration configuration, IMediator mediator)
     {
         _context = context;
         _userManager = userManager;
-        _terminationStore = (ITusTerminationStore)config.Store;
+        _configuration = configuration;
+        _mediator = mediator;
     }
 
 
@@ -30,17 +32,22 @@ public class DeleteExecutableCommandHandler : IRequestHandler<DeleteExecutableCo
 
         if (exe.UserName != request.InvokerName)
         {
-            var user = await _userManager.FindByIdAsync(request.InvokerName) ??
+            var user = await _userManager.FindByNameAsync(request.InvokerName) ??
                        throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().ObjectNotFound);
 
             var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);
 
             if (!admin) throw new ArgumentException(new ExceptionMessage<Dal.Entities.Executable>().NoPrivilege);
         }
+        
+        if (exe.Path != request.FileId)
+            throw new ArgumentException(new ExceptionMessage<Dal.Entities.Executable>().ObjectNotFound);
 
-
+        var store = new CustomTusDiskStore(
+            _configuration["Storage:Root"] + Path.DirectorySeparatorChar + exe.UserName, _mediator);
+        await store.DeleteFileAsync(request.FileId, cancellationToken);
+        
         _context.Remove(exe);
         await _context.SaveChangesAsync(cancellationToken);
-        await _terminationStore.DeleteFileAsync(request.FileId, cancellationToken);
     }
 }
