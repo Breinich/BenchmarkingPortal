@@ -20,8 +20,7 @@ public class CreateConfigurationCommandHandler : IRequestHandler<CreateConfigura
         CancellationToken cancellationToken)
     {
         // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        // config check needed based on the constraints
-        throw new NotImplementedException();
+        // TODO: config check needed based on the constraints
         // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
         var config = new Dal.Entities.Configuration();
