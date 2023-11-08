@@ -18,8 +18,6 @@
         <Folder Include="Features\Constraint\Queries\" />
         <Folder Include="Features\Constraint\QueryHandlers\" />
         <Folder Include="Features\Configuration\CommandHandlers\" />
-        <Folder Include="Features\Configuration\Queries\" />
-        <Folder Include="Features\Configuration\QueryHandlers\" />
         <Folder Include="Features\ConfigurationItem\CommandHandlers\" />
         <Folder Include="Features\ConfigurationItem\Commands\" />
         <Folder Include="Features\ConfigurationItem\Queries\" />
