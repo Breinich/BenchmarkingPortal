@@ -1,15 +1,19 @@
 ﻿using BenchmarkingPortal.Bll.Features.Benchmark.CommandHandlers;
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
+using BenchmarkingPortal.Dal.Entities;
+using Castle.Core.Configuration;
 
 namespace BenchmarkingPortal.Test.Features.Benchmark;
 
 public class StartBenchmarkTest : IClassFixture<DatabaseFixture>, IDisposable
 {
     private readonly DatabaseFixture _fixture;
+    private readonly Mock<Configuration> _configurationFixture;
 
-    public StartBenchmarkTest(DatabaseFixture fixture)
+    public StartBenchmarkTest(DatabaseFixture fixture, Mock<Configuration> configuration)
     {
         _fixture = fixture;
+        _configurationFixture = configuration;
     }
 
     public void Dispose()
@@ -19,24 +23,6 @@ public class StartBenchmarkTest : IClassFixture<DatabaseFixture>, IDisposable
     [Fact]
     public async Task TestSimpleStart()
     {
-        var handler = new StartBenchmarkCommandHandler(_fixture.Context);
-
-        await handler.Handle(new StartBenchmarkCommand
-        {
-            Name = "b2",
-            Priority = 1,
-            Ram = 8,
-            Cpu = 4,
-            TimeLimit = 900,
-            HardTimeLimit = 960,
-            ExecutableId = 1,
-            SetFilePath = "C:\\Users\\User\\Desktop\\test.txt",
-            PropertyFilePath = "C:\\Users\\User\\Desktop\\test.txt",
-            ConfigurationId = 1,
-            InvokerName = "TestUser"
-        }, CancellationToken.None);
-
-        Assert.Equal(1, _fixture.Context.Benchmarks
-            .Where(b => b.Name.Equals("b2")).Select(b => b.Id).Count());
+        throw new NotImplementedException();
     }
 }

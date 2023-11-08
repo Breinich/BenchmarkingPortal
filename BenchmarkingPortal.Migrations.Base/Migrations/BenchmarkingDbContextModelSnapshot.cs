@@ -222,6 +222,9 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
 
                     b.HasIndex("UserName");
 
+                    b.HasIndex("Name", "Version")
+                        .IsUnique();
+
                     b.ToTable("Executables", (string)null);
                 });
 
@@ -258,6 +261,9 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("UserName");
+
+                    b.HasIndex("Name", "Version")
+                        .IsUnique();
 
                     b.ToTable("SetFiles", (string)null);
                 });
