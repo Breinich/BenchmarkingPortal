@@ -48,6 +48,8 @@ public class BenchmarkEntityConfiguration : IEntityTypeConfiguration<Benchmark>
             .HasPrincipalKey(d => d.UserName)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_Benchmark_User");
+        
+        builder.HasIndex(e => e.Name).IsUnique();
 
         SampleData(builder);
     }
