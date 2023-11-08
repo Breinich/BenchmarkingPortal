@@ -123,19 +123,17 @@ public class Home : PageModel
                                      .GetComplexData<List<TempConfigData>>(_tempConfigDataListKey) ??
                                  new List<TempConfigData>();
 
-        if (configurationItems.Remove(new TempConfigData
+        if (!configurationItems.Remove(new TempConfigData
             {
                 Scope = scope,
                 Key = key,
                 Value = value
-            }))
-        {
-            HttpContext.Session.SetComplexData(_tempConfigDataListKey, configurationItems);
+            })) 
+            return new JsonResult(new { success = false, responseText = "Item not found." });
+        
+        HttpContext.Session.SetComplexData(_tempConfigDataListKey, configurationItems);
 
-            return new JsonResult(new { success = true, responseText = "Item removed." });
-        }
-
-        return new JsonResult(new { success = false, responseText = "Item not found." });
+        return new JsonResult(new { success = true, responseText = "Item removed." });
     }
 
     public ContentResult OnPostAddConstraint(string? premise, string? consequence)
@@ -334,7 +332,7 @@ public class Home : PageModel
             List<(string, string)>? constraintList = null;
 
             if (configs != null)
-                configList = configs.Select(c => (c.Scope, c.Key, c.Value)).ToList();
+                configList = configs.Select(c => (c.Scope, c.Key, c.Value ?? "")).ToList();
 
             if (constraints != null)
                 constraintList = constraints.Select(c => (c.Premise, c.Consequence)).ToList();
@@ -471,7 +469,7 @@ public class Home : PageModel
     {
         public Scope Scope { get; init; }
         public string Key { get; init; } = null!;
-        public string Value { get; init; } = null!;
+        public string? Value { get; init; }
 
         public override bool Equals(object? obj)
         {
