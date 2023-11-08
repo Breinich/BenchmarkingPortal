@@ -6,6 +6,7 @@ using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
 using BenchmarkingPortal.Bll.Features.ComputerGroup.Queries;
 using BenchmarkingPortal.Bll.Features.Configuration.Commands;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
+using BenchmarkingPortal.Bll.Features.PropertyFile.Queries;
 using BenchmarkingPortal.Bll.Features.SetFile.Queries;
 using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
@@ -40,6 +41,7 @@ public class Home : PageModel
     public List<BenchmarkHeader> UnfinishedBenchmarks { get; set; } = new();
     public List<SelectListItem> Executables { get; set; } = new();
     public List<SelectListItem> SetFiles { get; set; } = new();
+    public List<SelectListItem> PrpFiles { get; set; } = new();
     public List<SelectListItem> ComputerGroups { get; set; } = new();
     public List<string> Headers { get; set; } = new();
 
@@ -76,12 +78,14 @@ public class Home : PageModel
 
     public ContentResult OnPostAddConfigItem(Scope scope, string? key, string? value)
     {
-        if (key == null || value == null || key == "" || value == "")
+        if (string.IsNullOrEmpty(key))
             return new ContentResult
             {
                 Content = "Key or value is empty.",
                 ContentType = "application/json"
             };
+        
+        value ??= "";
 
         var configurationItems = HttpContext.Session
                                      .GetComplexData<List<TempConfigData>>(_tempConfigDataListKey) ??
@@ -93,13 +97,7 @@ public class Home : PageModel
             Key = key,
             Value = value
         };
-        var different = true;
-        foreach (var item in configurationItems)
-            if (!item.CheckDifference(newItem))
-            {
-                different = false;
-                break;
-            }
+        var different = configurationItems.All(item => item.CheckDifference(newItem));
 
         if (!different)
             return new ContentResult
@@ -158,13 +156,7 @@ public class Home : PageModel
             Premise = premise,
             Consequence = consequence
         };
-        var different = true;
-        foreach (var item in constraintItems)
-            if (!item.CheckDifference(newConstraint))
-            {
-                different = false;
-                break;
-            }
+        var different = constraintItems.All(item => item.CheckDifference(newConstraint));
 
         if (!different)
             return new ContentResult
@@ -366,6 +358,7 @@ public class Home : PageModel
                 HardTimeLimit = CreateInput.HardTimeLimit,
                 CpuModel = CreateInput.CpuModel,
                 ConfigurationId = config.Id,
+                ComputerGroupId = CreateInput.ComputerGroupId,
                 InvokerName = User.Identity?.Name ??
                               throw new ApplicationException(new ExceptionMessage<Benchmark>().NoPrivilege)
             });
@@ -394,7 +387,10 @@ public class Home : PageModel
                 .Select(eh => new SelectListItem(eh.Name + ":" + eh.Version, eh.Id.ToString())).ToList();
 
             SetFiles = (await _mediator.Send(new GetAllSetFileNamesQuery()))
-                .Select(sh => new SelectListItem(sh, sh)).ToList();
+                .Select(s => new SelectListItem(s.Split(Path.DirectorySeparatorChar).Last(), s)).ToList();
+            
+            PrpFiles = (await _mediator.Send(new GetAllPropertyFileNamesQuery()))
+                .Select(s => new SelectListItem(s.Split(Path.DirectorySeparatorChar).Last(), s)).ToList();
 
             ComputerGroups = (await _mediator.Send(new GetAllComputerGroupsQuery()))
                 .Select(c => new SelectListItem(c.Id + ": " + c.Description, c.Id.ToString())).ToList();
@@ -466,7 +462,6 @@ public class Home : PageModel
         [Display(Name = "Computer Group to run on")]
         public int ComputerGroupId { get; set; }
         
-        [DefaultValue("-")]
         [StringLength(50)]
         [Display(Name = "CPU Model to run on")]
         public string CpuModel { get; set; } = null!;
@@ -493,15 +488,12 @@ public class Home : PageModel
 
         public bool CheckDifference(TempConfigData configData)
         {
-            switch (configData.Scope)
+            return configData.Scope switch
             {
-                case Scope.Global:
-                    return configData.Key != Key;
-                case Scope.Local:
-                    return configData.Key != Key || configData.Value != Value;
-                default:
-                    return false;
-            }
+                Scope.Global => configData.Key != Key,
+                Scope.Local => configData.Key != Key || configData.Value != Value,
+                _ => false
+            };
         }
     }
 

@@ -7,8 +7,10 @@ using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
 using BenchmarkingPortal.Bll.Features.ComputerGroup.Commands;
 using BenchmarkingPortal.Bll.Features.ComputerGroup.Queries;
 using BenchmarkingPortal.Bll.Features.Configuration.Commands;
+using BenchmarkingPortal.Bll.Features.Configuration.Queries;
 using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
+using BenchmarkingPortal.Bll.Features.PropertyFile.Queries;
 using BenchmarkingPortal.Bll.Features.SetFile.Commands;
 using BenchmarkingPortal.Bll.Features.SetFile.Queries;
 using BenchmarkingPortal.Bll.Features.User.Commands;
@@ -161,7 +163,10 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
         typeof(SetFileExistsByNameQuery).Assembly,
         typeof(ExecutableExistsByNameQuery).Assembly,
         typeof(GetExecutableByPathQuery).Assembly,
-        typeof(GetSetFileByPathQuery).Assembly
+        typeof(GetSetFileByPathQuery).Assembly,
+        typeof(GetAllPropertyFileNamesQuery).Assembly,
+        typeof(GetExecutableToolNameQuery).Assembly,
+        typeof(GetConfigurationByIdQuery).Assembly
     ));
 
 builder.Services.Configure<FormOptions>(x =>

@@ -29,6 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="App_Data\tusfiles\" />
         <Folder Include="Areas\Identity\" />
         <Folder Include="Pages\Components\" />
         <Folder Include="ViewComponents\" />
