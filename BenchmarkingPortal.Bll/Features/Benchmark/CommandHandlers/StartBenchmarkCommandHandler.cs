@@ -221,7 +221,6 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
                         await writer.WriteStringAsync(item.Value ?? "");
                         await writer.WriteEndElementAsync();
                     }
-                    
                         
                     await writer.WriteStartElementAsync(null, "tasks", null);
                     await writer.WriteAttributeStringAsync(null, "name", null, 
@@ -241,7 +240,6 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
                     await writer.WriteEndElementAsync();
                 }
             }
-            
         }
 
         await writer.WriteEndElementAsync();

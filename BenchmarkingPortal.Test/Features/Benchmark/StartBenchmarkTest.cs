@@ -21,7 +21,7 @@ public class StartBenchmarkTest : IClassFixture<DatabaseFixture>, IDisposable
     }
 
     [Fact]
-    public async Task TestSimpleStart()
+    public Task TestSimpleStart()
     {
         throw new NotImplementedException();
     }
