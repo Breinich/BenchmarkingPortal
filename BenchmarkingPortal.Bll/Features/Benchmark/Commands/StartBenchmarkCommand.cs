@@ -26,6 +26,8 @@ public class StartBenchmarkCommand : IRequest<BenchmarkHeader>
     public string PropertyFilePath { get; set; } = null!;
 
     public int ConfigurationId { get; set; }
+    
+    public int ComputerGroupId { get; set; }
 
     public string InvokerName { get; set; } = null!;
 }
