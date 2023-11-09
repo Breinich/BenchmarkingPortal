@@ -5,7 +5,7 @@ namespace BenchmarkingPortal.Bll.Features.ComputerGroup.Commands;
 
 public class UpdateComputerGroupCommand : IRequest<ComputerGroupHeader>
 {
-    public int Id { get; set; }
-    public string? Description { get; set; }
-    public string InvokerName { get; set; } = null!;
+    public int Id { get; init; }
+    public string? Description { get; init; }
+    public string InvokerName { get; init; } = null!;
 }

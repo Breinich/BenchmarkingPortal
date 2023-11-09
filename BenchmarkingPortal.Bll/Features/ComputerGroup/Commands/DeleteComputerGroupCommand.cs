@@ -4,6 +4,6 @@ namespace BenchmarkingPortal.Bll.Features.ComputerGroup.Commands;
 
 public class DeleteComputerGroupCommand : IRequest
 {
-    public int Id { get; set; }
-    public string InvokerName { get; set; } = null!;
+    public int Id { get; init; }
+    public string InvokerName { get; init; } = null!;
 }
