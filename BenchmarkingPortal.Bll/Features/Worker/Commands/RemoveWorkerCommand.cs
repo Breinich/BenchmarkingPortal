@@ -4,5 +4,5 @@ namespace BenchmarkingPortal.Bll.Features.Worker.Commands;
 
 public class RemoveWorkerCommand : IRequest
 {
-    public int WorkerId { get; set; }
+    public int WorkerId { get; init; }
 }
