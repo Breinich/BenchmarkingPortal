@@ -1,6 +1,8 @@
-﻿namespace BenchmarkingPortal.Bll.Features.Configuration.Commands;
+﻿using MediatR;
 
-public class DeleteConfigurationCommand
+namespace BenchmarkingPortal.Bll.Features.Configuration.Commands;
+
+public class DeleteConfigurationCommand : IRequest
 {
-    
+    public int Id { get; init; }
 }
