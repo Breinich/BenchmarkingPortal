@@ -5,11 +5,11 @@ namespace BenchmarkingPortal.Bll.Features.Executable.Commands;
 
 public class UploadNewExecutableCommand : IRequest<ExecutableHeader>
 {
-    public string OwnerTool { get; set; } = null!;
-    public string ToolVersion { get; set; } = null!;
-    public string Path { get; set; } = null!;
-    public string Name { get; set; } = null!;
+    public string OwnerTool { get; init; } = null!;
+    public string ToolVersion { get; init; } = null!;
+    public string Path { get; init; } = null!;
+    public string Name { get; init; } = null!;
     public string? Version { get; set; }
-    public DateTime UploadedDate { get; set; }
-    public string InvokerName { get; set; } = null!;
+    public DateTime UploadedDate { get; init; }
+    public string InvokerName { get; init; } = null!;
 }

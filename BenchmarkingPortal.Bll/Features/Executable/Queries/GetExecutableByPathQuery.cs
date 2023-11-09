@@ -5,5 +5,5 @@ namespace BenchmarkingPortal.Bll.Features.Executable.Queries;
 
 public class GetExecutableByPathQuery : IRequest<ExecutableHeader?>
 {
-    public string FileId { get; set; } = null!;
+    public string FileId { get; init; } = null!;
 }

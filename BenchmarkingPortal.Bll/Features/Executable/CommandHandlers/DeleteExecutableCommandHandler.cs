@@ -2,9 +2,9 @@
 using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Bll.Tus;
 using BenchmarkingPortal.Dal;
+using BenchmarkingPortal.Web;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 
 namespace BenchmarkingPortal.Bll.Features.Executable.CommandHandlers;
 
@@ -12,15 +12,15 @@ public class DeleteExecutableCommandHandler : IRequestHandler<DeleteExecutableCo
 {
     private readonly BenchmarkingDbContext _context;
     private readonly UserManager<Dal.Entities.User> _userManager;
-    private readonly IConfiguration _configuration;
+    private readonly string _workDir;
     private readonly IMediator _mediator;
 
     public DeleteExecutableCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager, 
-        IConfiguration configuration, IMediator mediator)
+        StoragePaths storagePaths, IMediator mediator)
     {
         _context = context;
         _userManager = userManager;
-        _configuration = configuration;
+        _workDir = storagePaths.WorkingDir;
         _mediator = mediator;
     }
 
@@ -43,8 +43,8 @@ public class DeleteExecutableCommandHandler : IRequestHandler<DeleteExecutableCo
         if (exe.Path != request.FileId)
             throw new ArgumentException(new ExceptionMessage<Dal.Entities.Executable>().ObjectNotFound);
 
-        var store = new CustomTusDiskStore(
-            _configuration["Storage:Root"] + Path.DirectorySeparatorChar + exe.UserName, _mediator);
+        var store = new CustomTusDiskStore(_workDir + Path.DirectorySeparatorChar + exe.UserName 
+                                           + Path.DirectorySeparatorChar + "tools" , _mediator);
         await store.DeleteFileAsync(request.FileId, cancellationToken);
         
         _context.Remove(exe);

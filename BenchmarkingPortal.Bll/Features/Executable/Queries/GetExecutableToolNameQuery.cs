@@ -4,5 +4,5 @@ namespace BenchmarkingPortal.Bll.Features.Executable.Queries;
 
 public class GetExecutableToolNameQuery : IRequest<string?>
 {
-    public int Id { get; set; }
+    public int Id { get; init; }
 }

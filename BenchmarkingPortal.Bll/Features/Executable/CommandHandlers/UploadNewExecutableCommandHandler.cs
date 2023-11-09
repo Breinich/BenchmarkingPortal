@@ -1,20 +1,20 @@
 ﻿using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
+using BenchmarkingPortal.Web;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 
 namespace BenchmarkingPortal.Bll.Features.Executable.CommandHandlers;
 
 public class UploadNewExecutableCommandHandler : IRequestHandler<UploadNewExecutableCommand, ExecutableHeader>
 {
     private readonly BenchmarkingDbContext _context;
-    private readonly IConfiguration _configuration;
+    private readonly string _workDir;
 
-    public UploadNewExecutableCommandHandler(BenchmarkingDbContext context, IConfiguration configuration)
+    public UploadNewExecutableCommandHandler(BenchmarkingDbContext context, StoragePaths storagePaths)
     {
         _context = context;
-        _configuration = configuration;
+        _workDir = storagePaths.WorkingDir;
     }
 
 
@@ -22,10 +22,11 @@ public class UploadNewExecutableCommandHandler : IRequestHandler<UploadNewExecut
     {
         request.Version ??= "1.0";
         
-        if (!Directory.Exists(_configuration["Storage:Root"] + Path.DirectorySeparatorChar + request.InvokerName 
+        if (!Directory.Exists(_workDir + Path.DirectorySeparatorChar + request.InvokerName 
+                              + Path.DirectorySeparatorChar + "tools" 
                               + Path.DirectorySeparatorChar + request.Name))
         {
-            foreach(var file in Directory.EnumerateFiles(_configuration["Storage:Root"] 
+            foreach(var file in Directory.EnumerateFiles(_workDir + Path.DirectorySeparatorChar + "tools" 
                                                          + Path.DirectorySeparatorChar + request.InvokerName))
             {
                 // deleting the possibly junk files from the directory
@@ -34,9 +35,9 @@ public class UploadNewExecutableCommandHandler : IRequestHandler<UploadNewExecut
             }
             
             // deleting the already uploaded zip and metadata
-            File.Delete(_configuration["Storage:Root"] + Path.DirectorySeparatorChar + request.InvokerName 
+            File.Delete(_workDir + Path.DirectorySeparatorChar + request.InvokerName 
                         + Path.DirectorySeparatorChar + request.Path);
-            File.Delete(_configuration["Storage:Root"] + Path.DirectorySeparatorChar + request.InvokerName 
+            File.Delete(_workDir + Path.DirectorySeparatorChar + request.InvokerName 
                         + Path.DirectorySeparatorChar + request.Path + ".metadata");
             throw new ArgumentException("The root folder inside the zip of the tool directory doesn't have " +
                                         "the name of the zip file, please make sure to use the same zip name as the " +
