@@ -90,6 +90,11 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                         .IsRequired()
                         .HasColumnType("character varying(256)");
 
+                    b.Property<string>("XmlFilePath")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ComputerGroupId");
