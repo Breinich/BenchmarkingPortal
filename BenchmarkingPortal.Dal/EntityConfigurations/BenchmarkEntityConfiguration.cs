@@ -22,6 +22,8 @@ public class BenchmarkEntityConfiguration : IEntityTypeConfiguration<Benchmark>
         builder.Property(e => e.Ram).IsRequired();
         builder.Property(e => e.Status).HasConversion(s => s.ToString(),
             v => (Status)Enum.Parse(typeof(Status), v)).IsRequired();
+        builder.Property(e => e.Priority).HasConversion(p => p.ToString(),
+            v => (Priority)Enum.Parse(typeof(Priority), v)).IsRequired();
         builder.Property(e => e.TimeLimit).IsRequired();
         builder.Property(e => e.HardTimeLimit).IsRequired();
         builder.Property(e => e.CpuModel).HasMaxLength(50).IsRequired();
