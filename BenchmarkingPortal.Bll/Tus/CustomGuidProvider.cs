@@ -1,13 +1,12 @@
 ﻿using System.Text;
-using BenchmarkingPortal.Bll.Features.Executable.Queries;
-using BenchmarkingPortal.Bll.Features.SetFile.Queries;
 using MediatR;
 using tusdotnet.Models;
 using tusdotnet.Parsers;
+using tusdotnet.Stores.FileIdProviders;
 
 namespace BenchmarkingPortal.Bll.Tus;
 
-public class CustomGuidProvider : tusdotnet.Stores.FileIdProviders.GuidFileIdProvider
+public class CustomGuidProvider : GuidFileIdProvider
 {
     private readonly IMediator _mediator;
     
