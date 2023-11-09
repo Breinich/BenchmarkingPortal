@@ -28,11 +28,11 @@ public class Workers : PageModel
     }
 
     [TempData] public string StatusMessage { get; set; } = null!;
-    [BindProperty] public WorkerInputModel WorkerWorkerInput { get; set; }
-    [BindProperty] public ComputerGroupInputModel ComputerGroupInput { get; set; }
-    [BindProperty] public int ChangeComputerGroupId { get; set; }
-    [BindProperty] public string? ChangeDescription { get; set; }
-    [BindProperty] public int ChangeId { get; set; }
+    [BindProperty] public WorkerInputModel WorkerWorkerInput { get; init; }
+    [BindProperty] public ComputerGroupInputModel ComputerGroupInput { get; init; }
+    [BindProperty] public int ChangeComputerGroupId { get; init; }
+    [BindProperty] public string? ChangeDescription { get; init; }
+    [BindProperty] public int ChangeId { get; init; }
 
     public List<WorkerHeader> WorkerList { get; set; } = new();
     public List<ComputerGroupHeader> ComputerGroupList { get; set; } = new();
@@ -226,50 +226,51 @@ public class Workers : PageModel
 
     public class WorkerInputModel
     {
-        [Required] [DisplayName("Name")] public string Name { get; set; } = null!;
+        [Required] 
+        [DisplayName("Name")] 
+        public string Name { get; init; } = null!;
 
         [Required]
         [DisplayName("RAM (GB)")]
-        [Range(1, 1000)]
-        public int Ram { get; set; }
+        [Range(1, 100)]
+        public int Ram { get; init; }
 
         [Required]
         [DisplayName("CPU (cores)")]
         [Range(1, 100)]
-        public int Cpu { get; set; }
+        public int Cpu { get; init; }
 
         [Required]
         [DisplayName("Storage (GB)")]
         [Range(1, 10000)]
-        public int Storage { get; set; }
+        public int Storage { get; init; }
 
         [Required]
-        [DisplayName("IP Address")]
-        [RegularExpression("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")]
-        public string Address { get; set; } = null!;
+        [DisplayName("Host name or IP address")]
+        public string Address { get; init; } = null!;
 
         [Required]
         [DisplayName("Port Number")]
         [Range(1, 65535)]
-        public int Port { get; set; }
+        public int Port { get; init; }
 
         [Required]
         [DisplayName("Username for the VM")]
-        public string Username { get; set; } = null!;
+        public string Username { get; init; } = null!;
 
         [Required]
         [DisplayName("Password for the VM")]
-        public string Password { get; set; } = null!;
+        public string Password { get; init; } = null!;
 
         [Required]
         [DisplayName("Computer Group to add to")]
-        public int ComputerGroupId { get; set; }
+        public int ComputerGroupId { get; init; }
     }
 
     public class ComputerGroupInputModel
     {
         [Required]
         [DisplayName("Description")]
-        public string Description { get; set; } = null!;
+        public string Description { get; init; } = null!;
     }
 }
