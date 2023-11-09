@@ -1,4 +1,5 @@
 ﻿@page
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
 @model Home
 @inject IAuthorizationService AuthorizationService
 @{
@@ -71,7 +72,9 @@
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">
-                                <input asp-for="EditInput.Priority" class="form-control short-number m-1" placeholder="priority"/>
+                                <select asp-for="EditInput.Priority" asp-items="Model.Priorities" class="rounded-3 m-1">
+                                    <option value="@(((int)item.Priority).ToString())" selected disabled>@item.Priority.ToString()</option>
+                                </select>
                                 @if (item.Status == Status.Running)
                                 {
                                     <button type="submit" class="btn btn-warning m-1" asp-page-handler="Pause"
@@ -297,11 +300,18 @@
                     <span asp-validation-for="CreateInput.SetFilePath" class="text-danger"></span>
                 </div>
             </div>
-            <div class="col-6">
+            <div class="col-4">
                 <div class="form-floating mb-4">
                     <select asp-for="CreateInput.PropertyFilePath" asp-items="Model.PrpFiles" class="form-control"></select>
                     <label asp-for="CreateInput.PropertyFilePath" class="form-label"></label>
                     <span asp-validation-for="CreateInput.PropertyFilePath" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-floating mb-4">
+                    <select asp-for="CreateInput.Priority" asp-items="Model.Priorities" class="form-control"></select>
+                    <label asp-for="CreateInput.Priority" class="form-label"></label>
+                    <span asp-validation-for="CreateInput.Priority" class="text-danger"></span>
                 </div>
             </div>
             <!-- fourth row -->

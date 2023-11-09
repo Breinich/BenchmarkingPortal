@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
@@ -34,11 +33,13 @@ public class Home : PageModel
 
     [TempData] public string? StatusMessage { get; set; }
 
-    [BindProperty] public EditInputModel EditInput { get; set; } = default!;
+    [BindProperty] public EditInputModel EditInput { get; init; } = default!;
 
-    [BindProperty] public CreateInputModel CreateInput { get; set; } = default!;
+    [BindProperty] public CreateInputModel CreateInput { get; init; } = new();
 
     public List<BenchmarkHeader> UnfinishedBenchmarks { get; set; } = new();
+    
+    public List<SelectListItem> Priorities { get; set; } = new();
     public List<SelectListItem> Executables { get; set; } = new();
     public List<SelectListItem> SetFiles { get; set; } = new();
     public List<SelectListItem> PrpFiles { get; set; } = new();
@@ -62,6 +63,17 @@ public class Home : PageModel
             {
                 Finished = false
             })).ToList();
+            
+            Priorities = Enum.GetValues(typeof(Priority))
+                .Cast<Priority>()
+                .Select(v => new SelectListItem(v.ToString(), ((int)v).ToString()))
+                .ToList();
+            
+            CreateInput.Priority = Priority.LOW;
+            CreateInput.Ram = 4;
+            CreateInput.Cpu = 8;
+            CreateInput.TimeLimit = 900;
+            CreateInput.HardTimeLimit = 960;
 
             await LoadFormData();
 
@@ -410,7 +422,8 @@ public class Home : PageModel
 
     public class EditInputModel
     {
-        [Display(Name = "Benchmark Name")] public int Priority { get; set; }
+        [Display(Name = "Benchmark Name")] 
+        public Priority Priority { get; init; }
     }
 
     public class CreateInputModel
@@ -418,12 +431,11 @@ public class Home : PageModel
         [Required]
         [StringLength(50)]
         [Display(Name = "Benchmark Name")]
-        public string Name { get; set; } = null!;
+        public string Name { get; init; } = null!;
 
         [Required]
-        [DefaultValue(0)]
         [Display(Name = "Priority")]
-        public int Priority { get; set; }
+        public Priority Priority { get; set; }
 
         [Required]
         [Range(1, 1000)]
@@ -445,24 +457,24 @@ public class Home : PageModel
 
         [Required]
         [Display(Name = "Executable")]
-        public int ExecutableId { get; set; }
+        public int ExecutableId { get; init; }
 
         [Required]
         [StringLength(250)]
         [Display(Name = "Set File Path")]
-        public string SetFilePath { get; set; } = null!;
+        public string SetFilePath { get; init; } = null!;
 
         [Required]
         [StringLength(250)]
         [Display(Name = "Property File Path")]
-        public string PropertyFilePath { get; set; } = null!;
+        public string PropertyFilePath { get; init; } = null!;
 
         [Display(Name = "Computer Group to run on")]
-        public int ComputerGroupId { get; set; }
+        public int ComputerGroupId { get; init; }
         
         [StringLength(50)]
         [Display(Name = "CPU Model to run on")]
-        public string CpuModel { get; set; } = null!;
+        public string CpuModel { get; init; } = null!;
     }
 
     public class TempConfigData
