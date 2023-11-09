@@ -29,36 +29,36 @@ public class BenchmarkHeader
         UserName = b.UserName;
     }
 
-    public int Id { get; set; }
+    public int Id { get; init; }
 
-    public string? Name { get; set; }
+    public string? Name { get; init; }
 
-    public int Priority { get; set; }
+    public Priority Priority { get; set; }
 
     public Status Status { get; set; }
 
-    public int Ram { get; set; }
+    public int Ram { get; init; }
 
-    public int Cpu { get; set; }
+    public int Cpu { get; init; }
 
-    public string? ResultPath { get; set; }
+    public string? ResultPath { get; init; }
 
-    public int TimeLimit { get; set; }
+    public int TimeLimit { get; init; }
 
-    public int HardTimeLimit { get; set; }
+    public int HardTimeLimit { get; init; }
     
-    public string? CpuModel { get; set; }
+    public string? CpuModel { get; init; }
 
-    public int ComputerGroupId { get; set; }
+    public int ComputerGroupId { get; init; }
 
-    public int ExecutableId { get; set; }
+    public int ExecutableId { get; init; }
 
-    public string? SetFilePath { get; set; }
+    public string? SetFilePath { get; init; }
 
-    public string? PropertyFilePath { get; set; }
+    public string? PropertyFilePath { get; init; }
 
-    public DateTime StartedDate { get; set; }
+    public DateTime StartedDate { get; init; }
 
-    public int ConfigurationId { get; set; }
-    public string UserName { get; set; } = null!;
+    public int ConfigurationId { get; init; }
+    public string UserName { get; init; } = null!;
 }

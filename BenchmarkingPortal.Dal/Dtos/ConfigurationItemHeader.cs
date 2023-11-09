@@ -15,11 +15,11 @@ public class ConfigurationItemHeader
         Scope = ci.Scope;
     }
     
-    public string? Key { get; set; }
+    public string? Key { get; init; }
 
-    public string? Value { get; set; }
+    public string? Value { get; init; }
 
-    public Scope Scope { get; set; }
+    public Scope Scope { get; init; }
 
-    public int ConfigurationId { get; set; }
+    public int ConfigurationId { get; init; }
 }

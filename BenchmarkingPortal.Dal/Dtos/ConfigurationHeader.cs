@@ -10,13 +10,13 @@ public class ConfigurationHeader
     public ConfigurationHeader(Configuration configuration)
     {
         Id = configuration.Id;
-        ConfigurationItems = configuration.ConfigurationItems?.Select(ci => new ConfigurationItemHeader(ci)).ToList();
-        Constraints = configuration.Constraints?.Select(co => new ConstraintHeader(co)).ToList();
+        ConfigurationItems = configuration.ConfigurationItems.Select(ci => new ConfigurationItemHeader(ci)).ToList();
+        Constraints = configuration.Constraints.Select(co => new ConstraintHeader(co)).ToList();
     }
     
-    public int Id { get; set; }
+    public int Id { get; init; }
     
-    public ICollection<ConfigurationItemHeader>? ConfigurationItems { get; set; }
+    public ICollection<ConfigurationItemHeader>? ConfigurationItems { get; init; }
     
-    public ICollection<ConstraintHeader>? Constraints { get; set; }
+    public ICollection<ConstraintHeader>? Constraints { get; init; }
 }

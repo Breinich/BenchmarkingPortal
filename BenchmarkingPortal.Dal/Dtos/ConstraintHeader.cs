@@ -11,9 +11,9 @@ public class ConstraintHeader
         ConfigurationId = constraint.ConfigurationId;
     }
     
-    public string? Premise { get; set; }
+    public string? Premise { get; init; }
 
-    public string? Consequence { get; set; }
+    public string? Consequence { get; init; }
 
-    public int ConfigurationId { get; set; }
+    public int ConfigurationId { get; init; }
 }

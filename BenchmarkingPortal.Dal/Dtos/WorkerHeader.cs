@@ -24,27 +24,27 @@ public class WorkerHeader
         UserName = worker.UserName;
     }
 
-    public int Id { get; set; }
+    public int Id { get; init; }
 
-    public string? Name { get; set; }
+    public string? Name { get; init; }
 
-    public int Ram { get; set; }
+    public int Ram { get; init; }
 
-    public int Cpu { get; set; }
+    public int Cpu { get; init; }
 
-    public string? Login { get; set; }
+    public string? Login { get; init; }
 
-    public string? Password { get; set; }
+    public string? Password { get; init; }
 
-    public int Storage { get; set; }
+    public int Storage { get; init; }
 
-    public string? Address { get; set; }
+    public string? Address { get; init; }
 
-    public int Port { get; set; }
+    public int Port { get; init; }
 
     public int ComputerGroupId { get; set; }
 
-    public DateTime AddedDate { get; set; }
+    public DateTime AddedDate { get; init; }
 
-    public string UserName { get; set; } = null!;
+    public string UserName { get; init; } = null!;
 }

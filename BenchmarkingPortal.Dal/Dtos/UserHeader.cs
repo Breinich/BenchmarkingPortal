@@ -16,10 +16,10 @@ public class UserHeader
         Subscription = u.Subscription;
     }
 
-    public int Id { get; set; }
-    public string? UserName { get; set; }
-    public string? Email { get; set; }
-    public List<string> Roles { get; set; } = new();
+    public int Id { get; init; }
+    public string? UserName { get; init; }
+    public string? Email { get; init; }
+    public List<string> Roles { get; init; } = new();
 
-    public bool Subscription { get; set; }
+    public bool Subscription { get; init; }
 }

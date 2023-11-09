@@ -18,14 +18,14 @@ public class SetFileHeader
         Version = s.Version;
     }
 
-    public int Id { get; set; }
+    public int Id { get; init; }
 
-    public string Name { get; set; } = null!;
+    public string Name { get; init; } = null!;
 
-    public string? Path { get; set; }
+    public string? Path { get; init; }
 
-    public string? Version { get; set; }
+    public string? Version { get; init; }
 
-    public DateTime UploadedDate { get; set; }
-    public string UserName { get; set; } = null!;
+    public DateTime UploadedDate { get; init; }
+    public string UserName { get; init; } = null!;
 }

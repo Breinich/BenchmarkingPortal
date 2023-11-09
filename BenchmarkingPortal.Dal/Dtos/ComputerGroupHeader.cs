@@ -14,11 +14,11 @@ public class ComputerGroupHeader
         Description = cg.Description;
     }
 
-    public int Id { get; set; }
+    public int Id { get; init; }
 
-    public string? Description { get; set; }
+    public string? Description { get; init; }
 
-    public int WorkerCount { get; set; }
+    public int WorkerCount { get; init; }
 
-    public int BenchmarkCount { get; set; }
+    public int BenchmarkCount { get; init; }
 }
