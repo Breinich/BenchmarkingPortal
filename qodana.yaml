@@ -12,12 +12,6 @@ profile:
 #include:
 #  - name: <SomeEnabledInspectionId>
 
-#Disable inspections
-#exclude:
-#  - name: <SomeDisabledInspectionId>
-#    paths:
-#      - <path/where/not/run/inspection>
-
 #Execute shell command before Qodana execution (Applied in CI/CD pipeline)
 #bootstrap: sh ./prepare-qodana.sh
 
@@ -30,4 +24,4 @@ linter: jetbrains/qodana-dotnet:latest
 exclude:
   - name: All
     paths:
-      - BenchmarkingPortal.Web\wwwroot\lib\jquery-validation\dist
+      - BenchmarkingPortal.Web\wwwroot\lib
