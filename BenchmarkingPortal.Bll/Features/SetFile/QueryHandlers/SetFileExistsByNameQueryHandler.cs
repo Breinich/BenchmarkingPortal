@@ -1,6 +1,5 @@
 ﻿using BenchmarkingPortal.Bll.Features.SetFile.Queries;
 using BenchmarkingPortal.Dal;
-using BenchmarkingPortal.Dal.Dtos;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
