@@ -5,8 +5,8 @@ namespace BenchmarkingPortal.Bll.Features.User.Commands;
 
 public class UpdateUserCommand : IRequest<UserHeader>
 {
-    public string InvokerName { get; set; } = null!;
-    public string UserName { get; set; } = null!;
-    public bool Subscription { get; set; }
-    public string? Role { get; set; }
+    public string InvokerName { get; init; } = null!;
+    public string UserName { get; init; } = null!;
+    public bool Subscription { get; init; }
+    public string? Role { get; init; }
 }

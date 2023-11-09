@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using BenchmarkingPortal.Bll.Features.User.Commands;
+﻿using BenchmarkingPortal.Bll.Features.User.Commands;
 using BenchmarkingPortal.Dal.Dtos;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
