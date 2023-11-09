@@ -14,7 +14,6 @@ function uploadFile(num) {
     fileName = document.getElementById('fileName' + num);
 
     const file = document.getElementById('droppedFile' + num).files[0];
-    const rootPath = document.getElementById('rootPath' + num).value;
     fileVersion = document.getElementById('fileVersion' + num).value;
 
     uploadProgress.value = 0;
@@ -34,7 +33,7 @@ function uploadFile(num) {
                 emptyMetaKey: ''
             },
             headers: {
-                'root': rootPath
+                'extension': file.name.split('.').pop()
             }
         });
 
