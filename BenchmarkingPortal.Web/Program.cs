@@ -22,8 +22,10 @@ using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Entities;
 using BenchmarkingPortal.Dal.SeedInterfaces;
 using BenchmarkingPortal.Dal.SeedService;
+using BenchmarkingPortal.Web;
 using BenchmarkingPortal.Web.Endpoints;
 using BenchmarkingPortal.Web.Hosting;
+using BenchmarkingPortal.Web.Pages;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
@@ -83,8 +85,6 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     options.ExpireTimeSpan = TimeSpan.FromDays(1);
     options.LoginPath = "/Identity/Account/Login";
-    // ReturnUrlParameter requires 
-    //using Microsoft.AspNetCore.Authentication.Cookies;
     options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
     options.SlidingExpiration = true;
 });
@@ -166,7 +166,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
         typeof(GetSetFileByPathQuery).Assembly,
         typeof(GetAllPropertyFileNamesQuery).Assembly,
         typeof(GetExecutableToolNameQuery).Assembly,
-        typeof(GetConfigurationByIdQuery).Assembly
+        typeof(GetConfigurationByIdQuery).Assembly,
+        typeof(DeleteConfigurationCommand).Assembly
     ));
 
 builder.Services.Configure<FormOptions>(x =>
@@ -177,6 +178,23 @@ builder.Services.Configure<FormOptions>(x =>
 });
 
 builder.Services.Configure<KestrelServerOptions>(o => o.Limits.MaxRequestBodySize = 1024L * 1024 * 1024 * 10);
+
+var sp = new StoragePaths
+{
+    WorkingDir = builder.Configuration["Storage:WorkingDir"] ?? 
+                    throw new ApplicationException("Missing working directory path configuration!"),
+    SetFilesDir = builder.Configuration["Storage:WorkingDir"] + Path.DirectorySeparatorChar + "sv-benchmarks" 
+                     + Path.DirectorySeparatorChar + "c",
+    PropertyFilesDir = builder.Configuration["Storage:WorkingDir"] + Path.DirectorySeparatorChar + "sv-benchmarks" 
+                          + Path.DirectorySeparatorChar + "c" + Path.DirectorySeparatorChar + "properties",
+    VcloudBenchmarkPath = builder.Configuration["Storage:WorkingDir"] + Path.DirectorySeparatorChar + "benchexec"
+        + Path.DirectorySeparatorChar + "contrib" + Path.DirectorySeparatorChar + "vcloud-benchmark.py",
+    WorkerConfig = builder.Configuration["Storage:WorkerConfig"] ?? 
+                      throw new ApplicationException("Missing worker config path configuration!"),
+    SshConfig = builder.Configuration["Storage:SshConfig"] ??
+                   throw new ApplicationException("Missing ssh config path configuration!")
+};
+builder.Services.AddSingleton(sp);
 
 var app = builder.Build();
 
@@ -218,15 +236,23 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
 {
     var logger = httpContext.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger<Program>();
 
-    if (httpContext.Request.Headers["root"] == StringValues.Empty)
+    if (httpContext.Request.Headers["extension"] == StringValues.Empty)
     {
-        throw new ApplicationException("Missing root path from request headers");
+        throw new ApplicationException("Missing extension path from request headers");
     }
-    var diskStorePath = httpContext.Request.Headers["root"][0] ?? 
-                        throw new ApplicationException("Missing root path value from request headers");
+
+    var diskStorePath = (httpContext.Request.Headers["extension"][0] ??
+                         throw new ApplicationException("Missing extension path value from request headers"))
+        switch
+        {
+            "zip" => httpContext.RequestServices.GetRequiredService<StoragePaths>().WorkingDir 
+                     + Path.DirectorySeparatorChar + httpContext.User.Identity?.Name
+                     + Path.DirectorySeparatorChar + "tools",
+            "set" => httpContext.RequestServices.GetRequiredService<StoragePaths>().SetFilesDir,
+            _ => throw new ArgumentException("Invalid extension path value from request headers")
+        };
     
-    if (!Directory.Exists(diskStorePath))
-        Directory.CreateDirectory(diskStorePath);
+    Directory.CreateDirectory(diskStorePath);
 
     var config = new DefaultTusConfiguration
     {
