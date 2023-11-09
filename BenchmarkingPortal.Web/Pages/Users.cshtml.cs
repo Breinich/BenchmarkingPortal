@@ -35,7 +35,7 @@ public class UsersModel : PageModel
     public List<UserHeader> UserList { get; set; }
     public List<string> Headers { get; set; } = new();
 
-    [BindProperty] public InputModel Input { get; set; }
+    [BindProperty] public InputModel Input { get; init; }
 
     public async Task<IActionResult> OnGet()
     {
@@ -43,7 +43,7 @@ public class UsersModel : PageModel
         {
             Headers = new List<string>
             {
-                "Username", "Email", "Subscription", "Role", "Actions"
+                "Username", "Email", "Role", "Actions"
             };
 
             Roles = await RoleManager.Roles.Select(x => new SelectListItem
@@ -118,7 +118,7 @@ public class UsersModel : PageModel
 
     public class InputModel
     {
-        public bool Subscribed { get; set; }
-        public string? Role { get; set; }
+        public bool Subscribed { get; init; }
+        public string? Role { get; init; }
     }
 }
