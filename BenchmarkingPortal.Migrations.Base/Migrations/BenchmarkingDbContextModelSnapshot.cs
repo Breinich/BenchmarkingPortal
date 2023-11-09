@@ -55,8 +55,9 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<int>("Priority")
-                        .HasColumnType("integer");
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("PropertyFilePath")
                         .IsRequired()
