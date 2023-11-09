@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.Executable.QueryHandlers;
 
-public class GetExecutableToolNameQueryHandler : IRequestHandler<GetExecutableToolNameByIdQuery, string?>
+public class GetExecutableToolNameByIdQueryHandler : IRequestHandler<GetExecutableToolNameByIdQuery, string?>
 {
     private readonly BenchmarkingDbContext _context;
     
-    public GetExecutableToolNameQueryHandler(BenchmarkingDbContext context)
+    public GetExecutableToolNameByIdQueryHandler(BenchmarkingDbContext context)
     {
         _context = context;
     }
