@@ -165,7 +165,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
         typeof(GetExecutableByPathQuery).Assembly,
         typeof(GetSetFileByPathQuery).Assembly,
         typeof(GetAllPropertyFileNamesQuery).Assembly,
-        typeof(GetExecutableToolNameQuery).Assembly,
+        typeof(GetExecutableToolNameByIdQuery).Assembly,
         typeof(GetConfigurationByIdQuery).Assembly,
         typeof(DeleteConfigurationCommand).Assembly
     ));
