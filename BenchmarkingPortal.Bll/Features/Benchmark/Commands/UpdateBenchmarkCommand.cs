@@ -6,11 +6,11 @@ namespace BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 
 public class UpdateBenchmarkCommand : IRequest<BenchmarkHeader>
 {
-    public int Id { get; set; }
+    public int Id { get; init; }
 
-    public int Priority { get; set; }
+    public Priority Priority { get; init; }
 
-    public Status Status { get; set; }
+    public Status Status { get; init; }
 
-    public string InvokerName { get; set; } = null!;
+    public string InvokerName { get; init; } = null!;
 }

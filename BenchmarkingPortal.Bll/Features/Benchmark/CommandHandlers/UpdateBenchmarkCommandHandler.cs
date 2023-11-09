@@ -64,10 +64,8 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
 
             await _context.SaveChangesAsync(cancellationToken);
         }
-        else
-        {
-            throw new ArgumentException("The benchmark, that wanted to be modified, has already been finished.");
-        }
+
+        throw new ArgumentException("The benchmark, that wanted to be modified, has already been finished.");
 
 
         return benchmarkHeader;

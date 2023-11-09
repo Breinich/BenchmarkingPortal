@@ -5,22 +5,26 @@ using BenchmarkingPortal.Bll.Features.Executable.Queries;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
+using BenchmarkingPortal.Web;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using CliWrap;
 
 namespace BenchmarkingPortal.Bll.Features.Benchmark.CommandHandlers;
 
+// ReSharper disable once UnusedType.Global
 public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkCommand, BenchmarkHeader>
 {
     private readonly BenchmarkingDbContext _context;
-    private readonly IConfiguration _configuration;
+    private readonly string _vcloudBenchmarkPath;
+    private readonly string _workDir;
     private readonly IMediator _mediator;
 
-    public StartBenchmarkCommandHandler(BenchmarkingDbContext context, IConfiguration configuration, IMediator mediator)
+    public StartBenchmarkCommandHandler(BenchmarkingDbContext context, StoragePaths storagePaths, IMediator mediator)
     {
         _context = context;
-        _configuration = configuration;
+        _vcloudBenchmarkPath = storagePaths.VcloudBenchmarkPath;
+        _workDir = storagePaths.WorkingDir;
         _mediator = mediator;
     }
 
@@ -72,17 +76,21 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         };
         // The other values will be checked by the scheduler
         
-        // creating the benchmark definition xml file
-        await CreateXmlSetup(newBenchmark, cancellationToken);
         
-        // Delegating the benchmark to the scheduler and starting it on one or more VMs
-
-        // The scheduler sends back the assigned ComputerGroup's Id and the start time, these are ONLY TEMPORARY
+        Directory.CreateDirectory(_workDir + Path.DirectorySeparatorChar + newBenchmark.UserName
+                                  + Path.DirectorySeparatorChar + "benchmarks");
+        var xmlName = _workDir + Path.DirectorySeparatorChar + newBenchmark.UserName
+                       + Path.DirectorySeparatorChar + "benchmarks"
+                       + Path.DirectorySeparatorChar + newBenchmark.Name
+                       + ".xml";
+        
+        await CreateXmlSetup(newBenchmark, xmlName, cancellationToken);
+        
         var startedDate = DateTime.UtcNow;
+        await StartBenchmark(newBenchmark, startedDate, xmlName, cancellationToken);
+        
         // If the starting of the benchmark would be compromised, de scheduler must throw an exception and
         // in this case, no benchmark will be started
-
-        // TODO
 
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
@@ -114,7 +122,14 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         return new BenchmarkHeader(benchmark);
     }
 
-    private async Task CreateXmlSetup(BenchmarkHeader newBenchmark, CancellationToken cancellationToken)
+    /// <summary>
+    /// Creates the XML file for the benchmark
+    /// </summary>
+    /// <param name="newBenchmark">Benchmark info</param>
+    /// <param name="xmlName">The absolute path for the xml</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <exception cref="ApplicationException">Shows server-side problem</exception>
+    private async Task CreateXmlSetup(BenchmarkHeader newBenchmark, string xmlName, CancellationToken cancellationToken)
     {
         var settings = new XmlWriterSettings
         {
@@ -125,17 +140,14 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             Async = true
         };
 
-        await using var writer = XmlWriter.Create(_configuration["Storage:Root"] 
-                                                  + Path.DirectorySeparatorChar + newBenchmark.UserName 
-                                                  + Path.DirectorySeparatorChar + newBenchmark.Name 
-                                                  + ".xml", settings);
+        await using var writer = XmlWriter.Create(xmlName, settings);
         await writer.WriteStartDocumentAsync();
         await writer.WriteDocTypeAsync("benchmark", "+//IDN sosy-lab.org//DTD BenchExec benchmark 1.9//EN", 
             "https://www.sosy-lab.org/benchexec/benchmark-2.3.dtd", null);
             
         await writer.WriteStartElementAsync(null, "benchmark", null);
         await writer.WriteAttributeStringAsync(null, "tool", null, 
-            await _mediator.Send(new GetExecutableToolNameQuery()
+            await _mediator.Send(new GetExecutableToolNameQuery
             {
                 Id = newBenchmark.ExecutableId
             }, cancellationToken));
@@ -149,7 +161,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             newBenchmark.Cpu.ToString());
         
             
-        var config = await _mediator.Send(new GetConfigurationByIdQuery()
+        var config = await _mediator.Send(new GetConfigurationByIdQuery
         {
             Id = newBenchmark.ConfigurationId
         }, cancellationToken) ?? throw new ApplicationException("Configuration not found.");
@@ -168,7 +180,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             foreach (var item in config.ConfigurationItems.Where(ci => ci.Scope == Scope.Local).ToList())
             {
                 if (optionList.Count == 0)
-                    optionList.Add(new List<ConfigurationItemHeader>()
+                    optionList.Add(new List<ConfigurationItemHeader>
                     {
                         item
                     });
@@ -191,7 +203,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             // to let the combinations contain this option and let them contain also the empty option
             foreach (var list in optionList.Where(list => list.Count == 1).Where(list => list[0].Value == ""))
             {
-                list.Add(new ConfigurationItemHeader()
+                list.Add(new ConfigurationItemHeader
                 {
                     Key = null,
                     Value = null
@@ -210,7 +222,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
                         configurationItemHeaders.Aggregate("", (current, item) =>
                         {
                             if (item.Key != null)
-                                return current + (item.Key.Split("-")[0] + "-" + item.Value + "_");
+                                return current + item.Key.Split("-")[0] + "-" + item.Value + "_";
                             return current;
                         }));
                         
@@ -246,8 +258,50 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         await writer.FlushAsync();
     }
     
+    /// <summary>
+    /// Creates the cross product of the given lists
+    /// </summary>
+    /// <param name="source">Source list of lists</param>
+    /// <typeparam name="T">Type of one element in the inner lists</typeparam>
+    /// <returns>The cross product in the form of list of lists</returns>
     private static IEnumerable<IEnumerable<T>> CrossProduct<T>(IEnumerable<IEnumerable<T>> source) => 
         source.Aggregate(
             (IEnumerable<IEnumerable<T>>) new[] { Enumerable.Empty<T>() },
             (acc, src) => src.SelectMany(x => acc.Select(a => a.Concat(new[] {x}))));
+    
+    /// <summary>
+    /// Starts the benchmark
+    /// </summary>
+    /// <param name="newBenchmark">The benchmark's info</param>
+    /// <param name="startedDate">The registered start time</param>
+    /// <param name="xmlName">The absolute path of the xml config</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <exception cref="ApplicationException">Shows server-side problem</exception>
+    private async Task StartBenchmark(BenchmarkHeader newBenchmark, DateTime startedDate, string xmlName,
+        CancellationToken cancellationToken)
+    {
+        var exe = await _context.Executables.Where(x => x.Id == newBenchmark.ExecutableId)
+            .Select(x => new ExecutableHeader(x)).FirstOrDefaultAsync(cancellationToken);
+        if (exe == null)
+            throw new ApplicationException("The connecting executable not found.");
+
+        var resultDir = _workDir + Path.DirectorySeparatorChar + newBenchmark.UserName
+                        + Path.DirectorySeparatorChar + "results"
+                        + Path.DirectorySeparatorChar
+                        + exe.Name + "_" + startedDate.ToString("%Y-%m-%d_%H:%M:%S");
+        // prepare results directory
+        Directory.CreateDirectory(resultDir);
+
+        var xmlRelativePath = xmlName.TrimStart((_workDir + Path.DirectorySeparatorChar).ToCharArray());
+        var toolDir = newBenchmark.UserName + Path.DirectorySeparatorChar + "tools" + Path.DirectorySeparatorChar
+                      + exe.Name;
+
+        var result = await Cli.Wrap(_vcloudBenchmarkPath)
+            .WithArguments(new [] {"--tryLessMemory", "--no-container", xmlRelativePath, "--tool-directory", toolDir, 
+                "--vcloudAdditionalFiles", toolDir, "-o", resultDir, "--vcloudPriority", newBenchmark.Priority.ToString()})
+            .WithWorkingDirectory(_workDir)
+            .ExecuteAsync(cancellationToken);
+    }
+    
+    
 }

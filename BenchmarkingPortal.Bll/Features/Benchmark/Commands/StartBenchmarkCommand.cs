@@ -1,33 +1,34 @@
 ﻿using BenchmarkingPortal.Dal.Dtos;
+using BenchmarkingPortal.Dal.Entities;
 using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 
 public class StartBenchmarkCommand : IRequest<BenchmarkHeader>
 {
-    public string Name { get; set; } = null!;
+    public string Name { get; init; } = null!;
 
-    public int Priority { get; set; }
+    public Priority Priority { get; init; }
 
-    public int Ram { get; set; }
+    public int Ram { get; init; }
 
-    public int Cpu { get; set; }
+    public int Cpu { get; init; }
 
     public int TimeLimit { get; set; }
 
     public int HardTimeLimit { get; set; }
     
-    public string CpuModel { get; set; } = null!;
+    public string CpuModel { get; init; } = null!;
 
-    public int ExecutableId { get; set; }
+    public int ExecutableId { get; init; }
 
-    public string SetFilePath { get; set; } = null!;
+    public string SetFilePath { get; init; } = null!;
 
-    public string PropertyFilePath { get; set; } = null!;
+    public string PropertyFilePath { get; init; } = null!;
 
-    public int ConfigurationId { get; set; }
+    public int ConfigurationId { get; init; }
     
-    public int ComputerGroupId { get; set; }
+    public int ComputerGroupId { get; init; }
 
-    public string InvokerName { get; set; } = null!;
+    public string InvokerName { get; init; } = null!;
 }
