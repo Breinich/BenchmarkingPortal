@@ -7,19 +7,16 @@ namespace BenchmarkingPortal.Web.Endpoints;
 
 public class DownloadFileEndpoint
 {
-    public static async Task HandleRoute(HttpContext context, IConfiguration configuration, IMediator mediator)
+    public static async Task HandleRoute(HttpContext context, StoragePaths storagePaths, IMediator mediator)
     {
         var fileId = (string)(context.Request.RouteValues["fileId"] ?? 
                      throw new ApplicationException("Missing fileId from route"));
 
         var path = fileId.Split(".").Last() switch
         {
-            "set" => (configuration["Storage:SV-Benchmarks"] ??
-                      throw new ApplicationException("Missing SV-Benchmark path configuration")) +
-                     Path.DirectorySeparatorChar + "c",
-            "zip" => (configuration["Storage:Root"] ??
-                      throw new ApplicationException("Missing root path configuration")) + Path.DirectorySeparatorChar +
-                     context.User.Identity?.Name,
+            "set" => storagePaths.SetFilesDir,
+            "zip" => storagePaths.WorkingDir + Path.DirectorySeparatorChar + context.User.Identity?.Name 
+                     + Path.DirectorySeparatorChar + "tools" ,
             _ => throw new ArgumentException("Invalid file extension.")
         };
 
