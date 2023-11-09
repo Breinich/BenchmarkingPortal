@@ -4,7 +4,7 @@ public class Benchmark
 {
     public int Id { get; set; }
     public string Name { get; set; } = null!;
-    public int Priority { get; set; }
+    public Priority Priority { get; set; }
     public Status Status { get; set; }
     public int Ram { get; set; }
     public int Cpu { get; set; }
