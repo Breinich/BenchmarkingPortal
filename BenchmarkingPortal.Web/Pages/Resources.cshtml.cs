@@ -21,14 +21,17 @@ namespace BenchmarkingPortal.Web.Pages;
 public class Resources : PageModel
 {
     private readonly IMediator _mediator;
-    private readonly IConfiguration _configuration;
+    private readonly string _setFilesDir;
+    private readonly string _workDir;
 
-    public Resources(IMediator mediator, IConfiguration configuration)
+    public Resources(IMediator mediator, StoragePaths storagePaths)
     {
         _mediator = mediator;
+        _setFilesDir = storagePaths.SetFilesDir;
+        _workDir = storagePaths.WorkingDir;
+        
         Executables = new List<ExecutableHeader>();
         SetFiles = new List<SetFileHeader>();
-        _configuration = configuration;
         ExecutableInput = new ExecutableInputModel();
         SetFileInput = new SetFileInputModel();
     }
@@ -124,10 +127,7 @@ public class Resources : PageModel
     {
         try
         {
-            var path = (_configuration["Storage:SV-Benchmarks"] ?? 
-                      throw new ApplicationException("Missing SV-Benchmark path configuration")) 
-                     + Path.DirectorySeparatorChar + "c";
-            var store = new CustomTusDiskStore(path, _mediator);
+            var store = new CustomTusDiskStore(_setFilesDir, _mediator);
             
             var file = await store.GetFileAsync(fileId, cancellationToken);
 
@@ -173,9 +173,7 @@ public class Resources : PageModel
                 return RedirectToPage();
             }
             
-            var path = (_configuration["Storage:Root"] ??
-                        throw new ApplicationException("Missing SV-Benchmark path configuration"))
-                       + Path.DirectorySeparatorChar + exe.UserName;
+            var path = _workDir + Path.DirectorySeparatorChar + exe.UserName + Path.DirectorySeparatorChar + "tools" ;
             var store = new CustomTusDiskStore(path, _mediator);
             
             var file = await store.GetFileAsync(fileId, cancellationToken);
@@ -209,9 +207,7 @@ public class Resources : PageModel
 
     private static string GetContentTypeOrDefault(Dictionary<string, Metadata> metadata)
     {
-        if (metadata.TryGetValue("contentType", out var contentType)) return contentType.GetString(Encoding.UTF8);
-
-        return "application/octet-stream";
+        return metadata.TryGetValue("contentType", out var contentType) ? contentType.GetString(Encoding.UTF8) : "application/octet-stream";
     }
 
     public async Task<IActionResult> OnPostUploadExecutableAsync()
@@ -283,25 +279,25 @@ public class Resources : PageModel
         [Required]
         [RegularExpression(@"[A-Za-z0-9._-]+:[A-Za-z0-9._-]+\.zip$")]
         [Display(Name = "Executable Name")]
-        public string Name { get; set; } = null!;
+        public string Name { get; init; } = null!;
 
         [Required]
         [Display(Name = "Executable Version")] 
         [DefaultValue("1.0")]
-        public string? Version { get; set; }
+        public string? Version { get; init; }
 
         [Required]
         [Display(Name = "Owner Tool Name")]
-        public string OwnerTool { get; set; } = null!;
+        public string OwnerTool { get; init; } = null!;
 
         [Required]
         [Display(Name = "Tool Version")]
-        public string ToolVersion { get; set; } = null!;
+        public string ToolVersion { get; init; } = null!;
 
         [Required(ErrorMessage = "Please select a file.")]
         [Display(Name = "Executable Zip")]
         [RegularExpression(@".*\.zip$")]
-        public string FileUrl { get; set; } = null!;
+        public string FileUrl { get; init; } = null!;
     }
 
     public class SetFileInputModel
@@ -309,17 +305,17 @@ public class Resources : PageModel
         [Required]
         [RegularExpression(@"[A-Za-z0-9._-]+:[A-Za-z0-9._-]+\.set$")]
         [Display(Name = "Set File Name")]
-        public string Name { get; set; } = null!;
+        public string Name { get; init; } = null!;
         
         [Required]
         [Display(Name = "Set File Version")] 
         [DefaultValue("1.0")]
-        public string? Version { get; set; }
+        public string? Version { get; init; }
         
 
         [Required(ErrorMessage = "Please select a file.")]
         [Display(Name = "Set File")]
         [RegularExpression(@".*\.set$")]
-        public string FileUrl { get; set; } = null!;
+        public string FileUrl { get; init; } = null!;
     }
 }

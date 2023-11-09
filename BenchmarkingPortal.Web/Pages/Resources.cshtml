@@ -1,7 +1,6 @@
 ﻿@page
 @model Resources
 @inject IAuthorizationService AuthorizationService
-@inject IConfiguration Configuration
 @{
     ViewData["Title"] = "Resources";
 }
@@ -293,8 +292,6 @@
                         <span asp-validation-for="ExecutableInput.ToolVersion" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-4">
-                        <!-- we will use username as root path for each user, because it's unique -->
-                        <input id="rootPath1" hidden value="@(Configuration["Storage:Root"] + System.IO.Path.DirectorySeparatorChar + User.Identity?.Name)"/>
                         <input asp-for="ExecutableInput.FileUrl" id="filePath1" hidden/>
                         <div class="row">
                             <div class="col-6">
@@ -337,8 +334,6 @@
                         <span asp-validation-for="SetFileInput.Version" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-4">
-                        <!-- the root path for set files is within the sv-benchmarks directory -->
-                        <input id="rootPath2" hidden value="@(Configuration["Storage:SV-Benchmarks"] + System.IO.Path.DirectorySeparatorChar + "c")"/>
                         <input asp-for="SetFileInput.FileUrl" id="filePath2" hidden/>
                         <div class="row">
                             <div class="col-6">
@@ -364,6 +359,6 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial"/>
-    <script src="~/js/tus.min.js"></script>
+    <script src="~/lib/tusdotnet/tus.min.js"></script>
     <script src="~/js/resources.js"></script>
 }
