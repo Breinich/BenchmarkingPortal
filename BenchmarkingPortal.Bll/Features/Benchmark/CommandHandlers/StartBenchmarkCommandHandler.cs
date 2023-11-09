@@ -34,10 +34,9 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         // Value validations first:
 
         // Checking whether the name of the new benchmark is unique
-        var nameCountAsync = await _context.Benchmarks.Where(b => b.Name.Equals(request.Name)).Select(b => b.Id)
-            .CountAsync(cancellationToken);
-
-        if (nameCountAsync > 0)
+        var nameCount =  _context.Benchmarks.Where(b => b.Name.Equals(request.Name)).Select(b => b.Id)
+            .Count();
+        if (nameCount > 0)
             throw new ArgumentOutOfRangeException(nameof(request), request.Name,
                 "A benchmark with the same name already exists.");
 
@@ -79,44 +78,58 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         
         Directory.CreateDirectory(_workDir + Path.DirectorySeparatorChar + newBenchmark.UserName
                                   + Path.DirectorySeparatorChar + "benchmarks");
-        var xmlName = _workDir + Path.DirectorySeparatorChar + newBenchmark.UserName
+        newBenchmark.XmlFilePath = _workDir + Path.DirectorySeparatorChar + newBenchmark.UserName
                        + Path.DirectorySeparatorChar + "benchmarks"
                        + Path.DirectorySeparatorChar + newBenchmark.Name
                        + ".xml";
         
-        await CreateXmlSetup(newBenchmark, xmlName, cancellationToken);
-        
+        CreateXmlSetup(newBenchmark, cancellationToken);
         var startedDate = DateTime.UtcNow;
-        await StartBenchmark(newBenchmark, startedDate, xmlName, cancellationToken);
         
-        // If the starting of the benchmark would be compromised, de scheduler must throw an exception and
-        // in this case, no benchmark will be started
-
-        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
+        var toolName =  _mediator.Send(new GetExecutableToolNameByIdQuery
+        {
+            Id = newBenchmark.ExecutableId
+        }).Result;
+        if (toolName == null)
+            throw new ApplicationException("The according executable not found.");
+        
+        var resultDir = _workDir + Path.DirectorySeparatorChar + newBenchmark.UserName
+                        + Path.DirectorySeparatorChar + "results"
+                        + Path.DirectorySeparatorChar
+                        + toolName + "_" + startedDate.ToString("%Y-%m-%d_%H:%M:%S");
+        // prepare results directory
+        Directory.CreateDirectory(resultDir);
+        
+        newBenchmark.ResultPath = resultDir;
+        newBenchmark.StartedDate = startedDate;
+        
+        await StartBenchmark(newBenchmark, toolName, cancellationToken);
+        
         // Creating new Benchmark entity and writing it to the DB
         // At this point, the benchmark has been successfully configured and started
         var benchmark = new Dal.Entities.Benchmark
         {
-            Name = request.Name,
-            Priority = request.Priority,
+            Name = newBenchmark.Name,
+            Priority = newBenchmark.Priority,
             Status = Status.Running,
-            Ram = request.Ram,
-            Cpu = request.Cpu,
-            TimeLimit = request.TimeLimit,
-            HardTimeLimit = request.HardTimeLimit,
-            CpuModel = request.CpuModel,
-            ComputerGroupId = request.ComputerGroupId,
-            ExecutableId = request.ExecutableId,
-            SetFilePath = request.SetFilePath,
-            PropertyFilePath = request.PropertyFilePath,
-            StartedDate = startedDate,
+            Ram = newBenchmark.Ram,
+            Cpu = newBenchmark.Cpu,
+            TimeLimit = newBenchmark.TimeLimit,
+            HardTimeLimit = newBenchmark.HardTimeLimit,
+            CpuModel = newBenchmark.CpuModel,
+            ComputerGroupId = newBenchmark.ComputerGroupId,
+            ExecutableId = newBenchmark.ExecutableId,
+            SetFilePath = newBenchmark.SetFilePath,
+            PropertyFilePath = newBenchmark.PropertyFilePath,
+            StartedDate = newBenchmark.StartedDate,
             ConfigurationId = request.ConfigurationId,
-            UserName = newBenchmark.UserName
+            UserName = newBenchmark.UserName,
+            ResultPath = newBenchmark.ResultPath,
+            XmlFilePath = newBenchmark.XmlFilePath
         };
 
-        //_context.Benchmarks.Add(benchmark);
-        //await _context.SaveChangesAsync(cancellationToken);
+        _context.Benchmarks.Add(benchmark);
+        await _context.SaveChangesAsync(cancellationToken);
 
         // Returning the benchmark with the generated Id from the DB
         return new BenchmarkHeader(benchmark);
@@ -126,10 +139,9 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
     /// Creates the XML file for the benchmark
     /// </summary>
     /// <param name="newBenchmark">Benchmark info</param>
-    /// <param name="xmlName">The absolute path for the xml</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <exception cref="ApplicationException">Shows server-side problem</exception>
-    private async Task CreateXmlSetup(BenchmarkHeader newBenchmark, string xmlName, CancellationToken cancellationToken)
+    private void CreateXmlSetup(BenchmarkHeader newBenchmark, CancellationToken cancellationToken)
     {
         var settings = new XmlWriterSettings
         {
@@ -140,40 +152,40 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             Async = true
         };
 
-        await using var writer = XmlWriter.Create(xmlName, settings);
-        await writer.WriteStartDocumentAsync();
-        await writer.WriteDocTypeAsync("benchmark", "+//IDN sosy-lab.org//DTD BenchExec benchmark 1.9//EN", 
+        using var writer = XmlWriter.Create(newBenchmark.XmlFilePath!, settings);
+         writer.WriteStartDocumentAsync();
+         writer.WriteDocTypeAsync("benchmark", "+//IDN sosy-lab.org//DTD BenchExec benchmark 1.9//EN", 
             "https://www.sosy-lab.org/benchexec/benchmark-2.3.dtd", null);
             
-        await writer.WriteStartElementAsync(null, "benchmark", null);
-        await writer.WriteAttributeStringAsync(null, "tool", null, 
-            await _mediator.Send(new GetExecutableToolNameQuery
+         writer.WriteStartElementAsync(null, "benchmark", null);
+         writer.WriteAttributeStringAsync(null, "tool", null, 
+             _mediator.Send(new GetExecutableToolNameByIdQuery
             {
                 Id = newBenchmark.ExecutableId
-            }, cancellationToken));
-        await writer.WriteAttributeStringAsync(null, "timelimit", null, 
+            }, cancellationToken).Result ?? throw new ApplicationException("According executable not found."));
+         writer.WriteAttributeStringAsync(null, "timelimit", null, 
             newBenchmark.TimeLimit+"s");
-        await writer.WriteAttributeStringAsync(null, "hardtimelimit", null,
+         writer.WriteAttributeStringAsync(null, "hardtimelimit", null,
             newBenchmark.HardTimeLimit+"s");
-        await writer.WriteAttributeStringAsync(null, "memlimit", null,
+         writer.WriteAttributeStringAsync(null, "memlimit", null,
             newBenchmark.Ram+"GB");
-        await writer.WriteAttributeStringAsync(null, "cpuCores", null,
+         writer.WriteAttributeStringAsync(null, "cpuCores", null,
             newBenchmark.Cpu.ToString());
         
             
-        var config = await _mediator.Send(new GetConfigurationByIdQuery
+        var config =  _mediator.Send(new GetConfigurationByIdQuery
         {
             Id = newBenchmark.ConfigurationId
-        }, cancellationToken) ?? throw new ApplicationException("Configuration not found.");
+        }, cancellationToken).Result ?? throw new ApplicationException("According configuration not found.");
 
         if (config.ConfigurationItems != null)
         {
             foreach (var item in config.ConfigurationItems.Where(ci => ci.Scope == Scope.Global).ToList())
             {
-                await writer.WriteStartElementAsync(null, "option", null);
-                await writer.WriteAttributeStringAsync(null, "name", null, "--" + item.Key);
-                await writer.WriteStringAsync(item.Value ?? "");
-                await writer.WriteEndElementAsync();
+                 writer.WriteStartElementAsync(null, "option", null);
+                 writer.WriteAttributeStringAsync(null, "name", null, "--" + item.Key);
+                 writer.WriteStringAsync(item.Value ?? "");
+                 writer.WriteEndElementAsync();
             }
 
             var optionList = new List<List<ConfigurationItemHeader>>();
@@ -217,8 +229,8 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
                 {
                         
                     var configurationItemHeaders = list.ToList();
-                    await writer.WriteStartElementAsync(null, "rundefinition", null);
-                    await writer.WriteAttributeStringAsync(null, "name", null,
+                     writer.WriteStartElementAsync(null, "rundefinition", null);
+                     writer.WriteAttributeStringAsync(null, "name", null,
                         configurationItemHeaders.Aggregate("", (current, item) =>
                         {
                             if (item.Key != null)
@@ -228,34 +240,34 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
                         
                     foreach (var item in configurationItemHeaders.Where(item => item.Key != null))
                     {
-                        await writer.WriteStartElementAsync(null, "option", null);
-                        await writer.WriteAttributeStringAsync(null, "name", null, "--" + item.Key);
-                        await writer.WriteStringAsync(item.Value ?? "");
-                        await writer.WriteEndElementAsync();
+                         writer.WriteStartElementAsync(null, "option", null);
+                         writer.WriteAttributeStringAsync(null, "name", null, "--" + item.Key);
+                         writer.WriteStringAsync(item.Value ?? "");
+                         writer.WriteEndElementAsync();
                     }
                         
-                    await writer.WriteStartElementAsync(null, "tasks", null);
-                    await writer.WriteAttributeStringAsync(null, "name", null, 
+                    writer.WriteStartElementAsync(null, "tasks", null);
+                    writer.WriteAttributeStringAsync(null, "name", null, 
                         newBenchmark.SetFilePath!.Split(Path.DirectorySeparatorChar).Last().Split(".")[0]);
-                    await writer.WriteStartElementAsync(null, "includesfile", null);
-                    await writer.WriteStringAsync("sv-benchmarks" + Path.DirectorySeparatorChar + "c" 
-                                                  + Path.DirectorySeparatorChar 
-                                                  + newBenchmark.SetFilePath!.Split(Path.DirectorySeparatorChar).Last());
-                    await writer.WriteEndElementAsync();
-                    await writer.WriteStartElementAsync(null, "propertyfile", null);
-                    await writer.WriteStringAsync("sv-benchmarks" + Path.DirectorySeparatorChar + "c" 
-                                                  + Path.DirectorySeparatorChar + "properties" 
-                                                  + Path.DirectorySeparatorChar 
-                                                  + newBenchmark.PropertyFilePath!.Split(Path.DirectorySeparatorChar).Last());
-                    await writer.WriteEndElementAsync();
-                    await writer.WriteEndElementAsync();
-                    await writer.WriteEndElementAsync();
+                    writer.WriteStartElementAsync(null, "includesfile", null);
+                    writer.WriteStringAsync("sv-benchmarks" + Path.DirectorySeparatorChar + "c" 
+                                            + Path.DirectorySeparatorChar 
+                                            + newBenchmark.SetFilePath!.Split(Path.DirectorySeparatorChar).Last());
+                    writer.WriteEndElementAsync();
+                    writer.WriteStartElementAsync(null, "propertyfile", null);
+                    writer.WriteStringAsync("sv-benchmarks" + Path.DirectorySeparatorChar + "c" 
+                                            + Path.DirectorySeparatorChar + "properties" 
+                                            + Path.DirectorySeparatorChar 
+                                            + newBenchmark.PropertyFilePath!.Split(Path.DirectorySeparatorChar).Last());
+                    writer.WriteEndElementAsync();
+                    writer.WriteEndElementAsync();
+                    writer.WriteEndElementAsync();
                 }
             }
         }
 
-        await writer.WriteEndElementAsync();
-        await writer.FlushAsync();
+        writer.WriteEndElementAsync();
+        writer.FlushAsync();
     }
     
     /// <summary>
@@ -268,40 +280,56 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         source.Aggregate(
             (IEnumerable<IEnumerable<T>>) new[] { Enumerable.Empty<T>() },
             (acc, src) => src.SelectMany(x => acc.Select(a => a.Concat(new[] {x}))));
-    
+
     /// <summary>
     /// Starts the benchmark
     /// </summary>
     /// <param name="newBenchmark">The benchmark's info</param>
-    /// <param name="startedDate">The registered start time</param>
-    /// <param name="xmlName">The absolute path of the xml config</param>
+    /// <param name="toolName"></param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <exception cref="ApplicationException">Shows server-side problem</exception>
-    private async Task StartBenchmark(BenchmarkHeader newBenchmark, DateTime startedDate, string xmlName,
-        CancellationToken cancellationToken)
+    private async Task StartBenchmark(BenchmarkHeader newBenchmark, string toolName, CancellationToken cancellationToken)
     {
-        var exe = await _context.Executables.Where(x => x.Id == newBenchmark.ExecutableId)
-            .Select(x => new ExecutableHeader(x)).FirstOrDefaultAsync(cancellationToken);
-        if (exe == null)
-            throw new ApplicationException("The connecting executable not found.");
-
-        var resultDir = _workDir + Path.DirectorySeparatorChar + newBenchmark.UserName
-                        + Path.DirectorySeparatorChar + "results"
-                        + Path.DirectorySeparatorChar
-                        + exe.Name + "_" + startedDate.ToString("%Y-%m-%d_%H:%M:%S");
-        // prepare results directory
-        Directory.CreateDirectory(resultDir);
-
-        var xmlRelativePath = xmlName.TrimStart((_workDir + Path.DirectorySeparatorChar).ToCharArray());
+        var xmlRelativePath = newBenchmark.XmlFilePath!.TrimStart((_workDir + Path.DirectorySeparatorChar).ToCharArray());
         var toolDir = newBenchmark.UserName + Path.DirectorySeparatorChar + "tools" + Path.DirectorySeparatorChar
-                      + exe.Name;
+                      + toolName;
 
+        var outputLogPath = newBenchmark.ResultPath! + Path.DirectorySeparatorChar + "output.log";
+        var errorLogPath = newBenchmark.ResultPath! + Path.DirectorySeparatorChar + "error.log";
+        
+        using var forcefulCts = new CancellationTokenSource();
+        
         var result = await Cli.Wrap(_vcloudBenchmarkPath)
-            .WithArguments(new [] {"--tryLessMemory", "--no-container", xmlRelativePath, "--tool-directory", toolDir, 
-                "--vcloudAdditionalFiles", toolDir, "-o", resultDir, "--vcloudPriority", newBenchmark.Priority.ToString()})
+            .WithArguments(args =>
+            {
+                args
+                    .Add("--tryLessMemory")
+                    .Add("--no-container")
+                    .Add(xmlRelativePath)
+                    .Add("--tool-directory").Add(toolDir)
+                    .Add("--vcloudAdditionalFiles").Add(toolDir)
+                    .Add("-o").Add(newBenchmark.ResultPath!.TrimStart((_workDir + Path.DirectorySeparatorChar).ToCharArray()))
+                    .Add("--vcloudPriority").Add(newBenchmark.Priority.ToString());
+                if(newBenchmark.CpuModel != null && !newBenchmark.CpuModel.Equals("") && !newBenchmark.CpuModel.Equals("-"))
+                    args.Add("--vcloudCPUModel").Add(newBenchmark.CpuModel);
+            })
             .WithWorkingDirectory(_workDir)
-            .ExecuteAsync(cancellationToken);
+            .WithStandardOutputPipe(PipeTarget.ToFile(outputLogPath))
+            .WithStandardErrorPipe(PipeTarget.ToFile(errorLogPath))
+            .ExecuteAsync(forcefulCts.Token, cancellationToken);
+        
+        if (result.ExitCode != 0)
+            throw new ApplicationException("The benchmark did not finish successfully.\n" +
+                                           "You can check the errors in the error.log file among the result files.");
+        if (result.ExitCode == 0)
+        {
+            var benchmark = await _context.Benchmarks
+                .Where(b => b.Name.Equals(newBenchmark.Name))
+                .FirstOrDefaultAsync(cancellationToken);
+            if (benchmark != null)
+                benchmark.Status = Status.Finished;
+            
+            await _context.SaveChangesAsync(cancellationToken);
+        }
     }
-    
-    
 }
