@@ -28,7 +28,7 @@ public class LoginModel : PageModel
     ///     directly from your code. This API may change or be removed in future releases.
     /// </summary>
     [BindProperty]
-    public InputModel Input { get; set; }
+    public InputModel Input { get; init; }
 
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -47,7 +47,7 @@ public class LoginModel : PageModel
     ///     directly from your code. This API may change or be removed in future releases.
     /// </summary>
     [TempData]
-    public string ErrorMessage { get; set; }
+    public string ErrorMessage { get; init; }
 
     public async Task OnGetAsync(string returnUrl = null)
     {
@@ -69,29 +69,23 @@ public class LoginModel : PageModel
 
         ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid) return Page();
+        
+        var result =
+            await _signInManager.PasswordSignInAsync(Input.UserName, Input.Password, Input.RememberMe, false);
+        if (result.Succeeded)
         {
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-            var result =
-                await _signInManager.PasswordSignInAsync(Input.UserName, Input.Password, Input.RememberMe, false);
-            if (result.Succeeded)
-            {
-                _logger.LogInformation("User logged in.");
-                return LocalRedirect(returnUrl);
-            }
-
-            if (result.IsLockedOut)
-            {
-                _logger.LogWarning("User account locked out.");
-                return RedirectToPage("./Lockout");
-            }
-
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            return Page();
+            _logger.LogInformation("User logged in.");
+            return LocalRedirect(returnUrl);
         }
 
-        // If we got this far, something failed, redisplay form
+        if (result.IsLockedOut)
+        {
+            _logger.LogWarning("User account locked out.");
+            return RedirectToPage("./Lockout");
+        }
+
+        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
         return Page();
     }
 
@@ -106,7 +100,7 @@ public class LoginModel : PageModel
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         [Required]
-        public string UserName { get; set; }
+        public string UserName { get; init; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -114,13 +108,13 @@ public class LoginModel : PageModel
         /// </summary>
         [Required]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string Password { get; init; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         [Display(Name = "Remember me?")]
-        public bool RememberMe { get; set; }
+        public bool RememberMe { get; init; }
     }
 }

@@ -29,7 +29,7 @@ public class SetPasswordModel : PageModel
     ///     directly from your code. This API may change or be removed in future releases.
     /// </summary>
     [BindProperty]
-    public InputModel Input { get; set; }
+    public InputModel Input { get; init; }
 
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -85,7 +85,7 @@ public class SetPasswordModel : PageModel
             MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "New password")]
-        public string NewPassword { get; set; }
+        public string NewPassword { get; init; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -94,6 +94,6 @@ public class SetPasswordModel : PageModel
         [DataType(DataType.Password)]
         [Display(Name = "Confirm new password")]
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; }
+        public string ConfirmPassword { get; init; }
     }
 }

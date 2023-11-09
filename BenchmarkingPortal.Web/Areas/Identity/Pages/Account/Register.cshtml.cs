@@ -39,7 +39,7 @@ public class RegisterModel : PageModel
     ///     directly from your code. This API may change or be removed in future releases.
     /// </summary>
     [BindProperty]
-    public InputModel Input { get; set; }
+    public InputModel Input { get; init; }
 
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -68,7 +68,7 @@ public class RegisterModel : PageModel
         {
             try
             {
-                UserHeader result = await _mediator.Send(new CreateUserCommand()
+                UserHeader result = await _mediator.Send(new CreateUserCommand
                 {
                     UserName = Input.UserName,
                     Email = Input.Email,
@@ -110,7 +110,7 @@ public class RegisterModel : PageModel
     {
         [Required]
         [Display(Name = "User name")]
-        public string UserName { get; set; }
+        public string UserName { get; init; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -119,7 +119,7 @@ public class RegisterModel : PageModel
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
-        public string Email { get; set; }
+        public string Email { get; init; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -130,7 +130,7 @@ public class RegisterModel : PageModel
             MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
-        public string Password { get; set; }
+        public string Password { get; init; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -139,6 +139,6 @@ public class RegisterModel : PageModel
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; }
+        public string ConfirmPassword { get; init; }
     }
 }

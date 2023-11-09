@@ -62,7 +62,7 @@ public class ExternalLoginModel : PageModel
     public string Email { get; set; }
     public string Name { get; set; }
 
-    public bool FtsrgMember { get; set; }
+    public bool FtsrgMember { get; init; }
 
     public IActionResult OnGet()
     {
@@ -79,7 +79,7 @@ public class ExternalLoginModel : PageModel
 
     public async Task<IActionResult> OnGetCallbackAsync(string returnUrl = null, string remoteError = null)
     {
-        returnUrl = returnUrl ?? Url.Content("~/");
+        returnUrl ??= Url.Content("~/");
         if (remoteError != null)
         {
             ErrorMessage = $"Error from external provider: {remoteError}";
@@ -174,11 +174,11 @@ public class ExternalLoginModel : PageModel
         /// </summary>
         [Required]
         [Display(Name = "Username")]
-        public string UserName { get; set; }
+        public string UserName { get; init; }
 
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
-        public string Email { get; set; }
+        public string Email { get; init; }
     }
 }

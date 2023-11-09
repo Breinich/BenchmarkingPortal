@@ -121,8 +121,8 @@ public class IndexModel : PageModel
         /// </summary>
         [Phone]
         [Display(Name = "Phone number")]
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; init; }
 
-        [Display(Name = "Subscription")] public bool Subscription { get; set; }
+        [Display(Name = "Subscription")] public bool Subscription { get; init; }
     }
 }

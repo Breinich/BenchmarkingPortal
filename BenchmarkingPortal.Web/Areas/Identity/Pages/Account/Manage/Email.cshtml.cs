@@ -98,6 +98,6 @@ public class EmailModel : PageModel
         [Required]
         [EmailAddress]
         [Display(Name = "New email")]
-        public string NewEmail { get; set; }
+        public string NewEmail { get; init; }
     }
 }
