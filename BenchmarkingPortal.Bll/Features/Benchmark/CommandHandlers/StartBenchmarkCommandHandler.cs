@@ -323,9 +323,9 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
                     .Add("-o").Add(
                         newBenchmark.ResultPath!.TrimStart((_workDir + Path.DirectorySeparatorChar).ToCharArray()))
                     .Add("--vcloudPriority").Add(newBenchmark.Priority.ToString());
-                if(_vcloudHost != "")
+                if(!string.IsNullOrEmpty(_vcloudHost))
                     args.Add("--vcloudMaster").Add(_vcloudHost);
-                if(newBenchmark.CpuModel != null && !newBenchmark.CpuModel.Equals("") && !newBenchmark.CpuModel.Equals("-"))
+                if(!string.IsNullOrEmpty(newBenchmark.CpuModel) && !newBenchmark.CpuModel.Equals("-"))
                     args.Add("--vcloudCPUModel").Add(newBenchmark.CpuModel);
             })
             .WithWorkingDirectory(_workDir)
