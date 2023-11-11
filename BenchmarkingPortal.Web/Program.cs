@@ -180,7 +180,7 @@ builder.Services.Configure<FormOptions>(x =>
 
 builder.Services.Configure<KestrelServerOptions>(o => o.Limits.MaxRequestBodySize = 1024L * 1024 * 1024 * 10);
 
-builder.Services.AddSingleton<StoragePaths>(_ => new StoragePaths
+builder.Services.AddSingleton<PathConfigs>(_ => new PathConfigs
 {
     WorkingDir = builder.Configuration["Storage:WorkingDir"] ?? 
                  throw new ApplicationException("Missing working directory path configuration!"),
@@ -193,7 +193,9 @@ builder.Services.AddSingleton<StoragePaths>(_ => new StoragePaths
     WorkerConfig = builder.Configuration["Storage:WorkerConfig"] ?? 
                    throw new ApplicationException("Missing worker config path configuration!"),
     SshConfig = builder.Configuration["Storage:SshConfig"] ??
-                throw new ApplicationException("Missing ssh config path configuration!")
+                throw new ApplicationException("Missing ssh config path configuration!"),
+    VcloudHost = builder.Configuration["VCloud:Hostname"] ?? 
+                 throw new ApplicationException("Missing vcloud hostname configuration!")
 });
 
 builder.Services.AddSingleton<IBenchmarkQueue>(_ => new BenchmarkQueue());
@@ -249,10 +251,10 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
                          throw new ApplicationException("Missing extension path value from request headers"))
         switch
         {
-            "zip" => httpContext.RequestServices.GetRequiredService<StoragePaths>().WorkingDir 
+            "zip" => httpContext.RequestServices.GetRequiredService<PathConfigs>().WorkingDir 
                      + Path.DirectorySeparatorChar + httpContext.User.Identity?.Name
                      + Path.DirectorySeparatorChar + "tools",
-            "set" => httpContext.RequestServices.GetRequiredService<StoragePaths>().SetFilesDir,
+            "set" => httpContext.RequestServices.GetRequiredService<PathConfigs>().SetFilesDir,
             _ => throw new ArgumentException("Invalid extension path value from request headers")
         };
     

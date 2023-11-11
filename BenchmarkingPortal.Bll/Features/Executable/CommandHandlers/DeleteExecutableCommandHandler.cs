@@ -16,11 +16,11 @@ public class DeleteExecutableCommandHandler : IRequestHandler<DeleteExecutableCo
     private readonly IMediator _mediator;
 
     public DeleteExecutableCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager, 
-        StoragePaths storagePaths, IMediator mediator)
+        PathConfigs pathConfigs, IMediator mediator)
     {
         _context = context;
         _userManager = userManager;
-        _workDir = storagePaths.WorkingDir;
+        _workDir = pathConfigs.WorkingDir;
         _mediator = mediator;
     }
 

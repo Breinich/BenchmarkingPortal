@@ -8,9 +8,9 @@ public class GetAllSetFileNamesQueryHandler : IRequestHandler<GetAllSetFileNames
 {
     private readonly string _setFilesDir;
     
-    public GetAllSetFileNamesQueryHandler(StoragePaths storagePaths)
+    public GetAllSetFileNamesQueryHandler(PathConfigs pathConfigs)
     {
-        _setFilesDir = storagePaths.SetFilesDir;
+        _setFilesDir = pathConfigs.SetFilesDir;
     }
     
     public Task<IEnumerable<string>> Handle(GetAllSetFileNamesQuery request, CancellationToken cancellationToken)

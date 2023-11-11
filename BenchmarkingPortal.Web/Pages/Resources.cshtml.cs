@@ -25,11 +25,11 @@ public class Resources : PageModel
     private readonly string _setFilesDir;
     private readonly string _workDir;
 
-    public Resources(IMediator mediator, StoragePaths storagePaths)
+    public Resources(IMediator mediator, PathConfigs pathConfigs)
     {
         _mediator = mediator;
-        _setFilesDir = storagePaths.SetFilesDir;
-        _workDir = storagePaths.WorkingDir;
+        _setFilesDir = pathConfigs.SetFilesDir;
+        _workDir = pathConfigs.WorkingDir;
         
         Executables = new List<ExecutableHeader>();
         SetFiles = new List<SetFileHeader>();

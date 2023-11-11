@@ -17,11 +17,11 @@ public class DeleteSetFileCommandHandler : IRequestHandler<DeleteSetFileCommand>
     private readonly IMediator _mediator;
 
     public DeleteSetFileCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager, 
-        StoragePaths storagePaths, IMediator mediator)
+        PathConfigs pathConfigs, IMediator mediator)
     {
         _context = context;
         _userManager = userManager;
-        _setFilesDir = storagePaths.SetFilesDir;
+        _setFilesDir = pathConfigs.SetFilesDir;
         _mediator = mediator;
     }
 
