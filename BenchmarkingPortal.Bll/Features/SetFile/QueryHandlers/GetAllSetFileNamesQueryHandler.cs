@@ -1,10 +1,10 @@
 ﻿using BenchmarkingPortal.Bll.Features.SetFile.Queries;
-using BenchmarkingPortal.Web;
+using BenchmarkingPortal.Bll.Services;
 using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.SetFile.QueryHandlers;
 
-public class GetAllSetFileNamesQueryHandler : IRequestHandler<GetAllSetFileNamesQuery, IEnumerable<String>>
+public class GetAllSetFileNamesQueryHandler : IRequestHandler<GetAllSetFileNamesQuery, IEnumerable<string>>
 {
     private readonly string _setFilesDir;
     

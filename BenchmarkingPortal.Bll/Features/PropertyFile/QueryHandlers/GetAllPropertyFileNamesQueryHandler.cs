@@ -1,5 +1,5 @@
 ﻿using BenchmarkingPortal.Bll.Features.PropertyFile.Queries;
-using BenchmarkingPortal.Web;
+using BenchmarkingPortal.Bll.Services;
 using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.PropertyFile.QueryHandlers;
