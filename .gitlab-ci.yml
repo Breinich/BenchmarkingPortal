@@ -1,6 +1,5 @@
 qodana:
   only:
-    - master
     - dev
     - merge_requests
   image:
