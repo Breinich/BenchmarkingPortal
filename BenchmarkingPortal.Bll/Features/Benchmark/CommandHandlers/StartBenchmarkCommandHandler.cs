@@ -19,14 +19,16 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
     private readonly BenchmarkingDbContext _context;
     private readonly string _vcloudBenchmarkPath;
     private readonly string _workDir;
+    private readonly string _vcloudHost;
     private readonly IMediator _mediator;
     private readonly IBenchmarkQueue _queue;
 
-    public StartBenchmarkCommandHandler(BenchmarkingDbContext context, StoragePaths storagePaths, IMediator mediator, IBenchmarkQueue queue)
+    public StartBenchmarkCommandHandler(BenchmarkingDbContext context, PathConfigs pathConfigs, IMediator mediator, IBenchmarkQueue queue)
     {
         _context = context;
-        _vcloudBenchmarkPath = storagePaths.VcloudBenchmarkPath;
-        _workDir = storagePaths.WorkingDir;
+        _vcloudBenchmarkPath = pathConfigs.VcloudBenchmarkPath;
+        _workDir = pathConfigs.WorkingDir;
+        _vcloudHost = pathConfigs.VcloudHost;
         _mediator = mediator;
         _queue = queue;
     }
@@ -318,8 +320,11 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
                     .Add(xmlRelativePath)
                     .Add("--tool-directory").Add(toolDir)
                     .Add("--vcloudAdditionalFiles").Add(toolDir)
-                    .Add("-o").Add(newBenchmark.ResultPath!.TrimStart((_workDir + Path.DirectorySeparatorChar).ToCharArray()))
+                    .Add("-o").Add(
+                        newBenchmark.ResultPath!.TrimStart((_workDir + Path.DirectorySeparatorChar).ToCharArray()))
                     .Add("--vcloudPriority").Add(newBenchmark.Priority.ToString());
+                if(_vcloudHost != "")
+                    args.Add("--vcloudMaster").Add(_vcloudHost);
                 if(newBenchmark.CpuModel != null && !newBenchmark.CpuModel.Equals("") && !newBenchmark.CpuModel.Equals("-"))
                     args.Add("--vcloudCPUModel").Add(newBenchmark.CpuModel);
             })
