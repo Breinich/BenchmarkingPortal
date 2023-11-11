@@ -1,6 +1,7 @@
 qodana:
   only:
     - master
+    - dev
     - merge_requests
   image:
     name: jetbrains/qodana-dotnet
