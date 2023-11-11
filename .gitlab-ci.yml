@@ -1,7 +1,4 @@
 qodana:
-  only:
-    - master
-    - merge_requests
   image:
     name: jetbrains/qodana-dotnet
     entrypoint: [""]
