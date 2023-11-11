@@ -17,15 +17,14 @@ using BenchmarkingPortal.Bll.Features.User.Commands;
 using BenchmarkingPortal.Bll.Features.User.Queries;
 using BenchmarkingPortal.Bll.Features.Worker.Commands;
 using BenchmarkingPortal.Bll.Features.Worker.Queries;
+using BenchmarkingPortal.Bll.Services;
 using BenchmarkingPortal.Bll.Tus;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Entities;
 using BenchmarkingPortal.Dal.SeedInterfaces;
 using BenchmarkingPortal.Dal.SeedService;
-using BenchmarkingPortal.Web;
 using BenchmarkingPortal.Web.Endpoints;
 using BenchmarkingPortal.Web.Hosting;
-using BenchmarkingPortal.Web.Pages;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
@@ -75,6 +74,8 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddDbContext<BenchmarkingDbContext>(
     o => o.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnString"),
         x => x.MigrationsAssembly("BenchmarkingPortal.Migrations.Base")));
+
+// builder.Services.AddMemoryCache();
 
 builder.Services.AddScoped<IRoleSeedService, RoleSeedService>();
 builder.Services.AddScoped<IUserSeedService, UserSeedService>();
@@ -179,22 +180,25 @@ builder.Services.Configure<FormOptions>(x =>
 
 builder.Services.Configure<KestrelServerOptions>(o => o.Limits.MaxRequestBodySize = 1024L * 1024 * 1024 * 10);
 
-var sp = new StoragePaths
+builder.Services.AddSingleton<StoragePaths>(_ => new StoragePaths
 {
     WorkingDir = builder.Configuration["Storage:WorkingDir"] ?? 
-                    throw new ApplicationException("Missing working directory path configuration!"),
+                 throw new ApplicationException("Missing working directory path configuration!"),
     SetFilesDir = builder.Configuration["Storage:WorkingDir"] + Path.DirectorySeparatorChar + "sv-benchmarks" 
-                     + Path.DirectorySeparatorChar + "c",
+                  + Path.DirectorySeparatorChar + "c",
     PropertyFilesDir = builder.Configuration["Storage:WorkingDir"] + Path.DirectorySeparatorChar + "sv-benchmarks" 
-                          + Path.DirectorySeparatorChar + "c" + Path.DirectorySeparatorChar + "properties",
+                       + Path.DirectorySeparatorChar + "c" + Path.DirectorySeparatorChar + "properties",
     VcloudBenchmarkPath = builder.Configuration["Storage:WorkingDir"] + Path.DirectorySeparatorChar + "benchexec"
-        + Path.DirectorySeparatorChar + "contrib" + Path.DirectorySeparatorChar + "vcloud-benchmark.py",
+                          + Path.DirectorySeparatorChar + "contrib" + Path.DirectorySeparatorChar + "vcloud-benchmark.py",
     WorkerConfig = builder.Configuration["Storage:WorkerConfig"] ?? 
-                      throw new ApplicationException("Missing worker config path configuration!"),
+                   throw new ApplicationException("Missing worker config path configuration!"),
     SshConfig = builder.Configuration["Storage:SshConfig"] ??
-                   throw new ApplicationException("Missing ssh config path configuration!")
-};
-builder.Services.AddSingleton(sp);
+                throw new ApplicationException("Missing ssh config path configuration!")
+});
+
+builder.Services.AddSingleton<IBenchmarkQueue>(_ => new BenchmarkQueue());
+
+builder.Services.AddHostedService<BenchmarkRunnerService>();
 
 var app = builder.Build();
 
