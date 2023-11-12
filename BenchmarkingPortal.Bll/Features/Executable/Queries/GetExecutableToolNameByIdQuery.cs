@@ -1,8 +1,9 @@
 ﻿using MediatR;
 
-namespace BenchmarkingPortal.Bll.Features.Executable.Queries;
-
-public class GetExecutableToolNameByIdQuery : IRequest<string?>
+namespace BenchmarkingPortal.Bll.Features.Executable.Queries
 {
-    public int Id { get; init; }
+    public class GetExecutableToolNameByIdQuery : IRequest<string?>
+    {
+        public int Id { get; init;}
+    }
 }
