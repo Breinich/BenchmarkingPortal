@@ -1,4 +1,4 @@
-﻿using System.Xml;
+using System.Xml;
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Configuration.Queries;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
@@ -223,7 +223,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
                 
             // Add an empty ConfigItem to the end of the list, if there is no value for the only one option,
             // to let the combinations contain this option and let them contain also the empty option
-            foreach (var list in optionList.Where(list => list.Count == 1).Where(list => list[0].Value == ""))
+            foreach (var list in optionList.Where(list => list.Count == 1).Where(list => string.IsNullOrEmpty(list[0].Value)))
             {
                 list.Add(new ConfigurationItemHeader
                 {
