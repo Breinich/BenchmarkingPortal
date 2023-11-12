@@ -98,24 +98,22 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         await CreateXmlSetup(newBenchmark, cancellationToken);
         var startedDate = DateTime.UtcNow;
         
-        var toolName = await _mediator.Send(new GetExecutableToolNameByIdQuery
+        var exeName = await _mediator.Send(new GetExecutableNameByIdQuery
         {
             Id = newBenchmark.ExecutableId
-        }, cancellationToken);
-        if (toolName == null)
-            throw new ApplicationException("The according executable not found.");
+        }, cancellationToken) ?? throw new ApplicationException("The according executable not found.");
         
         var resultDir = _workDir + Path.DirectorySeparatorChar + newBenchmark.UserName
                         + Path.DirectorySeparatorChar + "results"
                         + Path.DirectorySeparatorChar
-                        + toolName + "_" + startedDate.ToString("%Y-%m-%d_%H:%M:%S");
+                        + exeName + "_" + startedDate.ToString("yyyy-MM-dd_HH-mm-ss");
         // prepare results directory
         Directory.CreateDirectory(resultDir);
         
         newBenchmark.ResultPath = resultDir;
         newBenchmark.StartedDate = startedDate;
         
-        await QueueBenchmark(newBenchmark, toolName, cancellationToken);
+        await QueueBenchmark(newBenchmark, exeName, cancellationToken);
         
         // Creating new Benchmark entity and writing it to the DB
         // At this point, the benchmark has been successfully configured and queued for running
@@ -260,7 +258,8 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
                         
                     await writer.WriteStartElementAsync(null, "tasks", null);
                     await writer.WriteAttributeStringAsync(null, "name", null, 
-                        newBenchmark.SetFilePath!.Split(Path.DirectorySeparatorChar).Last().Split(".")[0]);
+                        newBenchmark.SetFilePath!.Split(Path.DirectorySeparatorChar).Last()
+                            .TrimStart('.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', '-', '+').Split(".")[0]);
                     await writer.WriteStartElementAsync(null, "includesfile", null);
                     await writer.WriteStringAsync("sv-benchmarks" + Path.DirectorySeparatorChar + "c" 
                                                   + Path.DirectorySeparatorChar 
@@ -297,14 +296,14 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
     /// Starts the benchmark
     /// </summary>
     /// <param name="newBenchmark">The benchmark's info</param>
-    /// <param name="toolName"></param>
+    /// <param name="exeName"></param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <exception cref="ApplicationException">Shows server-side problem</exception>
-    private async Task QueueBenchmark(BenchmarkHeader newBenchmark, string toolName, CancellationToken cancellationToken)
+    private async Task QueueBenchmark(BenchmarkHeader newBenchmark, string exeName, CancellationToken cancellationToken)
     {
-        var xmlRelativePath = newBenchmark.XmlFilePath!.TrimStart((_workDir + Path.DirectorySeparatorChar).ToCharArray());
+        var xmlRelativePath = newBenchmark.XmlFilePath![_workDir.Length..].TrimStart(Path.DirectorySeparatorChar);
         var toolDir = newBenchmark.UserName + Path.DirectorySeparatorChar + "tools" + Path.DirectorySeparatorChar
-                      + toolName;
+                      + exeName;
 
         var outputLogPath = newBenchmark.ResultPath! + Path.DirectorySeparatorChar + "output.log";
         var errorLogPath = newBenchmark.ResultPath! + Path.DirectorySeparatorChar + "error.log";
@@ -320,8 +319,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
                     .Add(xmlRelativePath)
                     .Add("--tool-directory").Add(toolDir)
                     .Add("--vcloudAdditionalFiles").Add(toolDir)
-                    .Add("-o").Add(
-                        newBenchmark.ResultPath!.TrimStart((_workDir + Path.DirectorySeparatorChar).ToCharArray()))
+                    .Add("-o").Add(newBenchmark.ResultPath![_workDir.Length..].TrimStart(Path.DirectorySeparatorChar))
                     .Add("--vcloudPriority").Add(newBenchmark.Priority.ToString());
                 if(!string.IsNullOrEmpty(_vcloudHost))
                     args.Add("--vcloudMaster").Add(_vcloudHost);
@@ -330,9 +328,9 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             })
             .WithWorkingDirectory(_workDir)
             .WithStandardOutputPipe(PipeTarget.ToFile(outputLogPath))
-            .WithStandardErrorPipe(PipeTarget.ToFile(errorLogPath));
+            .WithStandardErrorPipe(PipeTarget.ToFile(errorLogPath))
+            .WithValidation(CommandResultValidation.None);
 
-        await _queue.QueueBenchmarkAsync(new BenchmarkTask(newBenchmark, cmd, _context, 
-            new LoggerFactory().CreateLogger<BenchmarkTask>()), cancellationToken);
+        await _queue.QueueBenchmarkAsync(new BenchmarkTask(newBenchmark, cmd), cancellationToken);
     }
 }
