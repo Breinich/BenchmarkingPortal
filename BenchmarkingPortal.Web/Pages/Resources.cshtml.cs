@@ -217,7 +217,7 @@ public class Resources : PageModel
         {
             var newExecutable = await _mediator.Send(new UploadNewExecutableCommand
             {
-                Name = ExecutableInput.Name.TrimEnd(".zip".ToCharArray()),
+                Name = Path.ChangeExtension(ExecutableInput.Name, null),
                 Version = ExecutableInput.Version,
                 OwnerTool = ExecutableInput.OwnerTool,
                 ToolVersion = ExecutableInput.ToolVersion,
@@ -250,7 +250,7 @@ public class Resources : PageModel
         {
             var newSetFile = await _mediator.Send(new UploadNewSetFileCommand
             {
-                Name = SetFileInput.Name.TrimEnd(".set".ToCharArray()),
+                Name = Path.ChangeExtension(SetFileInput.Name, null),
                 Version = SetFileInput.Version,
                 Path = SetFileInput.FileUrl,
                 UploadedDate = DateTime.UtcNow,
