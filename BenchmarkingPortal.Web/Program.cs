@@ -71,11 +71,10 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = false;
 });
 
+
 builder.Services.AddDbContext<BenchmarkingDbContext>(
     o => o.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnString"),
         x => x.MigrationsAssembly("BenchmarkingPortal.Migrations.Base")));
-
-// builder.Services.AddMemoryCache();
 
 builder.Services.AddScoped<IRoleSeedService, RoleSeedService>();
 builder.Services.AddScoped<IUserSeedService, UserSeedService>();
@@ -92,7 +91,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.Configure<SecurityStampValidatorOptions>(options =>
 {
-    options.ValidationInterval = TimeSpan.FromDays(1);
+    options.ValidationInterval = TimeSpan.FromHours(1);
 });
 
 builder.Services.AddAuthentication().AddCookie(
@@ -126,7 +125,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
 // Cookie settings
     options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+    options.ExpireTimeSpan = TimeSpan.FromDays(1);
     options.LoginPath = "/Identity/Account/Login";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     options.SlidingExpiration = true;
@@ -166,9 +165,10 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
         typeof(GetExecutableByPathQuery).Assembly,
         typeof(GetSetFileByPathQuery).Assembly,
         typeof(GetAllPropertyFileNamesQuery).Assembly,
-        typeof(GetExecutableToolNameByIdQuery).Assembly,
+        typeof(GetExecutableNameByIdQuery).Assembly,
         typeof(GetConfigurationByIdQuery).Assembly,
-        typeof(DeleteConfigurationCommand).Assembly
+        typeof(DeleteConfigurationCommand).Assembly,
+        typeof(GetExecutableToolNameByIdQuery).Assembly
     ));
 
 builder.Services.Configure<FormOptions>(x =>
@@ -346,7 +346,7 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
                 logger.LogInformation($"Deleted file {ctx.FileId} using {ctx.Store.GetType().FullName}");
                 if (ctx.FileId.Split(".").Last() == "zip")
                 {
-                    Directory.Delete(diskStorePath + Path.DirectorySeparatorChar + ctx.FileId.TrimEnd(".zip".ToCharArray()));
+                    Directory.Delete(Path.Combine(diskStorePath, Path.ChangeExtension(ctx.FileId, null)), true);
                 }
                 return Task.CompletedTask;
             },
