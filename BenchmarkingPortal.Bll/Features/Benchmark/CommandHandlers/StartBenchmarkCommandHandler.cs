@@ -9,7 +9,6 @@ using BenchmarkingPortal.Dal.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using CliWrap;
-using Microsoft.Extensions.Logging;
 
 namespace BenchmarkingPortal.Bll.Features.Benchmark.CommandHandlers;
 
@@ -95,25 +94,27 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
                        + Path.DirectorySeparatorChar + newBenchmark.Name
                        + ".xml";
         
-        await CreateXmlSetup(newBenchmark, cancellationToken);
-        var startedDate = DateTime.UtcNow;
-        
-        var exeName = await _mediator.Send(new GetExecutableNameByIdQuery
+        var exe = await _mediator.Send(new GetExecutableByIdQuery
         {
             Id = newBenchmark.ExecutableId
         }, cancellationToken) ?? throw new ApplicationException("The according executable not found.");
         
+        var xmlPath = await CreateXmlSetup(newBenchmark, exe.OwnerTool, cancellationToken);
+        var startedDate = DateTime.UtcNow;
+        
+        
+        
         var resultDir = _workDir + Path.DirectorySeparatorChar + newBenchmark.UserName
                         + Path.DirectorySeparatorChar + "results"
                         + Path.DirectorySeparatorChar
-                        + exeName + "_" + startedDate.ToString("yyyy-MM-dd_HH-mm-ss");
+                        + exe.Name + "_" + startedDate.ToString("yyyy-MM-dd_HH-mm-ss");
         // prepare results directory
         Directory.CreateDirectory(resultDir);
         
         newBenchmark.ResultPath = resultDir;
         newBenchmark.StartedDate = startedDate;
         
-        await QueueBenchmark(newBenchmark, exeName, cancellationToken);
+        await QueueBenchmark(newBenchmark, exe, xmlPath, cancellationToken);
         
         // Creating new Benchmark entity and writing it to the DB
         // At this point, the benchmark has been successfully configured and queued for running
@@ -121,7 +122,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         {
             Name = newBenchmark.Name,
             Priority = newBenchmark.Priority,
-            Status = Status.Running,
+            Status = Status.Queued,
             Ram = newBenchmark.Ram,
             Cpu = newBenchmark.Cpu,
             TimeLimit = newBenchmark.TimeLimit,
@@ -149,9 +150,10 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
     /// Creates the XML file for the benchmark
     /// </summary>
     /// <param name="newBenchmark">Benchmark info</param>
+    /// <param name="exeToolName">The name of the executable's owner tool</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <exception cref="ApplicationException">Shows server-side problem</exception>
-    private async Task CreateXmlSetup(BenchmarkHeader newBenchmark, CancellationToken cancellationToken)
+    private async Task<string> CreateXmlSetup(BenchmarkHeader newBenchmark, string? exeToolName, CancellationToken cancellationToken)
     {
         var settings = new XmlWriterSettings
         {
@@ -168,11 +170,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             "https://www.sosy-lab.org/benchexec/benchmark-2.3.dtd", null);
             
         await writer.WriteStartElementAsync(null, "benchmark", null);
-        await writer.WriteAttributeStringAsync(null, "tool", null, 
-             await _mediator.Send(new GetExecutableToolNameByIdQuery
-            {
-                Id = newBenchmark.ExecutableId
-            }, cancellationToken) ?? throw new ApplicationException("According executable not found."));
+        await writer.WriteAttributeStringAsync(null, "tool", null, exeToolName ?? throw new ApplicationException("According executable not found."));
         await writer.WriteAttributeStringAsync(null, "timelimit", null, 
             newBenchmark.TimeLimit+"s");
         await writer.WriteAttributeStringAsync(null, "hardtimelimit", null,
@@ -279,6 +277,11 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
 
         await writer.WriteEndElementAsync();
         await writer.FlushAsync();
+
+        var xmlPath = _workDir + Path.DirectorySeparatorChar
+                               + newBenchmark.Name + ".xml";
+        File.Copy(newBenchmark.XmlFilePath!, xmlPath, true);
+        return xmlPath;
     }
     
     /// <summary>
@@ -296,14 +299,16 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
     /// Starts the benchmark
     /// </summary>
     /// <param name="newBenchmark">The benchmark's info</param>
-    /// <param name="exeName"></param>
+    /// <param name="exe">The executable, that will be used</param>
+    /// <param name="xmlPath">The absolute path for the xml file, must be in the working directory</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <exception cref="ApplicationException">Shows server-side problem</exception>
-    private async Task QueueBenchmark(BenchmarkHeader newBenchmark, string exeName, CancellationToken cancellationToken)
+    private async Task QueueBenchmark(BenchmarkHeader newBenchmark, ExecutableHeader exe, string xmlPath,
+        CancellationToken cancellationToken)
     {
-        var xmlRelativePath = newBenchmark.XmlFilePath![_workDir.Length..].TrimStart(Path.DirectorySeparatorChar);
-        var toolDir = newBenchmark.UserName + Path.DirectorySeparatorChar + "tools" + Path.DirectorySeparatorChar
-                      + exeName;
+        var xmlRelativePath = xmlPath[_workDir.Length..].TrimStart(Path.DirectorySeparatorChar);
+        var toolDir = exe.UserName + Path.DirectorySeparatorChar + "tools" + Path.DirectorySeparatorChar
+                      + exe.Name;
 
         var outputLogPath = newBenchmark.ResultPath! + Path.DirectorySeparatorChar + "output.log";
         var errorLogPath = newBenchmark.ResultPath! + Path.DirectorySeparatorChar + "error.log";
