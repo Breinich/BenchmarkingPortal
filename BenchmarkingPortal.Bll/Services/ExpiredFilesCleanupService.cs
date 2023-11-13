@@ -1,8 +1,10 @@
-﻿using tusdotnet.Interfaces;
+﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using tusdotnet.Interfaces;
 using tusdotnet.Models;
 using tusdotnet.Models.Expiration;
 
-namespace BenchmarkingPortal.Web.Hosting;
+namespace BenchmarkingPortal.Bll.Services;
 
 public sealed class ExpiredFilesCleanupService : IHostedService, IDisposable
 {

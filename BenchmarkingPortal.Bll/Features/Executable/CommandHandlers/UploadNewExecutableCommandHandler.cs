@@ -1,7 +1,7 @@
 ﻿using BenchmarkingPortal.Bll.Features.Executable.Commands;
+using BenchmarkingPortal.Bll.Services;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
-using BenchmarkingPortal.Web;
 using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.Executable.CommandHandlers;
@@ -11,10 +11,10 @@ public class UploadNewExecutableCommandHandler : IRequestHandler<UploadNewExecut
     private readonly BenchmarkingDbContext _context;
     private readonly string _workDir;
 
-    public UploadNewExecutableCommandHandler(BenchmarkingDbContext context, StoragePaths storagePaths)
+    public UploadNewExecutableCommandHandler(BenchmarkingDbContext context, PathConfigs pathConfigs)
     {
         _context = context;
-        _workDir = storagePaths.WorkingDir;
+        _workDir = pathConfigs.WorkingDir;
     }
 
 
