@@ -31,6 +31,10 @@ public class BenchmarkTask
         try
         {
             var context = scope.ServiceProvider.GetRequiredService<BenchmarkingDbContext>();
+            var benchmark = await context.Benchmarks.Where(b => b.Name == BenchmarkInfo.Name)
+                .FirstAsync(cancellationToken);
+            benchmark.Status = Status.Running;
+            await context.SaveChangesAsync(cancellationToken);
 
             var result = await RunConfig.ExecuteAsync(cancellationToken);
 
@@ -44,8 +48,6 @@ public class BenchmarkTask
                 logger.Log(LogLevel.Information, $"The benchmark {BenchmarkInfo.Name} finished successfully.");
             }
 
-            var benchmark = await context.Benchmarks.Where(b => b.Name == BenchmarkInfo.Name)
-                .FirstAsync(cancellationToken);
             benchmark.Status = Status.Finished;
             await context.SaveChangesAsync(cancellationToken);
            
