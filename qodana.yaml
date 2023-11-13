@@ -24,3 +24,4 @@ exclude:
 include:
   - name: RegExpRedundantEscape
   - name: RegExpSimplifiable
+  - name: VulnerableLibrariesGlobal
