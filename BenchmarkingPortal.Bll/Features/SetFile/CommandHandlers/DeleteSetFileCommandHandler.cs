@@ -1,8 +1,8 @@
 ﻿using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.SetFile.Commands;
+using BenchmarkingPortal.Bll.Services;
 using BenchmarkingPortal.Bll.Tus;
 using BenchmarkingPortal.Dal;
-using BenchmarkingPortal.Web;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using tusdotnet.Interfaces;
@@ -17,11 +17,11 @@ public class DeleteSetFileCommandHandler : IRequestHandler<DeleteSetFileCommand>
     private readonly IMediator _mediator;
 
     public DeleteSetFileCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager, 
-        StoragePaths storagePaths, IMediator mediator)
+        PathConfigs pathConfigs, IMediator mediator)
     {
         _context = context;
         _userManager = userManager;
-        _setFilesDir = storagePaths.SetFilesDir;
+        _setFilesDir = pathConfigs.SetFilesDir;
         _mediator = mediator;
     }
 

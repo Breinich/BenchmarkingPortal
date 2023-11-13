@@ -2,6 +2,7 @@
 
 public enum Status
 {
+    Queued,
     Running,
     Paused,
     Finished

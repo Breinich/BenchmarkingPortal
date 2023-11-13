@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using BenchmarkingPortal.Bll.Services;
 using BenchmarkingPortal.Bll.Tus;
 using MediatR;
 using tusdotnet.Models;
@@ -7,15 +8,15 @@ namespace BenchmarkingPortal.Web.Endpoints;
 
 public class DownloadFileEndpoint
 {
-    public static async Task HandleRoute(HttpContext context, StoragePaths storagePaths, IMediator mediator)
+    public static async Task HandleRoute(HttpContext context, PathConfigs pathConfigs, IMediator mediator)
     {
         var fileId = (string)(context.Request.RouteValues["fileId"] ?? 
                      throw new ApplicationException("Missing fileId from route"));
 
         var path = fileId.Split(".").Last() switch
         {
-            "set" => storagePaths.SetFilesDir,
-            "zip" => storagePaths.WorkingDir + Path.DirectorySeparatorChar + context.User.Identity?.Name 
+            "set" => pathConfigs.SetFilesDir,
+            "zip" => pathConfigs.WorkingDir + Path.DirectorySeparatorChar + context.User.Identity?.Name 
                      + Path.DirectorySeparatorChar + "tools" ,
             _ => throw new ArgumentException("Invalid file extension.")
         };

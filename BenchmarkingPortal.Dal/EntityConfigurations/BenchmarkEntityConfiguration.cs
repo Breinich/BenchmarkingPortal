@@ -27,6 +27,7 @@ public class BenchmarkEntityConfiguration : IEntityTypeConfiguration<Benchmark>
         builder.Property(e => e.TimeLimit).IsRequired();
         builder.Property(e => e.HardTimeLimit).IsRequired();
         builder.Property(e => e.CpuModel).HasMaxLength(50).IsRequired();
+        builder.Property(e => e.XmlFilePath).HasMaxLength(250).IsRequired();
 
         builder.HasIndex(e => e.Name).IsUnique();
 

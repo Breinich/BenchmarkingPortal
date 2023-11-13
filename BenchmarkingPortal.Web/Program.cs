@@ -17,15 +17,14 @@ using BenchmarkingPortal.Bll.Features.User.Commands;
 using BenchmarkingPortal.Bll.Features.User.Queries;
 using BenchmarkingPortal.Bll.Features.Worker.Commands;
 using BenchmarkingPortal.Bll.Features.Worker.Queries;
+using BenchmarkingPortal.Bll.Services;
 using BenchmarkingPortal.Bll.Tus;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Entities;
 using BenchmarkingPortal.Dal.SeedInterfaces;
 using BenchmarkingPortal.Dal.SeedService;
-using BenchmarkingPortal.Web;
 using BenchmarkingPortal.Web.Endpoints;
 using BenchmarkingPortal.Web.Hosting;
-using BenchmarkingPortal.Web.Pages;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
@@ -72,6 +71,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = false;
 });
 
+
 builder.Services.AddDbContext<BenchmarkingDbContext>(
     o => o.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnString"),
         x => x.MigrationsAssembly("BenchmarkingPortal.Migrations.Base")));
@@ -91,7 +91,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.Configure<SecurityStampValidatorOptions>(options =>
 {
-    options.ValidationInterval = TimeSpan.FromDays(1);
+    options.ValidationInterval = TimeSpan.FromHours(1);
 });
 
 builder.Services.AddAuthentication().AddCookie(
@@ -125,7 +125,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
 // Cookie settings
     options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+    options.ExpireTimeSpan = TimeSpan.FromDays(1);
     options.LoginPath = "/Identity/Account/Login";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     options.SlidingExpiration = true;
@@ -165,7 +165,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
         typeof(GetExecutableByPathQuery).Assembly,
         typeof(GetSetFileByPathQuery).Assembly,
         typeof(GetAllPropertyFileNamesQuery).Assembly,
-        typeof(GetExecutableToolNameQuery).Assembly,
+        typeof(GetExecutableByIdQuery).Assembly,
         typeof(GetConfigurationByIdQuery).Assembly,
         typeof(DeleteConfigurationCommand).Assembly
     ));
@@ -179,22 +179,27 @@ builder.Services.Configure<FormOptions>(x =>
 
 builder.Services.Configure<KestrelServerOptions>(o => o.Limits.MaxRequestBodySize = 1024L * 1024 * 1024 * 10);
 
-var sp = new StoragePaths
+builder.Services.AddSingleton<PathConfigs>(_ => new PathConfigs
 {
     WorkingDir = builder.Configuration["Storage:WorkingDir"] ?? 
-                    throw new ApplicationException("Missing working directory path configuration!"),
+                 throw new ApplicationException("Missing working directory path configuration!"),
     SetFilesDir = builder.Configuration["Storage:WorkingDir"] + Path.DirectorySeparatorChar + "sv-benchmarks" 
-                     + Path.DirectorySeparatorChar + "c",
+                  + Path.DirectorySeparatorChar + "c",
     PropertyFilesDir = builder.Configuration["Storage:WorkingDir"] + Path.DirectorySeparatorChar + "sv-benchmarks" 
-                          + Path.DirectorySeparatorChar + "c" + Path.DirectorySeparatorChar + "properties",
+                       + Path.DirectorySeparatorChar + "c" + Path.DirectorySeparatorChar + "properties",
     VcloudBenchmarkPath = builder.Configuration["Storage:WorkingDir"] + Path.DirectorySeparatorChar + "benchexec"
-        + Path.DirectorySeparatorChar + "contrib" + Path.DirectorySeparatorChar + "vcloud-benchmark.py",
+                          + Path.DirectorySeparatorChar + "contrib" + Path.DirectorySeparatorChar + "vcloud-benchmark.py",
     WorkerConfig = builder.Configuration["Storage:WorkerConfig"] ?? 
-                      throw new ApplicationException("Missing worker config path configuration!"),
+                   throw new ApplicationException("Missing worker config path configuration!"),
     SshConfig = builder.Configuration["Storage:SshConfig"] ??
-                   throw new ApplicationException("Missing ssh config path configuration!")
-};
-builder.Services.AddSingleton(sp);
+                throw new ApplicationException("Missing ssh config path configuration!"),
+    VcloudHost = builder.Configuration["VCloud:Hostname"] ?? 
+                 throw new ApplicationException("Missing vcloud hostname configuration!")
+});
+
+builder.Services.AddSingleton<IBenchmarkQueue>(_ => new BenchmarkQueue());
+
+builder.Services.AddHostedService<BenchmarkRunnerService>();
 
 var app = builder.Build();
 
@@ -245,10 +250,10 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
                          throw new ApplicationException("Missing extension path value from request headers"))
         switch
         {
-            "zip" => httpContext.RequestServices.GetRequiredService<StoragePaths>().WorkingDir 
+            "zip" => httpContext.RequestServices.GetRequiredService<PathConfigs>().WorkingDir 
                      + Path.DirectorySeparatorChar + httpContext.User.Identity?.Name
                      + Path.DirectorySeparatorChar + "tools",
-            "set" => httpContext.RequestServices.GetRequiredService<StoragePaths>().SetFilesDir,
+            "set" => httpContext.RequestServices.GetRequiredService<PathConfigs>().SetFilesDir,
             _ => throw new ArgumentException("Invalid extension path value from request headers")
         };
     
@@ -340,7 +345,7 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
                 logger.LogInformation($"Deleted file {ctx.FileId} using {ctx.Store.GetType().FullName}");
                 if (ctx.FileId.Split(".").Last() == "zip")
                 {
-                    Directory.Delete(diskStorePath + Path.DirectorySeparatorChar + ctx.FileId.TrimEnd(".zip".ToCharArray()));
+                    Directory.Delete(Path.Combine(diskStorePath, Path.ChangeExtension(ctx.FileId, null)), true);
                 }
                 return Task.CompletedTask;
             },

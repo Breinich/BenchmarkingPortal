@@ -1,5 +1,5 @@
 ﻿using BenchmarkingPortal.Bll.Features.PropertyFile.Queries;
-using BenchmarkingPortal.Web;
+using BenchmarkingPortal.Bll.Services;
 using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.PropertyFile.QueryHandlers;
@@ -8,9 +8,9 @@ public class GetAllPropertyFileNamesQueryHandler : IRequestHandler<GetAllPropert
 {
     private readonly string _propertyFilesDir;
     
-    public GetAllPropertyFileNamesQueryHandler(StoragePaths storagePaths)
+    public GetAllPropertyFileNamesQueryHandler(PathConfigs pathConfigs)
     {
-        _propertyFilesDir = storagePaths.PropertyFilesDir;
+        _propertyFilesDir = pathConfigs.PropertyFilesDir;
     }
     
     public Task<IEnumerable<string>> Handle(GetAllPropertyFileNamesQuery request, CancellationToken cancellationToken)
