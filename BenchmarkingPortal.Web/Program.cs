@@ -165,10 +165,9 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
         typeof(GetExecutableByPathQuery).Assembly,
         typeof(GetSetFileByPathQuery).Assembly,
         typeof(GetAllPropertyFileNamesQuery).Assembly,
-        typeof(GetExecutableNameByIdQuery).Assembly,
+        typeof(GetExecutableByIdQuery).Assembly,
         typeof(GetConfigurationByIdQuery).Assembly,
-        typeof(DeleteConfigurationCommand).Assembly,
-        typeof(GetExecutableToolNameByIdQuery).Assembly
+        typeof(DeleteConfigurationCommand).Assembly
     ));
 
 builder.Services.Configure<FormOptions>(x =>
