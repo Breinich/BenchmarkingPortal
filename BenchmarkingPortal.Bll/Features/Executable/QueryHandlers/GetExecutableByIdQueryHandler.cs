@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.Executable.QueryHandlers;
 
-public class GetExecutableNameByIdQueryHandler : IRequestHandler<GetExecutableNameByIdQuery, string?>
+public class GetExecutableNameByIdQueryHandler : IRequestHandler<GetExecutableByIdQuery, string?>
 {
     private readonly BenchmarkingDbContext _context;
     
@@ -14,7 +14,7 @@ public class GetExecutableNameByIdQueryHandler : IRequestHandler<GetExecutableNa
         _context = context;
     }
     
-    public Task<string?> Handle(GetExecutableNameByIdQuery request, CancellationToken cancellationToken)
+    public Task<string?> Handle(GetExecutableByIdQuery request, CancellationToken cancellationToken)
     {
         return _context.Executables.Where(e => e.Id == request.Id).Select(e => e.Name)
             .FirstOrDefaultAsync(cancellationToken);
