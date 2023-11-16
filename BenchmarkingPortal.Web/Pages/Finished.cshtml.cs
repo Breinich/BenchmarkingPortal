@@ -2,6 +2,8 @@
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
+using BenchmarkingPortal.Bll.Features.Result.Commands;
+using BenchmarkingPortal.Bll.Services;
 using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
 using MediatR;
@@ -15,11 +17,12 @@ namespace BenchmarkingPortal.Web.Pages;
 public class Finished : PageModel
 {
     private readonly IMediator _mediator;
+    private readonly string _workDir;
 
-
-    public Finished(IMediator mediator)
+    public Finished(IMediator mediator, PathConfigs pathConfigs)
     {
         _mediator = mediator;
+        _workDir = pathConfigs.WorkingDir;
     }
 
     [TempData] public string? StatusMessage { get; set; }
@@ -56,7 +59,7 @@ public class Finished : PageModel
         }
     }
 
-    public async Task<IActionResult> OnPostDeleteAsync(int id, string name)
+    public async Task<IActionResult> OnPostDeleteAsync(int id, string name, CancellationToken cancellationToken)
     {
         try
         {
@@ -65,7 +68,7 @@ public class Finished : PageModel
                 Id = id,
                 InvokerName = User.Identity?.Name ??
                               throw new ApplicationException(new ExceptionMessage<Benchmark>().NoPrivilege)
-            });
+            }, cancellationToken);
 
             StatusMessage = $"{name} deleted successfully.";
             return RedirectToPage();
@@ -79,12 +82,21 @@ public class Finished : PageModel
         }
     }
 
-    public IActionResult OnPostDownload(string path)
+    public async Task<IActionResult> OnPostDownload(string path, CancellationToken cancellationToken)
     {
         try
         {
+            var (fileStream, contentType, fileName) = await _mediator.Send(new DownloadResultCommand
+            {
+                Path = path
+            }, cancellationToken);
+            
             StatusMessage = "Download started.";
-            return Page();
+
+            return new FileStreamResult(fileStream, contentType)
+            {
+                FileDownloadName = fileName
+            };
         }
         catch (Exception e)
         {
