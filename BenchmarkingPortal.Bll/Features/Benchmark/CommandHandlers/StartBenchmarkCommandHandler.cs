@@ -99,7 +99,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             Id = newBenchmark.ExecutableId
         }, cancellationToken) ?? throw new ApplicationException("The according executable not found.");
         
-        var xmlPath = await CreateXmlSetup(newBenchmark, exe.OwnerTool, cancellationToken);
+        await CreateXmlSetup(newBenchmark, exe.OwnerTool, cancellationToken);
         var startedDate = DateTime.UtcNow;
         
         
@@ -114,7 +114,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         newBenchmark.ResultPath = resultDir;
         newBenchmark.StartedDate = startedDate;
         
-        await QueueBenchmark(newBenchmark, exe, xmlPath, cancellationToken);
+        await QueueBenchmark(newBenchmark, exe, cancellationToken);
         
         // Creating new Benchmark entity and writing it to the DB
         // At this point, the benchmark has been successfully configured and queued for running
@@ -153,7 +153,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
     /// <param name="exeToolName">The name of the executable's owner tool</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <exception cref="ApplicationException">Shows server-side problem</exception>
-    private async Task<string> CreateXmlSetup(BenchmarkHeader newBenchmark, string? exeToolName, CancellationToken cancellationToken)
+    private async Task CreateXmlSetup(BenchmarkHeader newBenchmark, string? exeToolName, CancellationToken cancellationToken)
     {
         var settings = new XmlWriterSettings
         {
@@ -259,12 +259,16 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
                         newBenchmark.SetFilePath!.Split(Path.DirectorySeparatorChar).Last()
                             .TrimStart('.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', '-', '+').Split(".")[0]);
                     await writer.WriteStartElementAsync(null, "includesfile", null);
-                    await writer.WriteStringAsync("sv-benchmarks" + Path.DirectorySeparatorChar + "c" 
+                    await writer.WriteStringAsync(".." + Path.DirectorySeparatorChar + ".." 
+                                                  + Path.DirectorySeparatorChar + "sv-benchmarks" 
+                                                  + Path.DirectorySeparatorChar + "c" 
                                                   + Path.DirectorySeparatorChar 
                                                   + newBenchmark.SetFilePath!.Split(Path.DirectorySeparatorChar).Last());
                     await writer.WriteEndElementAsync();
                     await writer.WriteStartElementAsync(null, "propertyfile", null);
-                    await writer.WriteStringAsync("sv-benchmarks" + Path.DirectorySeparatorChar + "c" 
+                    await writer.WriteStringAsync(".." + Path.DirectorySeparatorChar + ".." 
+                                                  + Path.DirectorySeparatorChar + "sv-benchmarks" 
+                                                  + Path.DirectorySeparatorChar + "c" 
                                                   + Path.DirectorySeparatorChar + "properties" 
                                                   + Path.DirectorySeparatorChar 
                                                   + newBenchmark.PropertyFilePath!.Split(Path.DirectorySeparatorChar).Last());
@@ -277,11 +281,6 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
 
         await writer.WriteEndElementAsync();
         await writer.FlushAsync();
-
-        var xmlPath = _workDir + Path.DirectorySeparatorChar
-                               + newBenchmark.Name + ".xml";
-        File.Copy(newBenchmark.XmlFilePath!, xmlPath, true);
-        return xmlPath;
     }
     
     /// <summary>
@@ -303,10 +302,10 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
     /// <param name="xmlPath">The absolute path for the xml file, must be in the working directory</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <exception cref="ApplicationException">Shows server-side problem</exception>
-    private async Task QueueBenchmark(BenchmarkHeader newBenchmark, ExecutableHeader exe, string xmlPath,
+    private async Task QueueBenchmark(BenchmarkHeader newBenchmark, ExecutableHeader exe,
         CancellationToken cancellationToken)
     {
-        var xmlRelativePath = xmlPath[_workDir.Length..].TrimStart(Path.DirectorySeparatorChar);
+        var xmlRelativePath = newBenchmark.XmlFilePath![_workDir.Length..].TrimStart(Path.DirectorySeparatorChar);
         var toolDir = exe.UserName + Path.DirectorySeparatorChar + "tools" + Path.DirectorySeparatorChar
                       + exe.Name;
 
