@@ -11,6 +11,7 @@ using BenchmarkingPortal.Bll.Features.Configuration.Queries;
 using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
 using BenchmarkingPortal.Bll.Features.PropertyFile.Queries;
+using BenchmarkingPortal.Bll.Features.Result.Commands;
 using BenchmarkingPortal.Bll.Features.SetFile.Commands;
 using BenchmarkingPortal.Bll.Features.SetFile.Queries;
 using BenchmarkingPortal.Bll.Features.User.Commands;
@@ -167,7 +168,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
         typeof(GetAllPropertyFileNamesQuery).Assembly,
         typeof(GetExecutableByIdQuery).Assembly,
         typeof(GetConfigurationByIdQuery).Assembly,
-        typeof(DeleteConfigurationCommand).Assembly
+        typeof(DeleteConfigurationCommand).Assembly,
+        typeof(DownloadResultCommand).Assembly
     ));
 
 builder.Services.Configure<FormOptions>(x =>
