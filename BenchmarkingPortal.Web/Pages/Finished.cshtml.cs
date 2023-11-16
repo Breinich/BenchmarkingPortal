@@ -90,8 +90,6 @@ public class Finished : PageModel
             {
                 Path = path
             }, cancellationToken);
-            
-            StatusMessage = "Download started.";
 
             return new FileStreamResult(fileStream, contentType)
             {
