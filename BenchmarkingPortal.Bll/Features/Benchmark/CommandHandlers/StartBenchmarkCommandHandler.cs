@@ -281,6 +281,11 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
 
         await writer.WriteEndElementAsync();
         await writer.FlushAsync();
+
+        var xmlPath = _workDir + Path.DirectorySeparatorChar
+                               + newBenchmark.Name + ".xml";
+        File.Copy(newBenchmark.XmlFilePath!, xmlPath, true);
+        return xmlPath;
     }
     
     /// <summary>
