@@ -28,7 +28,7 @@ function uploadFile(num) {
             onProgress: onTusProgress,
             onSuccess: onTusSuccess,
             metadata: {
-                name: fileVersion + '+' + file.name,
+                name: fileVersion + ':' + file.name,
                 contentType: file.type || 'application/octet-stream',
                 emptyMetaKey: ''
             },
