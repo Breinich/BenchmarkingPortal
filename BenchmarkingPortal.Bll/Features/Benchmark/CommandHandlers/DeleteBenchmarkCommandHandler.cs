@@ -28,7 +28,6 @@ public class DeleteBenchmarkCommandHandler : IRequestHandler<DeleteBenchmarkComm
 
         var benchmarkHeader = new BenchmarkHeader(benchmark);
 
-
         // Only the owner or the administrators have the permission to delete a specific benchmark
         if (benchmarkHeader.UserName != request.InvokerName)
         {
@@ -47,15 +46,17 @@ public class DeleteBenchmarkCommandHandler : IRequestHandler<DeleteBenchmarkComm
         if (benchmarkHeader.Status != Status.Finished)
             throw new ArgumentException("The benchmark, that wanted to be deleted hasn't been finished yet.");
 
-        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-        // Somehow remove the results of the benchmark, maybe ask a service
-        // If this uses the whole object, BenchmarkHeader should be used
-        throw new NotImplementedException();
-
-        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        if (benchmarkHeader.ResultPath != null)
+        {
+            Directory.Delete(benchmarkHeader.ResultPath, true);
+            File.Delete(benchmarkHeader.ResultPath + ".zip");
+        }
 
         _context.Benchmarks.Remove(benchmark);
+        (await _context.ConfigurationItems.Where(ci => ci.ConfigurationId == benchmark.ConfigurationId)
+            .ToListAsync(cancellationToken)).ForEach(ci => _context.ConfigurationItems.Remove(ci));
+        _context.Configurations.Remove((await _context.Configurations.FindAsync(benchmark.ConfigurationId, cancellationToken))!);
         await _context.SaveChangesAsync(cancellationToken);
     }
 }
