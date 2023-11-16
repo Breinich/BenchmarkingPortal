@@ -5,6 +5,7 @@
 Start
 - [ ] 2 | Option for rerunning an already existing benchmark
 - [ ] 2 | Option for starting a benchmark via uploading the xml configuration file
+- [ ] 1 | Fix sv-benchmarks path to relative path based on the xml path and don't copy the xml file
   
 Modify
 - [ ] 1 | Add vcloud ID to the benchmark table
@@ -20,13 +21,13 @@ Durability
   if they are not running >> this is needed for the case that the server is restarted
 
 Results
-- [ ] 1 | Downloading the results properly
+- [X] 1 | Downloading the results properly
 
 UX
 - [ ] 1 | Redesign UI, reomve useless components
   - Remove Progress column
   - Remove non-functional buttons
-  - Remove the absolut part of the set file's path
+  - Remove the absolut part of the set file's path on Home and Finished pages
   - Create a window width dependant design for the start benchmark modal
   - Move priority button's place to the end of the row
   - Finished header alignment
@@ -51,4 +52,5 @@ Modify
 UX
 - [ ] 2 | During uploading the main Add, Cancel and X buttons should be disabled
 - [ ] 2 | After cancelling the upload the file should be deleted from the server
-- [ ] 2 | Use : character to separate the set file name and version instead of + character
+- [X] 2 | Use : character to separate the set file name and version instead of + character
+- [ ] 2 | Pop-up warning before deleting anything
