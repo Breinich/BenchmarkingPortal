@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
@@ -14,7 +13,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using tusdotnet.Models;
 
 namespace BenchmarkingPortal.Web.Pages;
 
@@ -133,21 +131,16 @@ public class Resources : PageModel
             var file = await store.GetFileAsync(fileId, cancellationToken);
 
             if (file == null)
-            {
-                StatusMessage = $"Error: File with id {fileId} was not found.";
-                return RedirectToPage();
-            }
+                throw new ApplicationException($"File with id {fileId} was not found.");
 
             var fileStream = await file.GetContentAsync(cancellationToken);
             var metadata = await file.GetMetadataAsync(cancellationToken);
 
             StatusMessage = "Download started.";
 
-            return new FileStreamResult(fileStream, GetContentTypeOrDefault(metadata))
+            return new FileStreamResult(fileStream, TusUtil.GetContentTypeOrDefault(metadata))
             {
-                FileDownloadName = metadata.TryGetValue("name", out var nameMeta)
-                    ? nameMeta.GetString(Encoding.UTF8)
-                    : "download"
+                FileDownloadName = TusUtil.GetContentNameOrDefault(metadata)
             };
         }
         catch (Exception e)
@@ -169,10 +162,7 @@ public class Resources : PageModel
             }, cancellationToken);
             
             if (exe == null)
-            {
-                StatusMessage = $"Error: File with id {fileId} was not found.";
-                return RedirectToPage();
-            }
+                throw new ApplicationException($"File with id {fileId} was not found.");
             
             var path = _workDir + Path.DirectorySeparatorChar + exe.UserName + Path.DirectorySeparatorChar + "tools" ;
             var store = new CustomTusDiskStore(path, _mediator);
@@ -190,11 +180,9 @@ public class Resources : PageModel
 
             StatusMessage = "Download started.";
 
-            return new FileStreamResult(fileStream, GetContentTypeOrDefault(metadata))
+            return new FileStreamResult(fileStream, TusUtil.GetContentTypeOrDefault(metadata))
             {
-                FileDownloadName = metadata.TryGetValue("name", out var nameMeta)
-                    ? nameMeta.GetString(Encoding.UTF8)
-                    : "download"
+                FileDownloadName = TusUtil.GetContentNameOrDefault(metadata)
             };
         }
         catch (Exception e)
@@ -204,11 +192,6 @@ public class Resources : PageModel
 
             return RedirectToPage();
         }
-    }
-
-    private static string GetContentTypeOrDefault(Dictionary<string, Metadata> metadata)
-    {
-        return metadata.TryGetValue("contentType", out var contentType) ? contentType.GetString(Encoding.UTF8) : "application/octet-stream";
     }
 
     public async Task<IActionResult> OnPostUploadExecutableAsync()
