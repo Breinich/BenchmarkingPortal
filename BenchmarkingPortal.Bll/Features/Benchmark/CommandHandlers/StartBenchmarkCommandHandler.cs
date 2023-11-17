@@ -87,12 +87,8 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         // The other values will be checked by the scheduler
         
         
-        Directory.CreateDirectory(_workDir + Path.DirectorySeparatorChar + newBenchmark.UserName
-                                  + Path.DirectorySeparatorChar + "benchmarks");
-        newBenchmark.XmlFilePath = _workDir + Path.DirectorySeparatorChar + newBenchmark.UserName
-                       + Path.DirectorySeparatorChar + "benchmarks"
-                       + Path.DirectorySeparatorChar + newBenchmark.Name
-                       + ".xml";
+        Directory.CreateDirectory(Path.Join(_workDir, newBenchmark.UserName, "benchmarks"));
+        newBenchmark.XmlFilePath = Path.Join(_workDir, newBenchmark.UserName, "benchmarks", newBenchmark.Name + ".xml");
         
         var exe = await _mediator.Send(new GetExecutableByIdQuery
         {
@@ -104,10 +100,8 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         
         
         
-        var resultDir = _workDir + Path.DirectorySeparatorChar + newBenchmark.UserName
-                        + Path.DirectorySeparatorChar + "results"
-                        + Path.DirectorySeparatorChar
-                        + exe.Name + "_" + startedDate.ToString("yyyy-MM-dd_HH-mm-ss");
+        var resultDir = Path.Join(_workDir, newBenchmark.UserName, "results", 
+            exe.Name + "_" + startedDate.ToString("yyyy-MM-dd_HH-mm-ss"));
         // prepare results directory
         Directory.CreateDirectory(resultDir);
         
@@ -256,22 +250,13 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
                         
                     await writer.WriteStartElementAsync(null, "tasks", null);
                     await writer.WriteAttributeStringAsync(null, "name", null, 
-                        newBenchmark.SetFilePath!.Split(Path.DirectorySeparatorChar).Last()
-                            .TrimStart('.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', '-', '+').Split(".")[0]);
+                        Path.ChangeExtension(Path.GetFileName(newBenchmark.SetFilePath!)
+                            .TrimStart('.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', '-', '+'), null));
                     await writer.WriteStartElementAsync(null, "includesfile", null);
-                    await writer.WriteStringAsync(".." + Path.DirectorySeparatorChar + ".." 
-                                                  + Path.DirectorySeparatorChar + "sv-benchmarks" 
-                                                  + Path.DirectorySeparatorChar + "c" 
-                                                  + Path.DirectorySeparatorChar 
-                                                  + newBenchmark.SetFilePath!.Split(Path.DirectorySeparatorChar).Last());
+                    await writer.WriteStringAsync(Path.Join("..", "..", "sv-benchmarks", "c", Path.GetFileName(newBenchmark.SetFilePath!)));
                     await writer.WriteEndElementAsync();
                     await writer.WriteStartElementAsync(null, "propertyfile", null);
-                    await writer.WriteStringAsync(".." + Path.DirectorySeparatorChar + ".." 
-                                                  + Path.DirectorySeparatorChar + "sv-benchmarks" 
-                                                  + Path.DirectorySeparatorChar + "c" 
-                                                  + Path.DirectorySeparatorChar + "properties" 
-                                                  + Path.DirectorySeparatorChar 
-                                                  + newBenchmark.PropertyFilePath!.Split(Path.DirectorySeparatorChar).Last());
+                    await writer.WriteStringAsync(Path.Join("..", "..", "sv-benchmarks", "c", "properties", Path.GetFileName(newBenchmark.PropertyFilePath!)));
                     await writer.WriteEndElementAsync();
                     await writer.WriteEndElementAsync();
                     await writer.WriteEndElementAsync();
@@ -281,11 +266,6 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
 
         await writer.WriteEndElementAsync();
         await writer.FlushAsync();
-
-        var xmlPath = _workDir + Path.DirectorySeparatorChar
-                               + newBenchmark.Name + ".xml";
-        File.Copy(newBenchmark.XmlFilePath!, xmlPath, true);
-        return xmlPath;
     }
     
     /// <summary>
@@ -304,18 +284,16 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
     /// </summary>
     /// <param name="newBenchmark">The benchmark's info</param>
     /// <param name="exe">The executable, that will be used</param>
-    /// <param name="xmlPath">The absolute path for the xml file, must be in the working directory</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <exception cref="ApplicationException">Shows server-side problem</exception>
-    private async Task QueueBenchmark(BenchmarkHeader newBenchmark, ExecutableHeader exe,
+    private async Task QueueBenchmark(BenchmarkHeader newBenchmark, ExecutableHeader exe, 
         CancellationToken cancellationToken)
     {
         var xmlRelativePath = newBenchmark.XmlFilePath![_workDir.Length..].TrimStart(Path.DirectorySeparatorChar);
-        var toolDir = exe.UserName + Path.DirectorySeparatorChar + "tools" + Path.DirectorySeparatorChar
-                      + exe.Name;
+        var toolDir = Path.Join(exe.UserName, "tools", exe.Name);
 
-        var outputLogPath = newBenchmark.ResultPath! + Path.DirectorySeparatorChar + "output.log";
-        var errorLogPath = newBenchmark.ResultPath! + Path.DirectorySeparatorChar + "error.log";
+        var outputLogPath = Path.Join(newBenchmark.ResultPath!, "output.log");
+        var errorLogPath = Path.Join(newBenchmark.ResultPath!, "error.log");
         
         using var forcefulCts = new CancellationTokenSource();
         
