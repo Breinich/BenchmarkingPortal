@@ -55,7 +55,7 @@ public class Home : PageModel
 
             Headers = new List<string>
             {
-                "Name", "Started", "Status", "Priority", "RAM", "CPU", "CPU model", "Executable", "Set File", "Progress",
+                "Name", "Started", "Status", "RAM", "CPU", "CPU model", "Executable", "Set File", "Progress", "Priority",
                 "Actions"
             };
 
@@ -206,58 +206,6 @@ public class Home : PageModel
         return new JsonResult(new { success = false, responseText = "Item not found." });
     }
 
-    public async Task<IActionResult> OnPostPauseAsync(int id)
-    {
-        try
-        {
-            var benchmark = await _mediator.Send(new UpdateBenchmarkCommand
-            {
-                Id = id,
-                Status = Status.Paused,
-                Priority = EditInput.Priority,
-                InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(new ExceptionMessage<Benchmark>().NoPrivilege)
-            });
-
-            StatusMessage = $"Benchmark {benchmark.Name} paused.";
-
-            return RedirectToPage();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
-
-            return RedirectToPage();
-        }
-    }
-
-    public async Task<IActionResult> OnPostResumeAsync(int id)
-    {
-        try
-        {
-            var benchmark = await _mediator.Send(new UpdateBenchmarkCommand
-            {
-                Id = id,
-                Status = Status.Running,
-                Priority = EditInput.Priority,
-                InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(new ExceptionMessage<Benchmark>().NoPrivilege)
-            });
-
-            StatusMessage = $"Benchmark {benchmark.Name} resumed.";
-
-            return RedirectToPage();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
-
-            return RedirectToPage();
-        }
-    }
-
     public async Task<IActionResult> OnPostSaveAsync(int id, Status status)
     {
         try
@@ -298,23 +246,6 @@ public class Home : PageModel
             StatusMessage = $"Benchmark {name} deleted.";
 
             return RedirectToPage();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
-
-            return RedirectToPage();
-        }
-    }
-
-    public IActionResult OnPostConnectAsync(int id)
-    {
-        try
-        {
-            StatusMessage = "Connected to the benchmark's console.";
-
-            return Page();
         }
         catch (Exception e)
         {
@@ -397,10 +328,10 @@ public class Home : PageModel
                 .Select(eh => new SelectListItem(eh.Name + ":" + eh.Version, eh.Id.ToString())).ToList();
 
             SetFiles = (await _mediator.Send(new GetAllSetFileNamesQuery()))
-                .Select(s => new SelectListItem(s.Split(Path.DirectorySeparatorChar).Last(), s)).ToList();
+                .Select(s => new SelectListItem(Path.GetFileName(s), s)).ToList();
             
             PrpFiles = (await _mediator.Send(new GetAllPropertyFileNamesQuery()))
-                .Select(s => new SelectListItem(s.Split(Path.DirectorySeparatorChar).Last(), s)).ToList();
+                .Select(s => new SelectListItem(Path.GetFileName(s), s)).ToList();
 
             ComputerGroups = (await _mediator.Send(new GetAllComputerGroupsQuery()))
                 .Select(c => new SelectListItem(c.Id + ": " + c.Description, c.Id.ToString())).ToList();
@@ -422,7 +353,7 @@ public class Home : PageModel
 
     public class EditInputModel
     {
-        [Display(Name = "Benchmark Name")] 
+        [Display(Name = "Benchmark Priority")] 
         public Priority Priority { get; init; }
     }
 
