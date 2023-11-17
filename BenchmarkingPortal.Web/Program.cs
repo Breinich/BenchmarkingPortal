@@ -14,6 +14,7 @@ using BenchmarkingPortal.Bll.Features.PropertyFile.Queries;
 using BenchmarkingPortal.Bll.Features.Result.Commands;
 using BenchmarkingPortal.Bll.Features.SetFile.Commands;
 using BenchmarkingPortal.Bll.Features.SetFile.Queries;
+using BenchmarkingPortal.Bll.Features.UploadedFile.Commands;
 using BenchmarkingPortal.Bll.Features.User.Commands;
 using BenchmarkingPortal.Bll.Features.User.Queries;
 using BenchmarkingPortal.Bll.Features.Worker.Commands;
@@ -169,7 +170,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
         typeof(GetExecutableByIdQuery).Assembly,
         typeof(GetConfigurationByIdQuery).Assembly,
         typeof(DeleteConfigurationCommand).Assembly,
-        typeof(DownloadResultCommand).Assembly
+        typeof(DownloadResultCommand).Assembly,
+        typeof(DownloadUploadedFileCommand).Assembly
     ));
 
 builder.Services.Configure<FormOptions>(x =>
@@ -185,12 +187,9 @@ builder.Services.AddSingleton<PathConfigs>(_ => new PathConfigs
 {
     WorkingDir = builder.Configuration["Storage:WorkingDir"] ?? 
                  throw new ApplicationException("Missing working directory path configuration!"),
-    SetFilesDir = builder.Configuration["Storage:WorkingDir"] + Path.DirectorySeparatorChar + "sv-benchmarks" 
-                  + Path.DirectorySeparatorChar + "c",
-    PropertyFilesDir = builder.Configuration["Storage:WorkingDir"] + Path.DirectorySeparatorChar + "sv-benchmarks" 
-                       + Path.DirectorySeparatorChar + "c" + Path.DirectorySeparatorChar + "properties",
-    VcloudBenchmarkPath = builder.Configuration["Storage:WorkingDir"] + Path.DirectorySeparatorChar + "benchexec"
-                          + Path.DirectorySeparatorChar + "contrib" + Path.DirectorySeparatorChar + "vcloud-benchmark.py",
+    SetFilesDir = Path.Join(builder.Configuration["Storage:WorkingDir"], "sv-benchmarks", "c"),
+    PropertyFilesDir = Path.Join(builder.Configuration["Storage:WorkingDir"], "sv-benchmarks", "c", "properties"),
+    VcloudBenchmarkPath = Path.Join(builder.Configuration["Storage:WorkingDir"], "benchexec", "contrib", "vcloud-benchmark.py"),
     WorkerConfig = builder.Configuration["Storage:WorkerConfig"] ?? 
                    throw new ApplicationException("Missing worker config path configuration!"),
     SshConfig = builder.Configuration["Storage:SshConfig"] ??
@@ -252,9 +251,8 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
                          throw new ApplicationException("Missing extension path value from request headers"))
         switch
         {
-            "zip" => httpContext.RequestServices.GetRequiredService<PathConfigs>().WorkingDir 
-                     + Path.DirectorySeparatorChar + httpContext.User.Identity?.Name
-                     + Path.DirectorySeparatorChar + "tools",
+            "zip" => Path.Join(httpContext.RequestServices.GetRequiredService<PathConfigs>().WorkingDir, 
+                httpContext.User.Identity?.Name, "tools"),
             "set" => httpContext.RequestServices.GetRequiredService<PathConfigs>().SetFilesDir,
             _ => throw new ArgumentException("Invalid extension path value from request headers")
         };
@@ -326,7 +324,7 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
                        FileName = fileName
                    })
                    || 
-                   File.Exists(diskStorePath + Path.DirectorySeparatorChar + fileName))
+                   File.Exists(Path.Join(diskStorePath, fileName)))
                     ctx.FailRequest("#File with this name already exists.#");
                 
                 if (!fileName.EndsWith(".zip") && !fileName.EndsWith(".set"))
@@ -347,7 +345,7 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
                 logger.LogInformation($"Deleted file {ctx.FileId} using {ctx.Store.GetType().FullName}");
                 if (ctx.FileId.Split(".").Last() == "zip")
                 {
-                    Directory.Delete(Path.Combine(diskStorePath, Path.ChangeExtension(ctx.FileId, null)), true);
+                    Directory.Delete(Path.Join(diskStorePath, Path.ChangeExtension(ctx.FileId, null)), true);
                 }
                 return Task.CompletedTask;
             },
@@ -360,14 +358,13 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
 
                 if (ctx.FileId.Split(".").Last() == "zip")
                 {
-                    ZipFile.ExtractToDirectory(diskStorePath + Path.DirectorySeparatorChar + ctx.FileId,
-                        diskStorePath, true);
+                    ZipFile.ExtractToDirectory(Path.Join(diskStorePath, ctx.FileId), diskStorePath, true);
                 }
                 
-                File.Delete(diskStorePath + Path.DirectorySeparatorChar + ctx.FileId + ".uploadlength");
-                File.Delete(diskStorePath + Path.DirectorySeparatorChar + ctx.FileId + ".chunkstart");
-                File.Delete(diskStorePath + Path.DirectorySeparatorChar + ctx.FileId + ".chunkcomplete");
-                File.Delete(diskStorePath + Path.DirectorySeparatorChar + ctx.FileId + ".expiration");
+                File.Delete(Path.Join(diskStorePath, ctx.FileId + ".uploadlength"));
+                File.Delete(Path.Join(diskStorePath, ctx.FileId + ".chunkstart"));
+                File.Delete(Path.Join(diskStorePath, ctx.FileId + ".chunkcomplete"));
+                File.Delete(Path.Join(diskStorePath, ctx.FileId + ".expiration"));
 
                 return Task.CompletedTask;
             }
