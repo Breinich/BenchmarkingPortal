@@ -49,22 +49,19 @@
                             <div class="d-flex justify-content-center">@item.Status</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.Priority</div>
-                        </td>
-                        <td>
                             <div class="d-flex justify-content-center">@item.Ram GB</div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">@item.Cpu Cores</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.ComputerGroupId</div>
+                            <div class="d-flex justify-content-center">@item.CpuModel</div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">@Model.Executables.Find(e => e.Value.Equals(item.ExecutableId.ToString()))?.Text</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.SetFilePath</div>
+                            <div class="d-flex justify-content-center">@(System.IO.Path.GetFileName(item.SetFilePath))</div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">Loading...</div>
@@ -74,30 +71,10 @@
                                 <select asp-for="EditInput.Priority" asp-items="Model.Priorities" class="rounded-3 m-1">
                                     <option value="@(((int)item.Priority).ToString())" selected disabled>@item.Priority.ToString()</option>
                                 </select>
-                                @if (item.Status == Status.Running)
-                                {
-                                    <button type="submit" class="btn btn-warning m-1" asp-page-handler="Pause"
-                                            asp-route-id="@item.Id">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pause-fill" viewBox="0 0 16 16">
-                                            <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"/>
-                                        </svg>
-                                    </button>
-                                }
-                                @if (item.Status == Status.Paused)
-                                {
-                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="Resume"
-                                            asp-route-id="@item.Id">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
-                                            <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
-                                        </svg>
-                                    </button>
-                                }
-                                <button type="button" class="btn btn-dark m-1" asp-page-handler="Connect" asp-route-id="@item.Id">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-terminal" viewBox="0 0 16 16">
-                                        <path d="M6 9a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3A.5.5 0 0 1 6 9zM3.854 4.146a.5.5 0 1 0-.708.708L4.793 6.5 3.146 8.146a.5.5 0 1 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2z"/>
-                                        <path d="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12z"/>
-                                    </svg>
-                                </button>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">
                                 <input type="submit" value="Save" class="btn btn-primary m-1"
                                        asp-page-handler="Save" asp-route-id="@item.Id" asp-route-status="@item.Status"/>
                                 <button type="submit" class="btn btn-danger m-1"
@@ -151,56 +128,34 @@
                             <div class="d-flex justify-content-center">@item.Status</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.Priority</div>
-                        </td>
-                        <td>
                             <div class="d-flex justify-content-center">@item.Ram GB</div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">@item.Cpu Cores</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.ComputerGroupId</div>
+                            <div class="d-flex justify-content-center">@item.CpuModel</div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">@Model.Executables.Find(e => e.Value.Equals(item.ExecutableId.ToString()))?.Text</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.SetFilePath</div>
+                            <div class="d-flex justify-content-center">@(System.IO.Path.GetFileName(item.SetFilePath))</div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">Loading...</div>
                         </td>
-                        <td>
-                            <div class="d-flex justify-content-center">
-                                @if ((await AuthorizationService.AuthorizeAsync(User, Policies.RequireAdministratorRole)).Succeeded)
-                                {
-                                    <input asp-for="EditInput.Priority" class="form-control short-number m-1" placeholder="priority"/>
-                                    switch (item.Status)
-                                    {
-                                        case Status.Running:
-                                            <button type="submit" class="btn btn-warning m-1" asp-page-handler="Pause"
-                                                    asp-route-id="@item.Id">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pause-fill" viewBox="0 0 16 16">
-                                                    <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"/>
-                                                </svg>
-                                            </button>
-                                            break;
-                                        case Status.Paused:
-                                            <button type="submit" class="btn btn-primary m-1" asp-page-handler="Resume"
-                                                    asp-route-id="@item.Id">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
-                                                    <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
-                                                </svg>
-                                            </button>
-                                            break;
-                                    }
-                                    <button type="button" class="btn btn-dark m-1" asp-page-handler="Connect" asp-route-id="@item.Id">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-terminal" viewBox="0 0 16 16">
-                                            <path d="M6 9a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3A.5.5 0 0 1 6 9zM3.854 4.146a.5.5 0 1 0-.708.708L4.793 6.5 3.146 8.146a.5.5 0 1 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2z"/>
-                                            <path d="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12z"/>
-                                        </svg>
-                                    </button>
+                        @if ((await AuthorizationService.AuthorizeAsync(User, Policies.RequireAdministratorRole)).Succeeded)
+                        {
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    <select asp-for="EditInput.Priority" asp-items="Model.Priorities" class="rounded-3 m-1">
+                                        <option value="@(((int)item.Priority).ToString())" selected disabled>@item.Priority.ToString()</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center">
                                     <input type="submit" value="Save" class="btn btn-primary m-1"
                                            asp-page-handler="Save" asp-route-id="@item.Id" asp-route-status="@item.Status"/>
                                     <button type="submit" class="btn btn-danger m-1"
@@ -209,9 +164,18 @@
                                             <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                                         </svg>
                                     </button>
-                                }
-                            </div>
-                        </td>
+                                </div>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                <div class="d-flex justify-content-center">@item.Priority</div>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center"></div>
+                            </td>
+                        }
                     </form>
                 </tr>
             }

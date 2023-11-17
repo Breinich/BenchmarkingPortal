@@ -22,12 +22,9 @@ public class UploadNewExecutableCommandHandler : IRequestHandler<UploadNewExecut
     {
         request.Version ??= "1.0";
         
-        if (!Directory.Exists(_workDir + Path.DirectorySeparatorChar + request.InvokerName 
-                              + Path.DirectorySeparatorChar + "tools" 
-                              + Path.DirectorySeparatorChar + request.Name))
+        if (!Directory.Exists(Path.Join(_workDir, request.InvokerName, "tools", request.Name)))
         {
-            foreach(var file in Directory.EnumerateFiles(_workDir + Path.DirectorySeparatorChar + "tools" 
-                                                         + Path.DirectorySeparatorChar + request.InvokerName))
+            foreach(var file in Directory.EnumerateFiles(Path.Join(_workDir, "tools", request.InvokerName)))
             {
                 // deleting the possibly junk files from the directory
                 if(!file.EndsWith(".zip") && !file.EndsWith(".metadata"))
@@ -35,10 +32,8 @@ public class UploadNewExecutableCommandHandler : IRequestHandler<UploadNewExecut
             }
             
             // deleting the already uploaded zip and metadata
-            File.Delete(_workDir + Path.DirectorySeparatorChar + request.InvokerName 
-                        + Path.DirectorySeparatorChar + request.Path);
-            File.Delete(_workDir + Path.DirectorySeparatorChar + request.InvokerName 
-                        + Path.DirectorySeparatorChar + request.Path + ".metadata");
+            File.Delete(Path.Join(_workDir, request.InvokerName, request.Path));
+            File.Delete(Path.Join(_workDir, request.InvokerName, request.Path + ".metadata"));
             throw new ArgumentException("The root folder inside the zip of the tool directory doesn't have " +
                                         "the name of the zip file, please make sure to use the same zip name as the " +
                                         "tool directory name!\n" +

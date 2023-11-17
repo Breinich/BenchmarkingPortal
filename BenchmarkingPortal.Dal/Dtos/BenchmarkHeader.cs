@@ -28,6 +28,7 @@ public class BenchmarkHeader
         StartedDate = b.StartedDate;
         ConfigurationId = b.ConfigurationId;
         UserName = b.UserName;
+        VcloudId = b.VcloudId;
     }
 
     public int Id { get; init; }
@@ -63,5 +64,8 @@ public class BenchmarkHeader
     public DateTime StartedDate { get; set; }
 
     public int ConfigurationId { get; init; }
+    
     public string UserName { get; init; } = null!;
+    
+    public string? VcloudId { get; set; }
 }

@@ -20,6 +20,7 @@ public class Benchmark
     public DateTime StartedDate { get; set; }
     public int ConfigurationId { get; set; }
     public string UserName { get; set; } = null!;
+    public string? VcloudId { get; set; }
     public virtual ComputerGroup ComputerGroup { get; set; } = null!;
     public virtual Configuration Configuration { get; set; } = null!;
     public virtual Executable Executable { get; set; } = null!;

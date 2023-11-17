@@ -54,9 +54,6 @@ public class DeleteBenchmarkCommandHandler : IRequestHandler<DeleteBenchmarkComm
         }
 
         _context.Benchmarks.Remove(benchmark);
-        (await _context.ConfigurationItems.Where(ci => ci.ConfigurationId == benchmark.ConfigurationId)
-            .ToListAsync(cancellationToken)).ForEach(ci => _context.ConfigurationItems.Remove(ci));
-        _context.Configurations.Remove((await _context.Configurations.FindAsync(benchmark.ConfigurationId, cancellationToken))!);
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

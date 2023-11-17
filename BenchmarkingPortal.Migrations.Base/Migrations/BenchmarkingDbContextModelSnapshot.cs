@@ -17,7 +17,7 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("ProductVersion", "7.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -89,6 +89,10 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("character varying(256)");
+
+                    b.Property<string>("VcloudId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("XmlFilePath")
                         .IsRequired()

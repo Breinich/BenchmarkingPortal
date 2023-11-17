@@ -5,8 +5,7 @@ using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
 using BenchmarkingPortal.Bll.Features.SetFile.Commands;
 using BenchmarkingPortal.Bll.Features.SetFile.Queries;
-using BenchmarkingPortal.Bll.Services;
-using BenchmarkingPortal.Bll.Tus;
+using BenchmarkingPortal.Bll.Features.UploadedFile.Commands;
 using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
 using MediatR;
@@ -20,14 +19,10 @@ namespace BenchmarkingPortal.Web.Pages;
 public class Resources : PageModel
 {
     private readonly IMediator _mediator;
-    private readonly string _setFilesDir;
-    private readonly string _workDir;
 
-    public Resources(IMediator mediator, PathConfigs pathConfigs)
+    public Resources(IMediator mediator)
     {
         _mediator = mediator;
-        _setFilesDir = pathConfigs.SetFilesDir;
-        _workDir = pathConfigs.WorkingDir;
         
         Executables = new List<ExecutableHeader>();
         SetFiles = new List<SetFileHeader>();
@@ -121,68 +116,19 @@ public class Resources : PageModel
             return RedirectToPage();
         }
     }
-
-    public async Task<IActionResult> OnPostDownloadSetFileAsync(string fileId, CancellationToken cancellationToken)
-    {
-        try
-        {
-            var store = new CustomTusDiskStore(_setFilesDir, _mediator);
-            
-            var file = await store.GetFileAsync(fileId, cancellationToken);
-
-            if (file == null)
-                throw new ApplicationException($"File with id {fileId} was not found.");
-
-            var fileStream = await file.GetContentAsync(cancellationToken);
-            var metadata = await file.GetMetadataAsync(cancellationToken);
-
-            StatusMessage = "Download started.";
-
-            return new FileStreamResult(fileStream, TusUtil.GetContentTypeOrDefault(metadata))
-            {
-                FileDownloadName = TusUtil.GetContentNameOrDefault(metadata)
-            };
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            StatusMessage = "Error: " + e.Message;
-
-            return RedirectToPage();
-        }
-    }
     
-    public async Task<IActionResult> OnPostDownloadExecutableAsync(string fileId, CancellationToken cancellationToken)
+    public async Task<IActionResult> OnPostDownloadAsync(string fileId, CancellationToken cancellationToken)
     {
         try
         {
-            var exe = await _mediator.Send(new GetExecutableByPathQuery
+            var (fileStream, contentType, fileName) = await _mediator.Send(new DownloadUploadedFileCommand
             {
                 FileId = fileId
             }, cancellationToken);
             
-            if (exe == null)
-                throw new ApplicationException($"File with id {fileId} was not found.");
-            
-            var path = _workDir + Path.DirectorySeparatorChar + exe.UserName + Path.DirectorySeparatorChar + "tools" ;
-            var store = new CustomTusDiskStore(path, _mediator);
-            
-            var file = await store.GetFileAsync(fileId, cancellationToken);
-
-            if (file == null)
+            return new FileStreamResult(fileStream, contentType)
             {
-                StatusMessage = $"Error: File with id {fileId} was not found.";
-                return RedirectToPage();
-            }
-
-            var fileStream = await file.GetContentAsync(cancellationToken);
-            var metadata = await file.GetMetadataAsync(cancellationToken);
-
-            StatusMessage = "Download started.";
-
-            return new FileStreamResult(fileStream, TusUtil.GetContentTypeOrDefault(metadata))
-            {
-                FileDownloadName = TusUtil.GetContentNameOrDefault(metadata)
+                FileDownloadName = fileName
             };
         }
         catch (Exception e)
