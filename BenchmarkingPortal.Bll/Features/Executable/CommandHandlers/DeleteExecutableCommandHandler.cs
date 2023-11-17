@@ -43,8 +43,7 @@ public class DeleteExecutableCommandHandler : IRequestHandler<DeleteExecutableCo
         if (exe.Path != request.FileId)
             throw new ArgumentException(new ExceptionMessage<Dal.Entities.Executable>().ObjectNotFound);
 
-        var store = new CustomTusDiskStore(_workDir + Path.DirectorySeparatorChar + exe.UserName 
-                                           + Path.DirectorySeparatorChar + "tools" , _mediator);
+        var store = new CustomTusDiskStore(Path.Join(_workDir, exe.UserName, "tools"), _mediator);
         await store.DeleteFileAsync(request.FileId, cancellationToken);
         
         _context.Remove(exe);
