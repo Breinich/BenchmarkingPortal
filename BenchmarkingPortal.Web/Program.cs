@@ -189,7 +189,10 @@ builder.Services.AddSingleton<PathConfigs>(_ => new PathConfigs
                  throw new ApplicationException("Missing working directory path configuration!"),
     SetFilesDir = Path.Join(builder.Configuration["Storage:WorkingDir"], "sv-benchmarks", "c"),
     PropertyFilesDir = Path.Join(builder.Configuration["Storage:WorkingDir"], "sv-benchmarks", "c", "properties"),
-    VcloudBenchmarkPath = Path.Join(builder.Configuration["Storage:WorkingDir"], "benchexec", "contrib", "vcloud-benchmark.py"),
+    VcloudBenchmarkPath = Path.Join(builder.Configuration["Storage:WorkingDir"], "benchexec", "contrib", 
+        "vcloud-benchmark.py"),
+    VcloudDirectory = Path.Join(builder.Configuration["Storage:WorkingDir"], "benchexec", "contrib", 
+        "vcloud"),
     WorkerConfig = builder.Configuration["Storage:WorkerConfig"] ?? 
                    throw new ApplicationException("Missing worker config path configuration!"),
     SshConfig = builder.Configuration["Storage:SshConfig"] ??
@@ -199,6 +202,14 @@ builder.Services.AddSingleton<PathConfigs>(_ => new PathConfigs
 });
 
 builder.Services.AddSingleton<IBenchmarkQueue>(_ => new BenchmarkQueue());
+
+builder.Services.AddSingleton<ICommandExecutor>(provider =>
+{
+    var commandExecutor = new VCloudCommandExecutor(provider.GetRequiredService<PathConfigs>(),
+        provider.GetRequiredService<ILogger<VCloudCommandExecutor>>());
+    commandExecutor.InitializeAsync().Wait();
+    return commandExecutor;
+});
 
 builder.Services.AddHostedService<BenchmarkRunnerService>();
 
