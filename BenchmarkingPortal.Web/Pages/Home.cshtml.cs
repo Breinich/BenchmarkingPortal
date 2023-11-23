@@ -362,6 +362,7 @@ public class Home : PageModel
         [Required]
         [StringLength(50)]
         [Display(Name = "Benchmark Name")]
+        [RegularExpression("[A-Za-z0-9]+$")]
         public string Name { get; init; } = null!;
 
         [Required]

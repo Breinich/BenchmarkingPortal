@@ -197,8 +197,11 @@ builder.Services.AddSingleton<PathConfigs>(_ => new PathConfigs
                    throw new ApplicationException("Missing worker config path configuration!"),
     SshConfig = builder.Configuration["Storage:SshConfig"] ??
                 throw new ApplicationException("Missing ssh config path configuration!"),
+    SshPubKey = builder.Configuration["Storage:SshPubKey"] ??
+               throw new ApplicationException("Missing ssh public key path configuration!"),
     VcloudHost = builder.Configuration["VCloud:Hostname"] ?? 
-                 throw new ApplicationException("Missing vcloud hostname configuration!")
+                 throw new ApplicationException("Missing vcloud hostname configuration!"),
+    Tab = "    ",
 });
 
 builder.Services.AddSingleton<IBenchmarkQueue>(_ => new BenchmarkQueue());
