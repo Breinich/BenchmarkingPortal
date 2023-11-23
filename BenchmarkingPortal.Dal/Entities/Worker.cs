@@ -10,11 +10,11 @@ public class Worker
 
     public int Cpu { get; set; }
 
+    public string CpuModel { get; set; } = null!;
+
     public string Login { get; set; } = null!;
 
     public string Password { get; set; } = null!;
-
-    public int Storage { get; set; }
 
     public string Address { get; set; } = null!;
 
