@@ -25,13 +25,6 @@ public class UpdateWorkerCommandHandler : IRequestHandler<UpdateWorkerCommand, W
         var workerDto = new WorkerHeader(worker);
         workerDto.ComputerGroupId = request.ComputerGroupId;
 
-        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-        // Assign the worker to an other computer group
-        throw new NotImplementedException();
-
-        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
         // If succeeded, update the DB
         worker.ComputerGroupId = request.ComputerGroupId;
 

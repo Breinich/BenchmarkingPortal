@@ -86,7 +86,7 @@ public class DatabaseFixture : IAsyncLifetime
             Cpu = 2,
             Login = "TestUser",
             Password = "TestPassword",
-            Storage = 40,
+            CpuModel = "AMD Ryzen 6800H",
             Address = "192.168.0.0",
             Port = 8080,
             ComputerGroupId = computerGroup.Id,

@@ -16,8 +16,8 @@ public class WorkerHeader
         Port = worker.Port;
         ComputerGroupId = worker.ComputerGroupId;
         Cpu = worker.Cpu;
+        CpuModel = worker.CpuModel;
         Ram = worker.Ram;
-        Storage = worker.Storage;
         Name = worker.Name;
         Login = worker.Login;
         Password = worker.Password;
@@ -28,15 +28,15 @@ public class WorkerHeader
 
     public string? Name { get; init; }
 
-    public int Ram { get; init; }
+    public int Ram { get; set; }
 
-    public int Cpu { get; init; }
+    public int Cpu { get; set; }
+    
+    public string? CpuModel { get; set; }
 
     public string? Login { get; init; }
 
     public string? Password { get; init; }
-
-    public int Storage { get; init; }
 
     public string? Address { get; init; }
 

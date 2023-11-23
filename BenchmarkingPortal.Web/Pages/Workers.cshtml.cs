@@ -46,7 +46,7 @@ public class Workers : PageModel
         {
             WorkerModelHeaders = new List<string>
             {
-                "Name", "Address", "Computer Group", "Actions"
+                "Name", "Address", "CPU Model", "Computer Group", "Actions"
             };
 
             CompGroupModelHeaders = new List<string>
@@ -60,7 +60,7 @@ public class Workers : PageModel
 
             ComputerGroupSelectList = ComputerGroupList.Select(x => new SelectListItem
             {
-                Text = x.Id + ": " + x.Description,
+                Text = x.Id.ToString(),
                 Value = x.Id.ToString()
             }).ToList();
 
@@ -127,11 +127,8 @@ public class Workers : PageModel
             var result = await _mediator.Send(new AddWorkerCommand
             {
                 Name = WorkerWorkerInput.Name,
-                Ram = WorkerWorkerInput.Ram,
-                Cpu = WorkerWorkerInput.Cpu,
                 Username = WorkerWorkerInput.Username,
                 Password = WorkerWorkerInput.Password,
-                Storage = WorkerWorkerInput.Storage,
                 Address = WorkerWorkerInput.Address,
                 Port = WorkerWorkerInput.Port,
                 ComputerGroupId = WorkerWorkerInput.ComputerGroupId,
@@ -228,22 +225,8 @@ public class Workers : PageModel
     {
         [Required] 
         [DisplayName("Name")] 
+        [RegularExpression("[A-Za-z0-9]+$")]
         public string Name { get; init; } = null!;
-
-        [Required]
-        [DisplayName("RAM (GB)")]
-        [Range(1, 100)]
-        public int Ram { get; init; }
-
-        [Required]
-        [DisplayName("CPU (cores)")]
-        [Range(1, 100)]
-        public int Cpu { get; init; }
-
-        [Required]
-        [DisplayName("Storage (GB)")]
-        [Range(1, 10000)]
-        public int Storage { get; init; }
 
         [Required]
         [DisplayName("Host name or IP address")]
@@ -260,6 +243,7 @@ public class Workers : PageModel
 
         [Required]
         [DisplayName("Password for the VM")]
+        [DataType(DataType.Password)]
         public string Password { get; init; } = null!;
 
         [Required]

@@ -44,12 +44,13 @@
                         <div class="d-flex justify-content-center">@item.Address:@item.Port</div>
                     </td>
                     <td>
+                        <div class="d-flex justify-content-center">@item.CpuModel</div>
+                    </td>
+                    <td>
                         <div class="d-flex justify-content-center">
-                            <select class="rounded-3" asp-for="@item.ComputerGroupId" asp-items="Model.ComputerGroupSelectList" disabled></select>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
-                            </svg>
-                            <select class="rounded-3" asp-for="ChangeComputerGroupId" asp-items="Model.ComputerGroupSelectList"></select>
+                            <select class="rounded-3" asp-for="ChangeComputerGroupId" asp-items="Model.ComputerGroupSelectList">
+                                <option value="@item.ComputerGroupId" selected disabled>@item.ComputerGroupId</option>
+                            </select>
                         </div>
                     </td>
                     <td>
@@ -140,47 +141,32 @@
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticVMBackdropLabel">Connect a new Virtual Machine</h5>
+                    <h5 class="modal-title" id="staticVMBackdropLabel">Connect a new Worker</h5>
                     <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-floating mb-4">
-                        <input asp-for="WorkerWorkerInput.Name" class="form-control" placeholder="the VM's unique name"/>
+                        <input asp-for="WorkerWorkerInput.Name" class="form-control" placeholder="the worker's unique name"/>
                         <label asp-for="WorkerWorkerInput.Name" class="form-label"></label>
                         <span asp-validation-for="WorkerWorkerInput.Name" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-4">
-                        <input asp-for="WorkerWorkerInput.Ram" class="form-control" placeholder="the VM's RAM amount"/>
-                        <label asp-for="WorkerWorkerInput.Ram" class="form-label"></label>
-                        <span asp-validation-for="WorkerWorkerInput.Ram" class="text-danger"></span>
-                    </div>
-                    <div class="form-floating mb-4">
-                        <input asp-for="WorkerWorkerInput.Cpu" class="form-control" placeholder="the VM's CPU amount"/>
-                        <label asp-for="WorkerWorkerInput.Cpu" class="form-label"></label>
-                        <span asp-validation-for="WorkerWorkerInput.Cpu" class="text-danger"></span>
-                    </div>
-                    <div class="form-floating mb-4">
-                        <input asp-for="WorkerWorkerInput.Storage" class="form-control" placeholder="the VM's Storage amount"/>
-                        <label asp-for="WorkerWorkerInput.Storage" class="form-label"></label>
-                        <span asp-validation-for="WorkerWorkerInput.Storage" class="text-danger"></span>
-                    </div>
-                    <div class="form-floating mb-4">
-                        <input asp-for="WorkerWorkerInput.Address" class="form-control" placeholder="the IP address of the VM"/>
+                        <input asp-for="WorkerWorkerInput.Address" class="form-control" placeholder="the IP address of the worker"/>
                         <label asp-for="WorkerWorkerInput.Address" class="form-label"></label>
                         <span asp-validation-for="WorkerWorkerInput.Address" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-4">
-                        <input asp-for="WorkerWorkerInput.Port" class="form-control" placeholder="the port number of the VM"/>
+                        <input asp-for="WorkerWorkerInput.Port" class="form-control" placeholder="the port number of the worker"/>
                         <label asp-for="WorkerWorkerInput.Port" class="form-label"></label>
                         <span asp-validation-for="WorkerWorkerInput.Port" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-4">
-                        <input asp-for="WorkerWorkerInput.Username" class="form-control" placeholder="the username to access the VM with"/>
+                        <input asp-for="WorkerWorkerInput.Username" class="form-control" placeholder="the username to access the worker with"/>
                         <label asp-for="WorkerWorkerInput.Username" class="form-label"></label>
                         <span asp-validation-for="WorkerWorkerInput.Username" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-4">
-                        <input asp-for="WorkerWorkerInput.Password" class="form-control" placeholder="the password to access the VM with"/>
+                        <input asp-for="WorkerWorkerInput.Password" class="form-control" placeholder="the password to access the worker with"/>
                         <label asp-for="WorkerWorkerInput.Password" class="form-label"></label>
                         <span asp-validation-for="WorkerWorkerInput.Password" class="text-danger"></span>
                     </div>

@@ -45,16 +45,14 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
 
         if (benchmarkHeader.Status != Status.Finished)
         {
-            benchmarkHeader.Priority = request.Priority;
-            benchmarkHeader.Status = request.Status;
-
-            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-            // Ask the scheduler to modify the selected benchmark
-            throw new NotImplementedException();
-
-            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
+            if (benchmarkHeader.Priority != request.Priority)
+            {
+                benchmarkHeader.Priority = request.Priority;
+                
+                // tell vcloud to change the priority of the benchmark
+                throw new NotImplementedException("This feature is not fully implemented yet.");
+            }
+            
 
             // If succeeded, the modified Benchmark will be written into the DB
 
