@@ -371,6 +371,10 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     b.Property<int>("Cpu")
                         .HasColumnType("integer");
 
+                    b.Property<string>("CpuModel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -390,9 +394,6 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("Ram")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Storage")
                         .HasColumnType("integer");
 
                     b.Property<string>("UserName")
