@@ -25,11 +25,10 @@ public class RemoveWorkerCommandHandler : IRequestHandler<RemoveWorkerCommand>
 
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         
-        throw new NotImplementedException();
+        throw new NotImplementedException("This feature is not fully implemented yet.");
 
-        // The scheduler checks, whether the worker has any tasks running, and if not, removes it
-        // and redelegates the tasks among the workers left at the according computer group
-
+        // Checks, whether the worker has any tasks running, and if not, remove it
+        
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
         _context.Remove(worker);
