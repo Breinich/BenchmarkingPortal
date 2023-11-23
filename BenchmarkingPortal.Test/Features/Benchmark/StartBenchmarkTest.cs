@@ -20,6 +20,6 @@ public class StartBenchmarkTest : IClassFixture<DatabaseFixture>, IDisposable
     [Fact]
     public Task TestSimpleStart()
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("Testing is not implemented yet.");
     }
 }
