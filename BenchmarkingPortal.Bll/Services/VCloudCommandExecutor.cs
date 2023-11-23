@@ -76,19 +76,44 @@ public class VCloudCommandExecutor : ICommandExecutor
         _logger.LogInformation("VCloud tested.");
     }
     
-    public async Task ExecuteAsync(string command, IEnumerable<string> args)
+    public async Task<string> ExecuteAsync(string command, IEnumerable<string> args)
     {
+        if (_terminal == null)
+            await InitializeAsync();
+        
+        var result = "";
+        
+        var gatherer = new DataReceivedEventHandler((_, eventArgs) =>
+        {
+            if (!string.IsNullOrEmpty(eventArgs.Data))
+            {
+                result += eventArgs.Data + "\n";
+            }
+        });
+
+        _terminal!.OutputDataReceived += gatherer;
+        _terminal.ErrorDataReceived += gatherer;
+        
         await _terminal!.StandardInput.WriteAsync(command);
         foreach (var arg in args)
         {
             await _terminal.StandardInput.WriteAsync(" " + arg);
         }
         await _terminal.StandardInput.WriteLineAsync();
+
+        // give n seconds to the vcloud client to execute the given command, until then we will gather the output
+        await Task.Delay(5000);
+
+        _terminal.OutputDataReceived -= gatherer;
+        _terminal.ErrorDataReceived -= gatherer;
+
+        return result;
     }
 
     public void Dispose()
     {
         if (_terminal == null) return;
+        if (_terminal.HasExited) return;
         
         _terminal.StandardInput.WriteLine("exit");
         _terminal.WaitForExit(2000);

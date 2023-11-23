@@ -2,6 +2,6 @@
 
 public interface ICommandExecutor : IDisposable
 {
-    Task ExecuteAsync(string command, IEnumerable<string> args);
+    Task<string> ExecuteAsync(string command, IEnumerable<string> args);
     Task InitializeAsync();
 }
