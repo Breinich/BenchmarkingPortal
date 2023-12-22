@@ -1,4 +1,4 @@
-﻿# Features to include later with priorities
+# Features to include later with priorities
 
 ### Benchmark handling
 
@@ -17,8 +17,10 @@ Modify
 
 Durability
 - [ ] 2 | Storing the benchmarking tasks persistently in a database
-- [ ] 2 | Checking if the benchmarking tasks are already existing in the database and restarting them,
-  if they are not running >> this is needed for the case that the server is restarted
+- [ ] 2 | Checking if the benchmarking tasks are already existing in the database and
+restarting them, if they are not running >> this is needed for the case that the server is
+restarted
+- [ ] 2 | Specify Name attributes to the created threads for further supportability
 
 Results
 - [X] 1 | Downloading the results properly
