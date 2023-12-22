@@ -54,5 +54,4 @@ Modify
 UX
 - [ ] 2 | During uploading the main Add, Cancel and X buttons should be disabled
 - [ ] 2 | After cancelling the upload the file should be deleted from the server
-- [X] 2 | Use : character to separate the set file name and version instead of + character
 - [ ] 2 | Pop-up warning before deleting anything
