@@ -31,8 +31,15 @@ public class BenchmarkTask
         try
         {
             var context = scope.ServiceProvider.GetRequiredService<BenchmarkingDbContext>();
-            var benchmark = await context.Benchmarks.Where(b => b.Name == BenchmarkInfo.Name)
-                .FirstAsync(cancellationToken);
+            
+            Benchmark? benchmark = null;
+            while(benchmark == null)
+            {
+                benchmark = await context.Benchmarks.Where(b => b.Name == BenchmarkInfo.Name)
+                    .FirstOrDefaultAsync(cancellationToken);
+                await Task.Delay(500, cancellationToken);
+            }
+            
             benchmark.Status = Status.Running;
             await context.SaveChangesAsync(cancellationToken);
 
