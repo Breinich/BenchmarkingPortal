@@ -5,7 +5,7 @@
 Start
 - [ ] 2 | Option for rerunning an already existing benchmark
 - [ ] 2 | Option for starting a benchmark via uploading the xml configuration file
-- [ ] 1 | Fix sv-benchmarks path to relative path based on the xml path and don't copy the xml file
+- [X] 1 | Fix sv-benchmarks path to relative path based on the xml path and don't copy the xml file
   
 Modify
 - [ ] 1 | Add vcloud ID to the benchmark table
@@ -22,9 +22,10 @@ Durability
 
 Results
 - [X] 1 | Downloading the results properly
+- [ ] 1 | Fix downloading not own benchmark's results
 
 UX
-- [ ] 1 | Redesign UI, reomve useless components
+- [ ] 1 | Redesign UI, remove useless components
   - Remove Progress column
   - Remove non-functional buttons
   - Remove the absolut part of the set file's path on Home and Finished pages
@@ -39,8 +40,9 @@ Info
 - [ ] 1 | Add vcloud ID to the worker table
 
 Add
-- [ ] 1 | Option for adding a new worker
-- [ ] 1 | Gather CPU and RAM metadata from vcloud
+- [X] 1 | Option for adding a new worker
+- [X] 1 | Gather CPU and RAM metadata from vcloud
+- [ ] 1 | Adding workers on different thread asynchronously, like at the benchmarks
 
 Modify  
 - [ ] 1 | Option for removing a worker
@@ -49,8 +51,13 @@ Modify
 
 ### Resource handling
 
+Delete
+- [ ] 2 | After deleting a resource, the resource's folder should be deleted too
+
 UX
 - [ ] 2 | During uploading the main Add, Cancel and X buttons should be disabled
-- [ ] 2 | After cancelling the upload the file should be deleted from the server
-- [X] 2 | Use : character to separate the set file name and version instead of + character
+- [ ] 2 | Until the successful upload, the Add button should be disabled, 
+the not existing file should be checked on the backend side too
+- [ ] 2 | After cancelling the upload the file should be deleted from the server, and the Add button should be disabled
+- [X] 2 | Use _ character to separate the set file name and version instead of + character
 - [ ] 2 | Pop-up warning before deleting anything
