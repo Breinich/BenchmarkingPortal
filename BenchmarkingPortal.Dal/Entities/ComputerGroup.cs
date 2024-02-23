@@ -6,6 +6,10 @@ public class ComputerGroup
 
     public string? Description { get; set; }
 
+    public string Name { get; set; }
+
+    public string Url { get; set; }
+
     public virtual ICollection<Benchmark> Benchmarks { get; } = new List<Benchmark>();
 
     public virtual ICollection<Worker> Workers { get; } = new List<Worker>();
