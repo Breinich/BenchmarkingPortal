@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using tusdotnet.Models;
 
-namespace BenchmarkingPortal.Web.Pages;
+namespace BenchmarkingPortal.Bll.Tus;
 
 public class TusUtil
 {
