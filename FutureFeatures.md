@@ -1,4 +1,4 @@
-﻿# Features to include later with priorities
+# Features to include later with priorities
 
 ### Benchmark handling
 
@@ -17,8 +17,10 @@ Modify
 
 Durability
 - [ ] 2 | Storing the benchmarking tasks persistently in a database
-- [ ] 2 | Checking if the benchmarking tasks are already existing in the database and restarting them,
-  if they are not running >> this is needed for the case that the server is restarted
+- [ ] 2 | Checking if the benchmarking tasks are already existing in the database and
+restarting them, if they are not running >> this is needed for the case that the server is
+restarted
+- [ ] 2 | Specify Name attributes to the created threads for further supportability
 
 Results
 - [X] 1 | Downloading the results properly
@@ -56,8 +58,13 @@ Delete
 
 UX
 - [ ] 2 | During uploading the main Add, Cancel and X buttons should be disabled
+<<<<<<< HEAD
 - [ ] 2 | Until the successful upload, the Add button should be disabled, 
 the not existing file should be checked on the backend side too
 - [ ] 2 | After cancelling the upload the file should be deleted from the server, and the Add button should be disabled
 - [X] 2 | Use _ character to separate the set file name and version instead of + character
 - [ ] 2 | Pop-up warning before deleting anything
+=======
+- [ ] 2 | After cancelling the upload the file should be deleted from the server
+- [ ] 2 | Pop-up warning before deleting anything
+>>>>>>> 372f9bf79b7ba597f8c5109913af298a2b92f659
