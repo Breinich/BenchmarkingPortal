@@ -207,7 +207,7 @@ public class Resources : PageModel
     public class ExecutableInputModel
     {
         [Required]
-        [RegularExpression(@"[A-Za-z0-9._-]+:[A-Za-z0-9._-]+\.zip$")]
+        [RegularExpression(@"[A-Za-z0-9._-]+_[A-Za-z0-9._-]+\.zip$")]
         [Display(Name = "Executable Name")]
         public string Name { get; init; } = null!;
 
@@ -233,7 +233,7 @@ public class Resources : PageModel
     public class SetFileInputModel
     {
         [Required]
-        [RegularExpression(@"[A-Za-z0-9._-]+:[A-Za-z0-9._-]+\.set$")]
+        [RegularExpression(@"[A-Za-z0-9._-]+_[A-Za-z0-9._-]+\.set$")]
         [Display(Name = "Set File Name")]
         public string Name { get; init; } = null!;
         
