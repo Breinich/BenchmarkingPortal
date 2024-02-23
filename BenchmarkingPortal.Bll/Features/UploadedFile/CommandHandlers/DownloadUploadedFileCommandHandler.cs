@@ -3,7 +3,6 @@ using BenchmarkingPortal.Bll.Services;
 using BenchmarkingPortal.Bll.Tus;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
-using BenchmarkingPortal.Web.Pages;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
