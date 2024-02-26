@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Folder Include="Features\SourceSet\" />
         <Folder Include="Features\Worker\CommandHandlers\" />
         <Folder Include="Features\Worker\Commands\" />
         <Folder Include="Features\Worker\Queries\" />
