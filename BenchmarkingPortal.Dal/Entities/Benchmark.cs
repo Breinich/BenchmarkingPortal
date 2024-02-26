@@ -21,7 +21,7 @@ public class Benchmark
     public int ConfigurationId { get; set; }
     public string UserName { get; set; } = null!;
     public string? VcloudId { get; set; }
-    public virtual ComputerGroup ComputerGroup { get; set; } = null!;
+    public virtual ComputerGroup? ComputerGroup { get; set; }
     public virtual Configuration Configuration { get; set; } = null!;
     public virtual Executable Executable { get; set; } = null!;
     public virtual User User { get; set; } = null!;

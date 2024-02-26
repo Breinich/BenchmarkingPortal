@@ -54,7 +54,20 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
             // tell vcloud to change the priority of the benchmark
             throw new NotImplementedException("This feature is not fully implemented yet.");
         }
-
+        
+        if (request.Status == Status.Finished)
+        {
+            benchmarkHeader.Status = Status.Finished;
+            
+            // tell vcloud to finish the benchmark
+            throw new NotImplementedException("This feature is not fully implemented yet.");
+            
+            // Remove the benchmark from the computer group
+            benchmarkEntity.ComputerGroup = null;
+            // Remove the benchmark from the CPU model
+            // TODO: should we keep this information?
+            benchmarkEntity.CpuModel = null;
+        }
 
         // If succeeded, the modified Benchmark will be written into the DB
         benchmarkEntity.Priority = benchmarkHeader.Priority;
