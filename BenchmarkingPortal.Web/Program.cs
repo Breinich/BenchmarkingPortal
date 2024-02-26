@@ -8,6 +8,7 @@ using BenchmarkingPortal.Bll.Features.ComputerGroup.Commands;
 using BenchmarkingPortal.Bll.Features.ComputerGroup.Queries;
 using BenchmarkingPortal.Bll.Features.Configuration.Commands;
 using BenchmarkingPortal.Bll.Features.Configuration.Queries;
+using BenchmarkingPortal.Bll.Features.CpuModel.Queries;
 using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
 using BenchmarkingPortal.Bll.Features.PropertyFile.Queries;
@@ -171,7 +172,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
         typeof(GetConfigurationByIdQuery).Assembly,
         typeof(DeleteConfigurationCommand).Assembly,
         typeof(DownloadResultCommand).Assembly,
-        typeof(DownloadUploadedFileCommand).Assembly
+        typeof(DownloadUploadedFileCommand).Assembly,
+        typeof(GetAllCpuModelsQuery).Assembly
     ));
 
 builder.Services.Configure<FormOptions>(x =>
