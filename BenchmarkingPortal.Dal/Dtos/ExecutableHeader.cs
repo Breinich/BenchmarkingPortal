@@ -21,18 +21,11 @@ public class ExecutableHeader
     }
 
     public int Id { get; init; }
-
     public string? OwnerTool { get; init; }
-
     public string? ToolVersion { get; init; }
-
     public string? Path { get; init; }
-
     public string Name { get; init; } = null!;
-
     public string? Version { get; init; }
-
     public DateTime UploadedDate { get; init; }
-
     public string UserName { get; init; } = null!;
 }
