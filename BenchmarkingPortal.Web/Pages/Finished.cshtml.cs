@@ -1,9 +1,9 @@
 ﻿using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
+using BenchmarkingPortal.Bll.Features.CpuModel.Queries;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
 using BenchmarkingPortal.Bll.Features.Result.Commands;
-using BenchmarkingPortal.Bll.Services;
 using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
 using MediatR;
@@ -17,17 +17,16 @@ namespace BenchmarkingPortal.Web.Pages;
 public class Finished : PageModel
 {
     private readonly IMediator _mediator;
-    private readonly string _workDir;
 
-    public Finished(IMediator mediator, PathConfigs pathConfigs)
+    public Finished(IMediator mediator)
     {
         _mediator = mediator;
-        _workDir = pathConfigs.WorkingDir;
     }
 
     [TempData] public string? StatusMessage { get; set; }
 
     public List<BenchmarkHeader> FinishedBenchmarks { get; set; } = new();
+    public Dictionary<int, string> CpuModelNames { get; set; } = new();
     public Dictionary<int, string> ExecutableNames { get; set; } = new();
     public List<string> Headers { get; set; } = new();
 
@@ -44,6 +43,9 @@ public class Finished : PageModel
             {
                 Finished = true
             })).ToList();
+
+            CpuModelNames = (await _mediator.Send(new GetAllCpuModelsQuery()))
+                .ToDictionary(cm => cm.Id, cm => cm.Name ?? cm.Value ?? "No information");
 
             ExecutableNames = (await _mediator.Send(new GetAllExecutablesQuery()))
                 .ToDictionary(x => x.Id, x => x.Name + ":" + x.Version);
