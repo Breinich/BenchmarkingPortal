@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BenchmarkingPortal.Bll.Features.Benchmark.CommandHandlers;
 
+// ReSharper disable once UnusedType.Global
 public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkCommand, BenchmarkHeader>
 {
     private readonly BenchmarkingDbContext _context;
@@ -19,13 +20,20 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
         _userManager = userManager;
     }
 
+    /// <summary>
+    /// This method is used to update the priority or the status of a specific benchmark.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>The modified dto</returns>
+    /// <exception cref="ArgumentException"></exception>
     public async Task<BenchmarkHeader> Handle(UpdateBenchmarkCommand request, CancellationToken cancellationToken)
     {
-        var benchmarkEntity = await _context.Benchmarks.FindAsync(request.Id, cancellationToken) ??
+        var benchmarkEntity = await _context.Benchmarks.FindAsync(new object?[] { request.Id}, 
+                                  cancellationToken: cancellationToken) ??
                               throw new ArgumentException(new ExceptionMessage<Dal.Entities.Benchmark>()
                                   .ObjectNotFound);
-
-
+        
         var benchmarkHeader = new BenchmarkHeader(benchmarkEntity);
 
         // Only the owner or the administrators have the permission to modify a specific benchmark
@@ -33,39 +41,31 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
         {
             var user = await _userManager.FindByNameAsync(request.InvokerName) ??
                        throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().ObjectNotFound);
-
-
+            
             var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);
 
             if (!admin)
-                throw new ArgumentException(
-                    new ExceptionMessage<Dal.Entities.Benchmark>().NoPrivilege);
+                throw new ArgumentException(new ExceptionMessage<Dal.Entities.Benchmark>().NoPrivilege);
         }
 
-
-        if (benchmarkHeader.Status != Status.Finished)
-        {
-            if (benchmarkHeader.Priority != request.Priority)
-            {
-                benchmarkHeader.Priority = request.Priority;
-                
-                // tell vcloud to change the priority of the benchmark
-                throw new NotImplementedException("This feature is not fully implemented yet.");
-            }
-            
-
-            // If succeeded, the modified Benchmark will be written into the DB
-
-
-            benchmarkEntity.Priority = request.Priority;
-            benchmarkEntity.Status = request.Status;
-
-            await _context.SaveChangesAsync(cancellationToken);
-            
-            return benchmarkHeader;
-        }
-
-        throw new ArgumentException("The benchmark, that wanted to be modified, has already been finished.");
+        if (benchmarkHeader.Status == Status.Finished)
+            throw new ArgumentException("The benchmark, that wanted to be modified, has already been finished.");
         
+        if (benchmarkHeader.Priority != request.Priority)
+        {
+            benchmarkHeader.Priority = request.Priority;
+
+            // tell vcloud to change the priority of the benchmark
+            throw new NotImplementedException("This feature is not fully implemented yet.");
+        }
+
+
+        // If succeeded, the modified Benchmark will be written into the DB
+        benchmarkEntity.Priority = benchmarkHeader.Priority;
+        benchmarkEntity.Status = benchmarkHeader.Status;
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return benchmarkHeader;
     }
 }
