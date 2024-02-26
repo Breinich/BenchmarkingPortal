@@ -26,7 +26,6 @@ public class BenchmarkEntityConfiguration : IEntityTypeConfiguration<Benchmark>
             v => (Priority)Enum.Parse(typeof(Priority), v)).IsRequired();
         builder.Property(e => e.TimeLimit).IsRequired();
         builder.Property(e => e.HardTimeLimit).IsRequired();
-        builder.Property(e => e.CpuModel).HasMaxLength(50).IsRequired();
         builder.Property(e => e.XmlFilePath).HasMaxLength(250).IsRequired();
         builder.Property(e => e.VcloudId).HasMaxLength(100);
 
@@ -52,6 +51,11 @@ public class BenchmarkEntityConfiguration : IEntityTypeConfiguration<Benchmark>
             .HasPrincipalKey(d => d.UserName)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_Benchmark_User");
+
+        builder.HasOne(d => d.CpuModel).WithMany(p => p.Benchmarks)
+            .HasForeignKey(d => d.CpuModelId)
+            .OnDelete(DeleteBehavior.ClientSetNull)
+            .HasConstraintName("FK_Benchmark_CpuModel");
         
         builder.HasIndex(e => e.Name).IsUnique();
 

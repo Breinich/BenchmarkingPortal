@@ -14,6 +14,8 @@ public class ComputerGroupEntityConfiguration : IEntityTypeConfiguration<Compute
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
         builder.Property(e => e.Description).HasMaxLength(50);
+        builder.Property(e => e.Name).HasMaxLength(50).IsRequired();
+        builder.Property(cg => cg.Hostname).HasMaxLength(50).IsRequired();
 
         builder.HasMany(p => p.Workers).WithOne()
             .HasForeignKey(d => d.ComputerGroupId)
