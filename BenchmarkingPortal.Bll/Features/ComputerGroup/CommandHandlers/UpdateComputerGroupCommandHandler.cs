@@ -1,4 +1,6 @@
-﻿using BenchmarkingPortal.Bll.Exceptions;
+﻿using System.Net.NetworkInformation;
+using System.Text;
+using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.ComputerGroup.Commands;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
@@ -7,6 +9,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BenchmarkingPortal.Bll.Features.ComputerGroup.CommandHandlers;
 
+/// <summary>
+/// Command handler for the <see cref="UpdateComputerGroupCommand"/>
+/// </summary>
+// ReSharper disable once UnusedType.Global
 public class UpdateComputerGroupCommandHandler : IRequestHandler<UpdateComputerGroupCommand, ComputerGroupHeader>
 {
     private readonly BenchmarkingDbContext _context;
@@ -31,13 +37,29 @@ public class UpdateComputerGroupCommandHandler : IRequestHandler<UpdateComputerG
         if (computerGroup == null)
             throw new ArgumentException(new ExceptionMessage<Dal.Entities.ComputerGroup>().ObjectNotFound);
 
-        if (request.Description == null)
-            return new ComputerGroupHeader(computerGroup);
+        if (request.Description != null)
+            computerGroup.Description = request.Description;
 
-        computerGroup.Description = request.Description;
+        if (request.Name != null)
+            computerGroup.Name = request.Name;
+
+        if (request.Hostname != null)
+        {
+            // check if the given hostname is reachable
+            Ping pingSender = new Ping ();
+            int timeout = 60;
+            PingReply reply = pingSender.Send(request.Hostname, timeout: timeout);
+            if (reply.Status == IPStatus.Success)
+            {
+                computerGroup.Hostname = request.Hostname;
+            }
+            else
+            {
+                throw new ArgumentException("The given hostname is not reachable!");
+            }
+        }
 
         await _context.SaveChangesAsync(cancellationToken);
-
         return new ComputerGroupHeader(computerGroup);
     }
 }

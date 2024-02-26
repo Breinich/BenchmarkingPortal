@@ -7,6 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.ComputerGroup.CommandHandlers;
 
+/// <summary>
+/// Command handler for the <see cref="DeleteComputerGroupCommand"/>
+/// </summary>
+// ReSharper disable once UnusedType.Global
 public class DeleteComputerGroupCommandHandler : IRequestHandler<DeleteComputerGroupCommand>
 {
     private readonly BenchmarkingDbContext _context;
@@ -25,7 +29,8 @@ public class DeleteComputerGroupCommandHandler : IRequestHandler<DeleteComputerG
         if (user == null || !await _userManager.IsInRoleAsync(user, Roles.Admin))
             throw new ArgumentException(new ExceptionMessage<Dal.Entities.ComputerGroup>().NoPrivilege);
 
-        var computerGroup = await _context.ComputerGroups.FindAsync(request.Id, cancellationToken);
+        var computerGroup = await _context.ComputerGroups.FindAsync(new object?[] { request.Id}, 
+            cancellationToken: cancellationToken);
 
         var workersCount = await _context.Workers
             .CountAsync(w => w.ComputerGroupId == request.Id, cancellationToken);
