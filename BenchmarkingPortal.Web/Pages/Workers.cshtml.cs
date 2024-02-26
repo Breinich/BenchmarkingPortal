@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.ComputerGroup.Commands;
 using BenchmarkingPortal.Bll.Features.ComputerGroup.Queries;
+using BenchmarkingPortal.Bll.Features.CpuModel.Queries;
 using BenchmarkingPortal.Bll.Features.Worker.Commands;
 using BenchmarkingPortal.Bll.Features.Worker.Queries;
 using BenchmarkingPortal.Dal.Dtos;
@@ -36,6 +37,7 @@ public class Workers : PageModel
 
     public List<WorkerHeader> WorkerList { get; set; } = new();
     public List<ComputerGroupHeader> ComputerGroupList { get; set; } = new();
+    public List<CpuModelHeader> CpuModelList { get; set; } = new();
     public List<SelectListItem> ComputerGroupSelectList { get; set; } = new();
     public List<string> WorkerModelHeaders { get; set; } = new();
     public List<string> CompGroupModelHeaders { get; set; } = new();
@@ -57,6 +59,8 @@ public class Workers : PageModel
             WorkerList = (await _mediator.Send(new GetAllWorkersQuery())).ToList();
 
             ComputerGroupList = (await _mediator.Send(new GetAllComputerGroupsQuery())).ToList();
+
+            CpuModelList = (await _mediator.Send(new GetAllCpuModelsQuery())).ToList();
 
             ComputerGroupSelectList = ComputerGroupList.Select(x => new SelectListItem
             {

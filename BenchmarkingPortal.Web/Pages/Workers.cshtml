@@ -41,10 +41,10 @@
                         <div class="d-flex justify-content-center">@item.Name</div>
                     </td>
                     <td>
-                        <div class="d-flex justify-content-center">@item.Address:@item.Port</div>
+                        <div class="d-flex justify-content-center">@Model.ComputerGroupList.Where(cg => cg.Id == item.ComputerGroupId).Select(cg => cg.HostName):@item.Port</div>
                     </td>
                     <td>
-                        <div class="d-flex justify-content-center">@item.CpuModel</div>
+                        <div class="d-flex justify-content-center">@Model.CpuModelList.Where(c => c.Id == item.CpuModelId).Select(c => c.Name).First()</div>
                     </td>
                     <td>
                         <div class="d-flex justify-content-center">
