@@ -76,7 +76,8 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             Cpu = request.Cpu,
             TimeLimit = request.TimeLimit,
             HardTimeLimit = request.HardTimeLimit,
-            CpuModel = request.CpuModel,
+            CpuModelId = request.CpuModelId,
+            CpuModelValue = request.CpuModelValue,
             ExecutableId = request.ExecutableId,
             SetFilePath = request.SetFilePath,
             PropertyFilePath = request.PropertyFilePath,
@@ -121,7 +122,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             Cpu = newBenchmark.Cpu,
             TimeLimit = newBenchmark.TimeLimit,
             HardTimeLimit = newBenchmark.HardTimeLimit,
-            CpuModel = newBenchmark.CpuModel,
+            CpuModelId = newBenchmark.CpuModelId,
             ComputerGroupId = newBenchmark.ComputerGroupId,
             ExecutableId = newBenchmark.ExecutableId,
             SetFilePath = newBenchmark.SetFilePath,
@@ -310,8 +311,8 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
                     .Add("--vcloudPriority").Add(newBenchmark.Priority.ToString());
                 if(!string.IsNullOrEmpty(_vcloudHost))
                     args.Add("--vcloudMaster").Add(_vcloudHost);
-                if(!string.IsNullOrEmpty(newBenchmark.CpuModel) && !newBenchmark.CpuModel.Equals("-"))
-                    args.Add("--vcloudCPUModel").Add(newBenchmark.CpuModel);
+                if(!string.IsNullOrEmpty(newBenchmark.CpuModelValue) && !newBenchmark.CpuModelValue.Equals("-"))
+                    args.Add("--vcloudCPUModel").Add(newBenchmark.CpuModelValue);
             })
             .WithWorkingDirectory(_workDir)
             .WithStandardOutputPipe(PipeTarget.ToFile(outputLogPath))
