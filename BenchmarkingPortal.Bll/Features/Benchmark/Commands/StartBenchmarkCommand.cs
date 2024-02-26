@@ -4,6 +4,9 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 
+/// <summary>
+/// The command for starting a benchmark.
+/// </summary>
 public class StartBenchmarkCommand : IRequest<BenchmarkHeader>
 {
     public string Name { get; init; } = null!;

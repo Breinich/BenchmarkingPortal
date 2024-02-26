@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BenchmarkingPortal.Bll.Features.Benchmark.CommandHandlers;
 
+/// <summary>
+/// Handler for the <see cref="UpdateBenchmarkCommand"/>.
+/// </summary>
 // ReSharper disable once UnusedType.Global
 public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkCommand, BenchmarkHeader>
 {
@@ -19,14 +22,7 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
         _context = context;
         _userManager = userManager;
     }
-
-    /// <summary>
-    /// This method is used to update the priority or the status of a specific benchmark.
-    /// </summary>
-    /// <param name="request"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns>The modified dto</returns>
-    /// <exception cref="ArgumentException"></exception>
+    
     public async Task<BenchmarkHeader> Handle(UpdateBenchmarkCommand request, CancellationToken cancellationToken)
     {
         var benchmarkEntity = await _context.Benchmarks.FindAsync(new object?[] { request.Id}, 

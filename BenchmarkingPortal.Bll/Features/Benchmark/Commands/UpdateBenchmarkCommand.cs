@@ -4,6 +4,9 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 
+/// <summary>
+/// The command for updating a benchmark's priority and status.
+/// </summary>
 public class UpdateBenchmarkCommand : IRequest<BenchmarkHeader>
 {
     public int Id { get; init; }

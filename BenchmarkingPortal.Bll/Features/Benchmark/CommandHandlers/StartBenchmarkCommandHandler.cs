@@ -12,6 +12,9 @@ using CliWrap;
 
 namespace BenchmarkingPortal.Bll.Features.Benchmark.CommandHandlers;
 
+/// <summary>
+/// The handler for the <see cref="StartBenchmarkCommand"/>.
+/// </summary>
 // ReSharper disable once UnusedType.Global
 public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkCommand, BenchmarkHeader>
 {
@@ -33,7 +36,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
     }
 
     /// <summary>
-    /// Creates a configuration XML file for the benchmark and starts it
+    /// Creates a configuration XML file for the benchmark and starts the benchmark
     /// </summary>
     /// <param name="request">The request data</param>
     /// <param name="cancellationToken">cancellation token</param>

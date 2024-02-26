@@ -9,6 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.Benchmark.CommandHandlers;
 
+/// <summary>
+/// The handler for the <see cref="DeleteBenchmarkCommand"/>.
+/// </summary>
 public class DeleteBenchmarkCommandHandler : IRequestHandler<DeleteBenchmarkCommand>
 {
     private readonly BenchmarkingDbContext _context;
