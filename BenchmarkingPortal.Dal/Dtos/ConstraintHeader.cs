@@ -12,8 +12,6 @@ public class ConstraintHeader
     }
     
     public string? Premise { get; init; }
-
     public string? Consequence { get; init; }
-
     public int ConfigurationId { get; init; }
 }
