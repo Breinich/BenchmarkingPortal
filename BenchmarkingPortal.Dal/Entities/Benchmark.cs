@@ -11,9 +11,9 @@ public class Benchmark
     public string? ResultPath { get; set; }
     public int TimeLimit { get; set; }
     public int HardTimeLimit { get; set; }
-    public string? CpuModel { get; set; }
     public int ComputerGroupId { get; set; }
     public int ExecutableId { get; set; }
+    public int CpuModelId { get; set; }
     public string SetFilePath { get; set; } = null!;
     public string PropertyFilePath { get; set; } = null!;
     public string XmlFilePath { get; set; } = null!;
@@ -25,4 +25,5 @@ public class Benchmark
     public virtual Configuration Configuration { get; set; } = null!;
     public virtual Executable Executable { get; set; } = null!;
     public virtual User User { get; set; } = null!;
+    public virtual CpuModel? CpuModel { get; set; }
 }
