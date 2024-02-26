@@ -26,7 +26,7 @@ public class DatabaseFixture : IAsyncLifetime
         await Context.Database.EnsureDeletedAsync();
         await Context.Database.EnsureCreatedAsync();
 
-        await SeedDatabase();
+        SeedDatabase();
     }
 
     public async Task DisposeAsync()
@@ -37,81 +37,8 @@ public class DatabaseFixture : IAsyncLifetime
     /// <summary>
     ///     Seeds the database with test data
     /// </summary>
-    private async Task SeedDatabase()
+    private void SeedDatabase()
     {
-        var user = new User
-        {
-            UserName = "TestUser",
-            Email = "test@me.hu"
-        };
-        await Context.Users.AddAsync(user);
-        await Context.SaveChangesAsync();
-
-        var executable = new Executable
-        {
-            OwnerTool = "TestTool",
-            ToolVersion = "1.0",
-            Path = "C:\\TestTool",
-            Name = "TestToolAlpha",
-            Version = "1.0",
-            UploadedDate = DateTime.UtcNow,
-            UserName = user.UserName
-        };
-        await Context.Executables.AddAsync(executable);
-        await Context.SaveChangesAsync();
-
-        var setFile = new SetFile
-        {
-            Name = "TestSetFile",
-            Path = "C:\\TestSetFile",
-            Version = "1.0",
-            UploadedDate = DateTime.UtcNow,
-            UserName = user.UserName
-        };
-        await Context.SetFiles.AddAsync(setFile);
-        await Context.SaveChangesAsync();
-
-        var configuration = new Configuration();
-        await Context.Configurations.AddAsync(configuration);
-        await Context.SaveChangesAsync();
-
-        var computerGroup = new ComputerGroup();
-        await Context.ComputerGroups.AddAsync(computerGroup);
-        await Context.SaveChangesAsync();
-
-        var worker = new Worker
-        {
-            Name = "TestWorker",
-            Ram = 4,
-            Cpu = 2,
-            Login = "TestUser",
-            Password = "TestPassword",
-            CpuModel = "AMD Ryzen 6800H",
-            Address = "192.168.0.0",
-            Port = 8080,
-            ComputerGroupId = computerGroup.Id,
-            AddedDate = DateTime.UtcNow
-        };
-        await Context.Workers.AddAsync(worker);
-        await Context.SaveChangesAsync();
-
-        await Context.Benchmarks.AddAsync(new Dal.Entities.Benchmark
-        {
-            Name = "TestBenchmark",
-            Priority = 0,
-            Status = Status.Running,
-            StartedDate = DateTime.UtcNow,
-            Ram = 1,
-            Cpu = 1,
-            TimeLimit = 900,
-            HardTimeLimit = 960,
-            ComputerGroupId = computerGroup.Id,
-            ExecutableId = executable.Id,
-            UserName = user.UserName,
-            SetFilePath = "C:\\TestSetFile\\test.txt",
-            PropertyFilePath = "C:\\TestSetFile\\test.properties",
-            ConfigurationId = configuration.Id
-        });
-        await Context.SaveChangesAsync();
+        
     }
 }
