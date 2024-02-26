@@ -19,7 +19,7 @@ public class BenchmarkHeader
         ResultPath = b.ResultPath;
         TimeLimit = b.TimeLimit;
         HardTimeLimit = b.HardTimeLimit;
-        CpuModel = b.CpuModel;
+        CpuModelId = b.CpuModelId;
         ComputerGroupId = b.ComputerGroupId;
         ExecutableId = b.ExecutableId;
         SetFilePath = b.SetFilePath;
@@ -32,40 +32,24 @@ public class BenchmarkHeader
     }
 
     public int Id { get; init; }
-
     public string? Name { get; init; }
-
     public Priority Priority { get; set; }
-
     public Status Status { get; set; }
-
     public int Ram { get; init; }
-
     public int Cpu { get; init; }
-
     public string? ResultPath { get; set; }
-
     public int TimeLimit { get; init; }
-
     public int HardTimeLimit { get; init; }
-    
-    public string? CpuModel { get; init; }
-
+    public int CpuModelId { get; init; }
     public int ComputerGroupId { get; init; }
-
     public int ExecutableId { get; init; }
-
     public string? SetFilePath { get; init; }
-
     public string? PropertyFilePath { get; init; }
-    
     public string? XmlFilePath { get; set; }
-
     public DateTime StartedDate { get; set; }
-
     public int ConfigurationId { get; init; }
-    
     public string UserName { get; init; } = null!;
     
     public string? VcloudId { get; set; }
+    public string? CpuModelValue { get; init; }
 }
