@@ -16,16 +16,14 @@ public class SetFileHeader
         UploadedDate = s.UploadedDate;
         UserName = s.UserName;
         Version = s.Version;
+        SourceSetId = s.SourceSetId;
     }
 
     public int Id { get; init; }
-
     public string Name { get; init; } = null!;
-
     public string? Path { get; init; }
-
     public string? Version { get; init; }
-
+    public int SourceSetId { get; init; }
     public DateTime UploadedDate { get; init; }
     public string UserName { get; init; } = null!;
 }
