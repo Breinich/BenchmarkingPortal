@@ -6,8 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.ComputerGroup.QueryHandlers;
 
-public class
-    GetAllComputerGroupsQueryHandler : IRequestHandler<GetAllComputerGroupsQuery, IEnumerable<ComputerGroupHeader>>
+/// <summary>
+/// Handler for <see cref="GetAllComputerGroupsQuery" /> to get all computer groups.
+/// </summary>
+// ReSharper disable once UnusedType.Global
+public class GetAllComputerGroupsQueryHandler : 
+    IRequestHandler<GetAllComputerGroupsQuery, IEnumerable<ComputerGroupHeader>>
 {
     private readonly BenchmarkingDbContext _context;
 
