@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.Benchmark.QueryHandlers;
 
+/// <summary>
+/// Handler for <see cref="GetBenchmarkByResultPathQuery"/>
+/// </summary>
+// ReSharper disable once UnusedType.Global
 public class GetBenchmarkByResultPathQueryHandler : IRequestHandler<GetBenchmarkByResultPathQuery, BenchmarkHeader?>
 {
     private readonly BenchmarkingDbContext _dbContext;

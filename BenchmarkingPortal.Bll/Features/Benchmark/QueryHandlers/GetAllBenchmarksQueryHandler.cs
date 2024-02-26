@@ -7,6 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.Benchmark.QueryHandlers;
 
+/// <summary>
+/// Defines a handler for the <see cref="GetAllBenchmarksQuery" /> request.
+/// </summary>
+// ReSharper disable once UnusedType.Global
 public class GetAllBenchmarksQueryHandler : IRequestHandler<GetAllBenchmarksQuery, IEnumerable<BenchmarkHeader>>
 {
     private readonly BenchmarkingDbContext _context;

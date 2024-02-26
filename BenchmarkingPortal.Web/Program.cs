@@ -141,7 +141,6 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
         typeof(StartBenchmarkCommand).Assembly,
         typeof(UpdateBenchmarkCommand).Assembly,
         typeof(GetAllBenchmarksQuery).Assembly,
-        typeof(GetResultPathQuery).Assembly,
         typeof(CreateComputerGroupCommand).Assembly,
         typeof(GetAllComputerGroupsQuery).Assembly,
         typeof(CreateConfigurationCommand).Assembly,
