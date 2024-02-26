@@ -1,11 +1,6 @@
 ﻿using BenchmarkingPortal.Dal.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BenchmarkingPortal.Dal.EntityConfigurations;
 
@@ -29,6 +24,7 @@ public class SourceSetEntityConfiguration : IEntityTypeConfiguration<SourceSet>
         SampleData(builder);
     }
 
+    // ReSharper disable once UnusedParameter.Local
     private void SampleData(EntityTypeBuilder<SourceSet> builder)
     {
 
