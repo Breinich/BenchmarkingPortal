@@ -8,6 +8,7 @@ using Renci.SshNet;
 
 namespace BenchmarkingPortal.Bll.Features.Worker.CommandHandlers;
 
+// ReSharper disable once UnusedType.Global
 public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerHeader>
 {
     private readonly BenchmarkingDbContext _context;
@@ -34,7 +35,6 @@ public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerH
         var workerDto = new WorkerHeader
         {
             AddedDate = request.AddedDate,
-            Address = request.Address,
             Port = request.Port,
             ComputerGroupId = request.ComputerGroupId,
             Name = request.Name,
@@ -42,9 +42,12 @@ public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerH
             Password = request.Password,
             UserName = request.InvokerName
         };
+
+        var workerUrl = await _context.ComputerGroups.Where(cg => cg.Id == request.ComputerGroupId)
+            .Select(c => c.Hostname).FirstAsync(cancellationToken);
         
         // check connection with SSH.Net
-        var client = new SftpClient(workerDto.Address, workerDto.Port, workerDto.Login, workerDto.Password);
+        var client = new SftpClient(workerUrl, workerDto.Port, workerDto.Login, workerDto.Password);
         await client.ConnectAsync(cancellationToken);
         if (client.IsConnected)
         {
@@ -55,7 +58,7 @@ public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerH
             // add worker info to the ssh config
             var sshEntryLines = new List<string>{"Host " + workerDto.Name,
                 _tab + " StrictHostKeyChecking no",
-                _tab + " HostName " + workerDto.Address,
+                _tab + " HostName " + workerUrl,
                 _tab + " Port " + workerDto.Port,
                 _tab + " User vcloud"};
             await File.AppendAllLinesAsync(_sshConfigPath, sshEntryLines, cancellationToken);
@@ -71,15 +74,7 @@ public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerH
         
         // parse the WorkerInformation file and add the hostname to it
         var workerConfigLines = (await File.ReadAllLinesAsync(_workerConfigPath, cancellationToken)).ToList();
-        bool workerExists = false;
-        foreach(string line in workerConfigLines)
-        {
-            if (line.Contains(workerDto.Name))
-            {
-                workerExists = true;
-                break;
-            }
-        }
+        var workerExists = workerConfigLines.Any(line => line.Contains(workerDto.Name));
 
         if (!workerExists)
             await File.AppendAllLinesAsync(_workerConfigPath, new List<string> { _tab + _tab + "- " + workerDto.Name },
@@ -88,7 +83,7 @@ public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerH
         // gather info about the worker
         var online = false;
         var timeOut = DateTime.UtcNow.AddMinutes(1);
-        while (!online || workerDto.CpuModel == null || workerDto.Cpu == 0 || workerDto.Ram == 0)
+        while (!online || workerDto.CpuModelValue == null || workerDto.Cpu == 0 || workerDto.Ram == 0)
         {
             var result = await _commandExecutor.ExecuteAsync("info", new[] { "worker", workerDto.Name });
             var workerInfo = result.Split("\n").ToList();
@@ -108,7 +103,7 @@ public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerH
                         }
                         break;
                     case "System:":
-                        workerDto.CpuModel = string.Join(" ", parts.Skip(1));
+                        workerDto.CpuModelValue = string.Join(" ", parts.Skip(1));
                         break;
                     case "Cores:":
                         workerDto.Cpu = int.Parse(parts[1]);
@@ -125,22 +120,34 @@ public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerH
                 throw new ArgumentException("It is not known whether the worker has successfully been started or not.");
         }
 
+        var cpuModel = await _context.CpuModels.Where(cm => cm.Value == workerDto.CpuModelValue)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (cpuModel == null)
+        {
+            cpuModel = new Dal.Entities.CpuModel
+            {
+                Name = workerDto.CpuModelValue,
+                Value = workerDto.CpuModelValue
+            };
+            _context.CpuModels.Add(cpuModel);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        
         var worker = new Dal.Entities.Worker
         {
             AddedDate = workerDto.AddedDate,
-            Address = workerDto.Address,
             Port = workerDto.Port,
             ComputerGroupId = workerDto.ComputerGroupId,
             Cpu = workerDto.Cpu,
             Ram = workerDto.Ram,
-            CpuModel = workerDto.CpuModel!,
+            CpuModelId = cpuModel.Id,
             Name = workerDto.Name,
             Login = request.Username,
             Password = workerDto.Password,
             UserName = request.InvokerName
         };
 
-        await _context.Workers.AddAsync(worker, cancellationToken);
+        _context.Workers.Add(worker);
         await _context.SaveChangesAsync(cancellationToken);
 
         return new WorkerHeader(worker);
