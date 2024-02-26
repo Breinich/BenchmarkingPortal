@@ -23,6 +23,11 @@ public class SetFileEntityConfiguration : IEntityTypeConfiguration<SetFile>
             .HasPrincipalKey(d => d.UserName)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_SetFile_User");
+
+        builder.HasOne(s => s.SourceSet).WithMany(s => s.SetFiles)
+            .HasForeignKey(s => s.SourceSetId)
+            .OnDelete(DeleteBehavior.SetNull)
+            .HasConstraintName("FK_SetFile_SourceSet");
         
         builder.HasIndex(e => new {e.Name, e.Version}).IsUnique();
 
