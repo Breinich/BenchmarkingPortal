@@ -39,10 +39,8 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     b.Property<int>("Cpu")
                         .HasColumnType("integer");
 
-                    b.Property<string>("CpuModel")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                    b.Property<int>("CpuModelId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("ExecutableId")
                         .HasColumnType("integer");
@@ -105,6 +103,8 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
 
                     b.HasIndex("ConfigurationId");
 
+                    b.HasIndex("CpuModelId");
+
                     b.HasIndex("ExecutableId");
 
                     b.HasIndex("Name")
@@ -124,6 +124,16 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Hostname")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
@@ -188,6 +198,29 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     b.ToTable("Constraints", (string)null);
                 });
 
+            modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.CpuModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CpuModels", (string)null);
+                });
+
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.Executable", b =>
                 {
                     b.Property<int>("Id")
@@ -238,6 +271,51 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     b.ToTable("Executables", (string)null);
                 });
 
+            modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.PropertyFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("SourceSetId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UploadedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SourceSetId");
+
+                    b.HasIndex("UserName");
+
+                    b.HasIndex("Name", "Version")
+                        .IsUnique();
+
+                    b.ToTable("PropertyFiles", (string)null);
+                });
+
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.SetFile", b =>
                 {
                     b.Property<int>("Id")
@@ -256,6 +334,9 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<int>("SourceSetId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("UploadedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -270,12 +351,43 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("SourceSetId");
+
                     b.HasIndex("UserName");
 
                     b.HasIndex("Name", "Version")
                         .IsUnique();
 
                     b.ToTable("SetFiles", (string)null);
+                });
+
+            modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.SourceSet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Root")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserName");
+
+                    b.ToTable("SourceSets", (string)null);
                 });
 
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.User", b =>
@@ -360,20 +472,14 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     b.Property<DateTime>("AddedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
                     b.Property<int>("ComputerGroupId")
                         .HasColumnType("integer");
 
                     b.Property<int>("Cpu")
                         .HasColumnType("integer");
 
-                    b.Property<string>("CpuModel")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("CpuModelId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Login")
                         .IsRequired()
@@ -403,6 +509,8 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ComputerGroupId");
+
+                    b.HasIndex("CpuModelId");
 
                     b.HasIndex("UserName");
 
@@ -555,6 +663,12 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Benchmark_Configuration");
 
+                    b.HasOne("BenchmarkingPortal.Dal.Entities.CpuModel", "CpuModel")
+                        .WithMany("Benchmarks")
+                        .HasForeignKey("CpuModelId")
+                        .IsRequired()
+                        .HasConstraintName("FK_Benchmark_CpuModel");
+
                     b.HasOne("BenchmarkingPortal.Dal.Entities.Executable", "Executable")
                         .WithMany("Benchmarks")
                         .HasForeignKey("ExecutableId")
@@ -571,6 +685,8 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     b.Navigation("ComputerGroup");
 
                     b.Navigation("Configuration");
+
+                    b.Navigation("CpuModel");
 
                     b.Navigation("Executable");
 
@@ -607,14 +723,57 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.PropertyFile", b =>
+                {
+                    b.HasOne("BenchmarkingPortal.Dal.Entities.SourceSet", "SourceSet")
+                        .WithMany("PropertyFiles")
+                        .HasForeignKey("SourceSetId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired()
+                        .HasConstraintName("FK_PropertyFile_SourceSet");
+
+                    b.HasOne("BenchmarkingPortal.Dal.Entities.User", "User")
+                        .WithMany("PropertyFiles")
+                        .HasForeignKey("UserName")
+                        .HasPrincipalKey("UserName")
+                        .IsRequired()
+                        .HasConstraintName("FK_PropertyFile_User");
+
+                    b.Navigation("SourceSet");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.SetFile", b =>
                 {
+                    b.HasOne("BenchmarkingPortal.Dal.Entities.SourceSet", "SourceSet")
+                        .WithMany("SetFiles")
+                        .HasForeignKey("SourceSetId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired()
+                        .HasConstraintName("FK_SetFile_SourceSet");
+
                     b.HasOne("BenchmarkingPortal.Dal.Entities.User", "User")
                         .WithMany("SetFiles")
                         .HasForeignKey("UserName")
                         .HasPrincipalKey("UserName")
                         .IsRequired()
                         .HasConstraintName("FK_SetFile_User");
+
+                    b.Navigation("SourceSet");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.SourceSet", b =>
+                {
+                    b.HasOne("BenchmarkingPortal.Dal.Entities.User", "User")
+                        .WithMany("SourceSets")
+                        .HasForeignKey("UserName")
+                        .HasPrincipalKey("UserName")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired()
+                        .HasConstraintName("FK_SourceSet_User");
 
                     b.Navigation("User");
                 });
@@ -627,6 +786,13 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Worker_ComputerGroup");
 
+                    b.HasOne("BenchmarkingPortal.Dal.Entities.CpuModel", "CpuModel")
+                        .WithMany("Workers")
+                        .HasForeignKey("CpuModelId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired()
+                        .HasConstraintName("FK_Worker_CpuModel");
+
                     b.HasOne("BenchmarkingPortal.Dal.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserName")
@@ -635,6 +801,8 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                         .HasConstraintName("FK_Worker_User");
 
                     b.Navigation("ComputerGroup");
+
+                    b.Navigation("CpuModel");
 
                     b.Navigation("User");
                 });
@@ -704,9 +872,23 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     b.Navigation("Constraints");
                 });
 
+            modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.CpuModel", b =>
+                {
+                    b.Navigation("Benchmarks");
+
+                    b.Navigation("Workers");
+                });
+
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.Executable", b =>
                 {
                     b.Navigation("Benchmarks");
+                });
+
+            modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.SourceSet", b =>
+                {
+                    b.Navigation("PropertyFiles");
+
+                    b.Navigation("SetFiles");
                 });
 
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.User", b =>
@@ -715,7 +897,11 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
 
                     b.Navigation("Executables");
 
+                    b.Navigation("PropertyFiles");
+
                     b.Navigation("SetFiles");
+
+                    b.Navigation("SourceSets");
                 });
 #pragma warning restore 612, 618
         }
