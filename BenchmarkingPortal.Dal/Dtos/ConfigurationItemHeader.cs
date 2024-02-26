@@ -16,10 +16,7 @@ public class ConfigurationItemHeader
     }
     
     public string? Key { get; init; }
-
     public string? Value { get; init; }
-
     public Scope Scope { get; init; }
-
     public int ConfigurationId { get; init; }
 }
