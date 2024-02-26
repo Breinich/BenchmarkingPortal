@@ -12,11 +12,10 @@ public class WorkerHeader
     {
         Id = worker.Id;
         AddedDate = worker.AddedDate;
-        Address = worker.Address;
         Port = worker.Port;
         ComputerGroupId = worker.ComputerGroupId;
         Cpu = worker.Cpu;
-        CpuModel = worker.CpuModel;
+        CpuModelId = worker.CpuModelId;
         Ram = worker.Ram;
         Name = worker.Name;
         Login = worker.Login;
@@ -25,26 +24,16 @@ public class WorkerHeader
     }
 
     public int Id { get; init; }
-
     public string? Name { get; init; }
-
     public int Ram { get; set; }
-
     public int Cpu { get; set; }
-    
-    public string? CpuModel { get; set; }
-
     public string? Login { get; init; }
-
     public string? Password { get; init; }
-
-    public string? Address { get; init; }
-
     public int Port { get; init; }
-
     public int ComputerGroupId { get; set; }
-
     public DateTime AddedDate { get; init; }
-
     public string UserName { get; init; } = null!;
+    public int CpuModelId { get; set; }
+    
+    public string? CpuModelValue { get; set; }
 }
