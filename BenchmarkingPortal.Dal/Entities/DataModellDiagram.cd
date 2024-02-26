@@ -3,14 +3,14 @@
   <Class Name="BenchmarkingPortal.Dal.Entities.Benchmark">
     <Position X="3.75" Y="3.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>oAADCAAEQAAQiAAFAAAAEgQAAAAAAUABgQAAAACAAEQ=</HashCode>
+      <HashCode>oAADCAAFQAAQiAAFAAAAEgQAAAAAAUABgQAAAACAAEQ=</HashCode>
       <FileName>Entities\Benchmark.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="BenchmarkingPortal.Dal.Entities.ComputerGroup">
     <Position X="0.75" Y="5.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAgAAAAAAEAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <HashCode>AAACAAAAAAAgAAACAAEAAAQAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>Entities\ComputerGroup.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -19,7 +19,7 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="BenchmarkingPortal.Dal.Entities.Configuration">
-    <Position X="1" Y="10.5" Width="1.5" />
+    <Position X="2" Y="10.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAABBAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\Configuration.cs</FileName>
@@ -30,14 +30,14 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="BenchmarkingPortal.Dal.Entities.ConfigurationItem">
-    <Position X="0.5" Y="7.25" Width="2.5" />
+    <Position X="1" Y="7.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAQACQAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>Entities\ConfigurationItem.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="BenchmarkingPortal.Dal.Entities.Constraint">
-    <Position X="3.5" Y="10.5" Width="2.5" />
+    <Position X="7" Y="10.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAACAAQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\Constraint.cs</FileName>
@@ -63,20 +63,51 @@
   <Class Name="BenchmarkingPortal.Dal.Entities.Worker">
     <Position X="0.75" Y="0.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAADCAAAAAAACAAAAAAAEAQACAAAAQACAQgQAACAAAA=</HashCode>
+      <HashCode>AAADCAABAAAACAAAAAAAEAQACAAAAQACAQgQAACAAAA=</HashCode>
       <FileName>Entities\Worker.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="BenchmarkingPortal.Dal.Entities.User">
     <Position X="7.75" Y="4" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAIAAAAAAAAEAAAAAAAAAAAAQAAAAAAAAgAA=</HashCode>
+      <HashCode>AAAEAAAAAIAAAAAAAAEAAAAAAAABAAAQAAAAAAAAgAA=</HashCode>
       <FileName>Entities\User.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="Benchmarks" />
       <Property Name="Executables" />
       <Property Name="SetFiles" />
+      <Property Name="PropertyFiles" />
+      <Property Name="SourceSets" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="BenchmarkingPortal.Dal.Entities.CpuModel">
+    <Position X="15.5" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAEAAAQAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Entities\CpuModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Benchmarks" />
+      <Property Name="Workers" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="BenchmarkingPortal.Dal.Entities.PropertyFile">
+    <Position X="16.25" Y="6.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>IAADAAAAAAAAgAIAAAAAAAQAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Entities\PropertyFile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BenchmarkingPortal.Dal.Entities.SourceSet">
+    <Position X="12" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAHAAAAAAAAACAAAAAAAAQAAAAAAAAAAQAAAAAAgAA=</HashCode>
+      <FileName>Entities\SourceSet.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="SetFiles" />
+      <Property Name="PropertyFiles" />
     </ShowAsCollectionAssociation>
   </Class>
   <Font Name="Segoe UI" Size="9" />
