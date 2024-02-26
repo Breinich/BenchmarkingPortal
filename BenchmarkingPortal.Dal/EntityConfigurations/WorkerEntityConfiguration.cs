@@ -14,7 +14,6 @@ public class WorkerEntityConfiguration : IEntityTypeConfiguration<Worker>
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
         builder.Property(e => e.AddedDate).IsRequired();
-        builder.Property(e => e.Address).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Name).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Password).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Login).HasMaxLength(50).IsRequired();
@@ -29,6 +28,11 @@ public class WorkerEntityConfiguration : IEntityTypeConfiguration<Worker>
             .HasForeignKey(w => w.ComputerGroupId)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_Worker_ComputerGroup");
+
+        builder.HasOne(w => w.CpuModel).WithMany(w => w.Workers)
+            .HasForeignKey(w => w.CpuModelId)
+            .OnDelete(DeleteBehavior.SetNull)
+            .HasConstraintName("FK_Worker_CpuModel");
 
         SampleData(builder);
     }
