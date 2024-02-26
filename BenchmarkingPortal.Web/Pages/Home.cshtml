@@ -55,7 +55,7 @@
                             <div class="d-flex justify-content-center">@item.Cpu Cores</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.CpuModel</div>
+                            <div class="d-flex justify-content-center">@Model.CpuModels.Find(c => c.Id == item.CpuModelId)?.Name</div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">@Model.Executables.Find(e => e.Value.Equals(item.ExecutableId.ToString()))?.Text</div>
@@ -134,7 +134,7 @@
                             <div class="d-flex justify-content-center">@item.Cpu Cores</div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">@item.CpuModel</div>
+                            <div class="d-flex justify-content-center">@Model.CpuModels.Find(c => c.Id == item.CpuModelId)?.Name</div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">@Model.Executables.Find(e => e.Value.Equals(item.ExecutableId.ToString()))?.Text</div>
@@ -250,9 +250,9 @@
             </div>
             <div class="col-4">
                 <div class="form-floating mb-4">
-                    <input asp-for="CreateInput.CpuModel" class="form-control" placeholder="the CPU model to use" value="-"/>
-                    <label asp-for="CreateInput.CpuModel" class="form-label"></label>
-                    <span asp-validation-for="CreateInput.CpuModel" class="text-danger"></span>
+                    <select asp-for="CreateInput.CpuModelId" asp-items="Model.CpuModelValues" class="form-control"></select>
+                    <label asp-for="CreateInput.CpuModelId" class="form-label"></label>
+                    <span asp-validation-for="CreateInput.CpuModelId" class="text-danger"></span>
                 </div>
             </div>
             <!-- third row -->

@@ -4,6 +4,7 @@ using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
 using BenchmarkingPortal.Bll.Features.ComputerGroup.Queries;
 using BenchmarkingPortal.Bll.Features.Configuration.Commands;
+using BenchmarkingPortal.Bll.Features.CpuModel.Queries;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
 using BenchmarkingPortal.Bll.Features.PropertyFile.Queries;
 using BenchmarkingPortal.Bll.Features.SetFile.Queries;
@@ -38,12 +39,14 @@ public class Home : PageModel
     [BindProperty] public CreateInputModel CreateInput { get; init; } = new();
 
     public List<BenchmarkHeader> UnfinishedBenchmarks { get; set; } = new();
+    public List<CpuModelHeader> CpuModels { get; set; } = new();
     
     public List<SelectListItem> Priorities { get; set; } = new();
     public List<SelectListItem> Executables { get; set; } = new();
     public List<SelectListItem> SetFiles { get; set; } = new();
     public List<SelectListItem> PrpFiles { get; set; } = new();
     public List<SelectListItem> ComputerGroups { get; set; } = new();
+    public List<SelectListItem> CpuModelValues { get; set; } = new();
     public List<string> Headers { get; set; } = new();
 
 
@@ -63,6 +66,8 @@ public class Home : PageModel
             {
                 Finished = false
             })).ToList();
+
+            CpuModels = (await _mediator.Send(new GetAllCpuModelsQuery())).ToList();
             
             Priorities = Enum.GetValues(typeof(Priority))
                 .Cast<Priority>()
@@ -297,7 +302,9 @@ public class Home : PageModel
                 Cpu = CreateInput.Cpu,
                 TimeLimit = CreateInput.TimeLimit,
                 HardTimeLimit = CreateInput.HardTimeLimit,
-                CpuModel = CreateInput.CpuModel,
+                CpuModelId = CreateInput.CpuModelId,
+                CpuModelValue = CpuModels.Where(c => c.Id == CreateInput.CpuModelId)
+                    .Select(c => c.Value).FirstOrDefault(),
                 ConfigurationId = config.Id,
                 ComputerGroupId = CreateInput.ComputerGroupId,
                 InvokerName = User.Identity?.Name ??
@@ -325,16 +332,24 @@ public class Home : PageModel
         try
         {
             Executables = (await _mediator.Send(new GetAllExecutablesQuery()))
-                .Select(eh => new SelectListItem(eh.Name + ":" + eh.Version, eh.Id.ToString())).ToList();
+                .Select(eh => new SelectListItem(eh.Name + ":" + eh.Version, eh.Id.ToString()))
+                .ToList();
 
             SetFiles = (await _mediator.Send(new GetAllSetFileNamesQuery()))
-                .Select(s => new SelectListItem(Path.GetFileName(s), s)).ToList();
+                .Select(s => new SelectListItem(Path.GetFileName(s), s))
+                .ToList();
             
             PrpFiles = (await _mediator.Send(new GetAllPropertyFileNamesQuery()))
-                .Select(s => new SelectListItem(Path.GetFileName(s), s)).ToList();
+                .Select(s => new SelectListItem(Path.GetFileName(s), s))
+                .ToList();
 
             ComputerGroups = (await _mediator.Send(new GetAllComputerGroupsQuery()))
-                .Select(c => new SelectListItem(c.Id + ": " + c.Description, c.Id.ToString())).ToList();
+                .Select(c => new SelectListItem(c.Id + ": " + c.Description, c.Id.ToString()))
+                .ToList();
+
+            CpuModelValues = CpuModels
+                .Select(c => new SelectListItem(c.Name + ": " + c.Value, c.Id.ToString()))
+                .ToList();
         }
         catch (Exception ex)
         {
@@ -403,10 +418,9 @@ public class Home : PageModel
 
         [Display(Name = "Computer Group to run on")]
         public int ComputerGroupId { get; init; }
-        
-        [StringLength(50)]
-        [Display(Name = "CPU Model to run on")]
-        public string CpuModel { get; init; } = null!;
+
+        [Display(Name = "Cpu Model to run on")]
+        public int CpuModelId { get; init; }
     }
 
     public class TempConfigData
