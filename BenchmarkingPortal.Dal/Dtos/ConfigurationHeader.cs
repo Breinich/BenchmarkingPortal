@@ -17,6 +17,5 @@ public class ConfigurationHeader
     public int Id { get; init; }
     
     public ICollection<ConfigurationItemHeader>? ConfigurationItems { get; init; }
-    
     public ICollection<ConstraintHeader>? Constraints { get; init; }
 }
