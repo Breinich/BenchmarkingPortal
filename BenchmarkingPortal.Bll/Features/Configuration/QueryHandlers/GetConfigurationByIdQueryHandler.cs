@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.Configuration.QueryHandlers;
 
+/// <summary>
+/// The handler for <see cref="GetConfigurationByIdQuery"/>
+/// </summary>
+// ReSharper disable once UnusedType.Global
 public class GetConfigurationByIdQueryHandler : IRequestHandler<GetConfigurationByIdQuery, ConfigurationHeader?>
 {
     private readonly BenchmarkingDbContext _context;

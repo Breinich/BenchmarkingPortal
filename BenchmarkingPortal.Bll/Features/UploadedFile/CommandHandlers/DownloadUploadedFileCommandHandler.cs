@@ -8,19 +8,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.UploadedFile.CommandHandlers;
 
+/// <summary>
+/// Handler for <see cref="DownloadUploadedFileCommand"/>
+/// </summary>
 public class DownloadUploadedFileCommandHandler : IRequestHandler<DownloadUploadedFileCommand, (Stream, string, string)>
 {
     private readonly BenchmarkingDbContext _context;
     private readonly IMediator _mediator;
     private readonly string _workDir;
-    private readonly string _setRoot;
     
     public DownloadUploadedFileCommandHandler(BenchmarkingDbContext context, IMediator mediator, PathConfigs pathConfigs)
     {
         _context = context;
         _mediator = mediator;
         _workDir = pathConfigs.WorkingDir;
-        _setRoot = pathConfigs.SetFilesDir;
     }
     
     public async Task<(Stream, string, string)> Handle(DownloadUploadedFileCommand request, CancellationToken cancellationToken)
@@ -34,13 +35,6 @@ public class DownloadUploadedFileCommandHandler : IRequestHandler<DownloadUpload
                     .Select(e => new ExecutableHeader(e)).FirstOrDefaultAsync(cancellationToken);
                 storePath = Path.Join(_workDir, (exe ?? throw new ApplicationException($"File with id {request.FileId} was not found."))
                     .UserName, "tools");
-                break;
-            case ".set":
-                var set = await _context.SetFiles.Where(e => e.Path == request.FileId)
-                    .Select(s => new SetFileHeader(s)).FirstOrDefaultAsync(cancellationToken);
-                if (set == null)
-                    throw new ApplicationException($"File with id {request.FileId} was not found.");
-                storePath = _setRoot;
                 break;
         }
         

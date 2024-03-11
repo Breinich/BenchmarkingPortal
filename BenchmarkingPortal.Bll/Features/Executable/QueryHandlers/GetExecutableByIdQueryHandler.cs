@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.Executable.QueryHandlers;
 
+/// <summary>
+/// Handler for <see cref="GetExecutableByIdQuery"/>
+/// </summary>
+// ReSharper disable once UnusedType.Global
 public class GetExecutableByIdQueryHandler : IRequestHandler<GetExecutableByIdQuery, ExecutableHeader?>
 {
     private readonly BenchmarkingDbContext _context;

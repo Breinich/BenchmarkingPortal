@@ -8,6 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.Result.CommandHandlers;
 
+/// <summary>
+/// Handler for <see cref="DownloadResultCommand"/>
+/// </summary>
+// ReSharper disable once UnusedType.Global
 public class DownloadResultCommandHandler : IRequestHandler<DownloadResultCommand, (FileStream, string, string)>
 {
     private readonly BenchmarkingDbContext _dbContext;

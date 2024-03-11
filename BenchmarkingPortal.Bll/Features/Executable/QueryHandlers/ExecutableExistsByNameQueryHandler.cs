@@ -5,6 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.Executable.QueryHandlers;
 
+/// <summary>
+/// Handler for <see cref="ExecutableExistsByNameQuery"/>
+/// </summary>
+// ReSharper disable once UnusedType.Global
 public class ExecutableExistsByNameQueryHandler : IRequestHandler<ExecutableExistsByNameQuery, bool>
 {
     private readonly BenchmarkingDbContext _dbContext;

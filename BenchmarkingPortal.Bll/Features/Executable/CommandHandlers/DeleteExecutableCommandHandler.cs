@@ -8,6 +8,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BenchmarkingPortal.Bll.Features.Executable.CommandHandlers;
 
+/// <summary>
+/// Handler for <see cref="DeleteExecutableCommand"/>
+/// </summary>
+// ReSharper disable once UnusedType.Global
 public class DeleteExecutableCommandHandler : IRequestHandler<DeleteExecutableCommand>
 {
     private readonly BenchmarkingDbContext _context;
@@ -27,7 +31,8 @@ public class DeleteExecutableCommandHandler : IRequestHandler<DeleteExecutableCo
 
     public async Task Handle(DeleteExecutableCommand request, CancellationToken cancellationToken)
     {
-        var exe = await _context.Executables.FindAsync(request.ExecutableId, cancellationToken) ??
+        var exe = await _context.Executables.FindAsync(new object?[] { request.ExecutableId }, 
+                      cancellationToken: cancellationToken) ??
                   throw new ArgumentException(new ExceptionMessage<Dal.Entities.Executable>().ObjectNotFound);
 
         if (exe.UserName != request.InvokerName)

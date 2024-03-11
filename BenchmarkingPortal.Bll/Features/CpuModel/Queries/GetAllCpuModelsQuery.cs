@@ -3,6 +3,7 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.CpuModel.Queries;
 
-public class GetAllCpuModelsQuery : IRequest<IEnumerable<CpuModelHeader>>
-{
-}
+/// <summary>
+/// Query all CPU models
+/// </summary>
+public class GetAllCpuModelsQuery : IRequest<IEnumerable<CpuModelHeader>> { }

@@ -3,6 +3,7 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.Executable.Queries;
 
-public class GetAllExecutablesQuery : IRequest<IEnumerable<ExecutableHeader>>
-{
-}
+/// <summary>
+/// Get all executables
+/// </summary>
+public class GetAllExecutablesQuery : IRequest<IEnumerable<ExecutableHeader>> { }

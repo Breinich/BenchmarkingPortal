@@ -2,9 +2,14 @@
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.CpuModel.QueryHandlers;
 
+/// <summary>
+/// Handler for <see cref="GetAllCpuModelsQuery"/>
+/// </summary>
+// ReSharper disable once UnusedType.Global
 public class GetAllCpuModelsQueryHandler : IRequestHandler<GetAllCpuModelsQuery, IEnumerable<CpuModelHeader>>
 {
     private readonly BenchmarkingDbContext _context;
@@ -14,10 +19,8 @@ public class GetAllCpuModelsQueryHandler : IRequestHandler<GetAllCpuModelsQuery,
         _context = context;
     }
     
-    public Task<IEnumerable<CpuModelHeader>> Handle(GetAllCpuModelsQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<CpuModelHeader>> Handle(GetAllCpuModelsQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException(
-            "Needs a migration to let the CpuModels DBSet be available in the DB context."
-            );
+        return await _context.CpuModels.Select(c => new CpuModelHeader(c)).ToListAsync(cancellationToken);
     }
 }

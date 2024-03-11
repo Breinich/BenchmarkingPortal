@@ -3,6 +3,9 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.Executable.Commands;
 
+/// <summary>
+/// Upload a new executable
+/// </summary>
 public class UploadNewExecutableCommand : IRequest<ExecutableHeader>
 {
     public string OwnerTool { get; init; } = null!;

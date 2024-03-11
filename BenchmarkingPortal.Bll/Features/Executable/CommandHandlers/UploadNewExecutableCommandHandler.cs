@@ -6,6 +6,10 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.Executable.CommandHandlers;
 
+/// <summary>
+/// Handler for <see cref="UploadNewExecutableCommand"/>
+/// </summary>
+// ReSharper disable once UnusedType.Global
 public class UploadNewExecutableCommandHandler : IRequestHandler<UploadNewExecutableCommand, ExecutableHeader>
 {
     private readonly BenchmarkingDbContext _context;
