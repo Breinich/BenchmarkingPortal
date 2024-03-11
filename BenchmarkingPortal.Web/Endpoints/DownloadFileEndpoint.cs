@@ -15,7 +15,6 @@ public class DownloadFileEndpoint
 
         var path = fileId.Split(".").Last() switch
         {
-            "set" => pathConfigs.SetFilesDir,
             "zip" => Path.Join(pathConfigs.WorkingDir, context.User.Identity?.Name, "tools") ,
             _ => throw new ArgumentException("Invalid file extension.")
         };
