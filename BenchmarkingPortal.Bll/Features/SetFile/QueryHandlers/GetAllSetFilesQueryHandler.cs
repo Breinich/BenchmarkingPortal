@@ -19,7 +19,7 @@ public class GetAllSetFilesQueryHandler : IRequestHandler<GetAllSetFilesQuery, I
     public async Task<IEnumerable<SetFileHeader>> Handle(GetAllSetFilesQuery request,
         CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("This feature is not fully implemented yet.");
         
         return await _context.SetFiles.Select(s => new SetFileHeader(s)).ToListAsync(cancellationToken);
     }

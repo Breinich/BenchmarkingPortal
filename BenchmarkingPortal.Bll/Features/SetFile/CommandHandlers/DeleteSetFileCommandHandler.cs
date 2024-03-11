@@ -26,7 +26,7 @@ public class DeleteSetFileCommandHandler : IRequestHandler<DeleteSetFileCommand>
 
     public async Task Handle(DeleteSetFileCommand request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("This feature is not fully implemented yet.");
         
         var setFile = await _context.SetFiles.FindAsync(new object?[] { request.SetFileId },
                           cancellationToken: cancellationToken) ??

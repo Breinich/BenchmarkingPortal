@@ -17,7 +17,7 @@ public class UploadNewSetFileCommandHandler : IRequestHandler<UploadNewSetFileCo
 
     public async Task<SetFileHeader> Handle(UploadNewSetFileCommand request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("This feature is not fully implemented yet.");
         
         request.Version ??= "1.0";
 

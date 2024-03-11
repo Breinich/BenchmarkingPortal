@@ -13,7 +13,7 @@ public class GetAllSetFileNamesQueryHandler : IRequestHandler<GetAllSetFileNames
     
     public Task<IEnumerable<string>> Handle(GetAllSetFileNamesQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("This feature is not fully implemented yet.");
 
         //return Task.FromResult(Directory.GetFiles(_setFilesDir, "*.set", SearchOption.TopDirectoryOnly).Select(s => s));
     }

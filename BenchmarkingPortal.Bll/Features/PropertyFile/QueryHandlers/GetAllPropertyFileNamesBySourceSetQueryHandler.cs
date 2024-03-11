@@ -21,7 +21,7 @@ public class GetAllPropertyFileNamesBySourceSetQueryHandler : IRequestHandler<Ge
     
     public Task<IEnumerable<string?>> Handle(GetAllPropertyFileNamesBySourceSetQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("This feature is not fully implemented yet.");
         
         var propertyRoot = _context.SourceSets
             .Where(x => x.Id == request.SourceSetId)
