@@ -3,6 +3,9 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.Worker.Commands;
 
+/// <summary>
+/// Command for adding a new worker
+/// </summary>
 public class AddWorkerCommand : IRequest<WorkerHeader>
 {
     public string Name { get; init; } = null!;

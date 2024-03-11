@@ -6,6 +6,9 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.Worker.CommandHandlers;
 
+/// <summary>
+/// Handler for <see cref="UpdateWorkerCommand"/>
+/// </summary>
 public class UpdateWorkerCommandHandler : IRequestHandler<UpdateWorkerCommand, WorkerHeader>
 {
     private readonly BenchmarkingDbContext _context;

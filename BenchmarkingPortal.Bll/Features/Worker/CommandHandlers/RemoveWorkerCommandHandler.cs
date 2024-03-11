@@ -6,6 +6,9 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.Worker.CommandHandlers;
 
+/// <summary>
+/// Handler for <see cref="RemoveWorkerCommand"/>
+/// </summary>
 public class RemoveWorkerCommandHandler : IRequestHandler<RemoveWorkerCommand>
 {
     private readonly BenchmarkingDbContext _context;
@@ -14,8 +17,7 @@ public class RemoveWorkerCommandHandler : IRequestHandler<RemoveWorkerCommand>
     {
         _context = context;
     }
-
-
+    
     public async Task Handle(RemoveWorkerCommand request, CancellationToken cancellationToken)
     {
         var worker = await _context.Workers.FindAsync(new object?[] { request.WorkerId }, 

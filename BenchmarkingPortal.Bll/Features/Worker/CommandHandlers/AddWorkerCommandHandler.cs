@@ -8,6 +8,9 @@ using Renci.SshNet;
 
 namespace BenchmarkingPortal.Bll.Features.Worker.CommandHandlers;
 
+/// <summary>
+/// Handler for <see cref="AddWorkerCommand"/>
+/// </summary>
 // ReSharper disable once UnusedType.Global
 public class AddWorkerCommandHandler : IRequestHandler<AddWorkerCommand, WorkerHeader>
 {
