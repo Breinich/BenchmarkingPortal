@@ -1,5 +1,4 @@
 ﻿using System.Net.NetworkInformation;
-using System.Text;
 using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.ComputerGroup.Commands;
 using BenchmarkingPortal.Dal;
@@ -33,7 +32,8 @@ public class UpdateComputerGroupCommandHandler : IRequestHandler<UpdateComputerG
         if (user == null || !await _userManager.IsInRoleAsync(user, Roles.Admin))
             throw new ArgumentException(new ExceptionMessage<Dal.Entities.ComputerGroup>().NoPrivilege);
 
-        var computerGroup = await _context.ComputerGroups.FindAsync(request.Id, cancellationToken);
+        var computerGroup = await _context.ComputerGroups.FindAsync(new object?[] { request.Id }, 
+            cancellationToken: cancellationToken);
         if (computerGroup == null)
             throw new ArgumentException(new ExceptionMessage<Dal.Entities.ComputerGroup>().ObjectNotFound);
 

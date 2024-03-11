@@ -18,7 +18,8 @@ public class RemoveWorkerCommandHandler : IRequestHandler<RemoveWorkerCommand>
 
     public async Task Handle(RemoveWorkerCommand request, CancellationToken cancellationToken)
     {
-        var worker = await _context.Workers.FindAsync(request.WorkerId, cancellationToken) ??
+        var worker = await _context.Workers.FindAsync(new object?[] { request.WorkerId }, 
+                         cancellationToken: cancellationToken) ??
                      throw new ArgumentException(new ExceptionMessage<Dal.Entities.Worker>().ObjectNotFound);
 
         var workerDto = new WorkerHeader(worker);

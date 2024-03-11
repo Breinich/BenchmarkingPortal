@@ -18,12 +18,15 @@ public class UpdateWorkerCommandHandler : IRequestHandler<UpdateWorkerCommand, W
 
     public async Task<WorkerHeader> Handle(UpdateWorkerCommand request, CancellationToken cancellationToken)
     {
-        var worker = await _context.Workers.FindAsync(request.WorkerId, cancellationToken) ??
+        var worker = await _context.Workers.FindAsync(new object?[] { request.WorkerId }, 
+                         cancellationToken: cancellationToken) ??
                      throw new ArgumentException(new ExceptionMessage<Dal.Entities.Worker>().ObjectNotFound);
 
 
-        var workerDto = new WorkerHeader(worker);
-        workerDto.ComputerGroupId = request.ComputerGroupId;
+        var workerDto = new WorkerHeader(worker)
+        {
+            ComputerGroupId = request.ComputerGroupId
+        };
 
         // If succeeded, update the DB
         worker.ComputerGroupId = request.ComputerGroupId;
