@@ -166,7 +166,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
         typeof(ExecutableExistsByNameQuery).Assembly,
         typeof(GetExecutableByPathQuery).Assembly,
         typeof(GetSetFileByPathQuery).Assembly,
-        typeof(GetAllPropertyFileNamesQuery).Assembly,
+        typeof(GetAllPropertyFileNamesBySourceSetQuery).Assembly,
         typeof(GetExecutableByIdQuery).Assembly,
         typeof(GetConfigurationByIdQuery).Assembly,
         typeof(DeleteConfigurationCommand).Assembly,
@@ -188,8 +188,6 @@ builder.Services.AddSingleton<PathConfigs>(_ => new PathConfigs
 {
     WorkingDir = builder.Configuration["Storage:WorkingDir"] ?? 
                  throw new ApplicationException("Missing working directory path configuration!"),
-    SetFilesDir = Path.Join(builder.Configuration["Storage:WorkingDir"], "sv-benchmarks", "c"),
-    PropertyFilesDir = Path.Join(builder.Configuration["Storage:WorkingDir"], "sv-benchmarks", "c", "properties"),
     VcloudBenchmarkPath = Path.Join(builder.Configuration["Storage:WorkingDir"], "benchexec", "contrib", 
         "vcloud-benchmark.py"),
     VcloudDirectory = Path.Join(builder.Configuration["Storage:WorkingDir"], "benchexec", "contrib", 
@@ -268,7 +266,6 @@ static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpCon
         {
             "zip" => Path.Join(httpContext.RequestServices.GetRequiredService<PathConfigs>().WorkingDir, 
                 httpContext.User.Identity?.Name, "tools"),
-            "set" => httpContext.RequestServices.GetRequiredService<PathConfigs>().SetFilesDir,
             _ => throw new ArgumentException("Invalid extension path value from request headers")
         };
     
