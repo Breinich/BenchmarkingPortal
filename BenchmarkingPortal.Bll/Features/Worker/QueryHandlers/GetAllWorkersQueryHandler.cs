@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.Worker.QueryHandlers;
 
+/// <summary>
+/// Handler for <see cref="GetAllWorkersQuery"/>
+/// </summary>
+// ReSharper disable once UnusedType.Global
 public class GetAllWorkersQueryHandler : IRequestHandler<GetAllWorkersQuery, IEnumerable<WorkerHeader>>
 {
     private readonly BenchmarkingDbContext _context;
