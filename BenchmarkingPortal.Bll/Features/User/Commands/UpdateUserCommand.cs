@@ -3,6 +3,9 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.User.Commands;
 
+/// <summary>
+/// Command to update a user
+/// </summary>
 public class UpdateUserCommand : IRequest<UserHeader>
 {
     public string InvokerName { get; init; } = null!;

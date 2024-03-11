@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.User.CommandHandlers;
 
+/// <summary>
+/// Handler for <see cref="DeleteUserCommand"/>
+/// </summary>
 public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand>
 {
     private readonly BenchmarkingDbContext _context;

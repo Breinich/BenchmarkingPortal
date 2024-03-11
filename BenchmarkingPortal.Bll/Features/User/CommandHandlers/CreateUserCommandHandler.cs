@@ -6,6 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BenchmarkingPortal.Bll.Features.User.CommandHandlers;
 
+/// <summary>
+/// Handler for <see cref="CreateUserCommand"/>
+/// </summary>
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, UserHeader>
 {
     private readonly SignInManager<Dal.Entities.User> _signInManager;

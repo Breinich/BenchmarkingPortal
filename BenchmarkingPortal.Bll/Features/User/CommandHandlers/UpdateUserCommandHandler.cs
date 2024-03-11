@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BenchmarkingPortal.Bll.Features.User.CommandHandlers;
 
+/// <summary>
+/// Handler for <see cref="UpdateUserCommand"/>
+/// </summary>
 public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, UserHeader>
 {
     private readonly UserManager<Dal.Entities.User> _usermanager;
