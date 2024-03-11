@@ -17,6 +17,8 @@ public class UploadNewSetFileCommandHandler : IRequestHandler<UploadNewSetFileCo
 
     public async Task<SetFileHeader> Handle(UploadNewSetFileCommand request, CancellationToken cancellationToken)
     {
+        throw new NotImplementedException();
+        
         request.Version ??= "1.0";
 
         var setFile = new Dal.Entities.SetFile

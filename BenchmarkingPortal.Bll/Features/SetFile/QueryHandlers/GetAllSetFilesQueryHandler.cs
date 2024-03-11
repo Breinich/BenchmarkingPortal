@@ -19,6 +19,8 @@ public class GetAllSetFilesQueryHandler : IRequestHandler<GetAllSetFilesQuery, I
     public async Task<IEnumerable<SetFileHeader>> Handle(GetAllSetFilesQuery request,
         CancellationToken cancellationToken)
     {
+        throw new NotImplementedException();
+        
         return await _context.SetFiles.Select(s => new SetFileHeader(s)).ToListAsync(cancellationToken);
     }
 }

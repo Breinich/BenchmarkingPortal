@@ -16,6 +16,8 @@ public class SetFileExistsByNameQueryHandler : IRequestHandler<SetFileExistsByNa
     
     public Task<bool> Handle(SetFileExistsByNameQuery request, CancellationToken cancellationToken)
     {
+        throw new NotImplementedException();
+        
         return _dbContext.SetFiles.AnyAsync(x => x.Version + "+" + x.Name + ".set" == request.FileName, cancellationToken);
     }
 }

@@ -6,16 +6,15 @@ namespace BenchmarkingPortal.Bll.Features.SetFile.QueryHandlers;
 
 public class GetAllSetFileNamesQueryHandler : IRequestHandler<GetAllSetFileNamesQuery, IEnumerable<string>>
 {
-    private readonly string _setFilesDir;
     
-    public GetAllSetFileNamesQueryHandler(PathConfigs pathConfigs)
+    public GetAllSetFileNamesQueryHandler()
     {
-        _setFilesDir = pathConfigs.SetFilesDir;
     }
     
     public Task<IEnumerable<string>> Handle(GetAllSetFileNamesQuery request, CancellationToken cancellationToken)
     {
-        return Task.FromResult(Directory.GetFiles(_setFilesDir, "*.set", SearchOption.TopDirectoryOnly)
-            .Select(s => s));
+        throw new NotImplementedException();
+
+        //return Task.FromResult(Directory.GetFiles(_setFilesDir, "*.set", SearchOption.TopDirectoryOnly).Select(s => s));
     }
 }

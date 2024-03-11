@@ -13,7 +13,6 @@ public class DeleteSetFileCommandHandler : IRequestHandler<DeleteSetFileCommand>
 {
     private readonly BenchmarkingDbContext _context;
     private readonly UserManager<Dal.Entities.User> _userManager;
-    private readonly string _setFilesDir;
     private readonly IMediator _mediator;
 
     public DeleteSetFileCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager, 
@@ -21,14 +20,16 @@ public class DeleteSetFileCommandHandler : IRequestHandler<DeleteSetFileCommand>
     {
         _context = context;
         _userManager = userManager;
-        _setFilesDir = pathConfigs.SetFilesDir;
         _mediator = mediator;
     }
 
 
     public async Task Handle(DeleteSetFileCommand request, CancellationToken cancellationToken)
     {
-        var setFile = await _context.SetFiles.FindAsync(request.SetFileId, cancellationToken) ??
+        throw new NotImplementedException();
+        
+        var setFile = await _context.SetFiles.FindAsync(new object?[] { request.SetFileId },
+                          cancellationToken: cancellationToken) ??
                         throw new ArgumentException(new ExceptionMessage<Dal.Entities.SetFile>().ObjectNotFound);
 
         if (setFile.UserName != request.InvokerName)
@@ -44,10 +45,10 @@ public class DeleteSetFileCommandHandler : IRequestHandler<DeleteSetFileCommand>
         if (setFile.Path != request.FileId)
             throw new ArgumentException(new ExceptionMessage<Dal.Entities.SetFile>().ObjectNotFound);
         
-        ITusTerminationStore terminationStore = new CustomTusDiskStore(_setFilesDir, _mediator);
+        // ITusTerminationStore terminationStore = new CustomTusDiskStore(, _mediator);
 
         _context.Remove(setFile);
         await _context.SaveChangesAsync(cancellationToken);
-        await terminationStore.DeleteFileAsync(request.FileId, cancellationToken);
+        // await terminationStore.DeleteFileAsync(request.FileId, cancellationToken);
     }
 }
