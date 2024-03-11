@@ -4,6 +4,9 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.Configuration.Commands;
 
+/// <summary>
+/// Command to create a new configuration
+/// </summary>
 public class CreateConfigurationCommand : IRequest<ConfigurationHeader>
 {
     public List<(Scope, string, string)>? Configurations { get; init; }

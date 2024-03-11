@@ -6,6 +6,10 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.Configuration.CommandHandlers;
 
+/// <summary>
+/// The handler for the <see cref="CreateConfigurationCommand"/>
+/// </summary>
+// ReSharper disable once UnusedType.Global
 public class CreateConfigurationCommandHandler : IRequestHandler<CreateConfigurationCommand, ConfigurationHeader>
 {
     private readonly BenchmarkingDbContext _context;
