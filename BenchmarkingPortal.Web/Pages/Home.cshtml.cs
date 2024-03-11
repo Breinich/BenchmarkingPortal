@@ -339,7 +339,7 @@ public class Home : PageModel
                 .Select(s => new SelectListItem(Path.GetFileName(s), s))
                 .ToList();
             
-            PrpFiles = (await _mediator.Send(new GetAllPropertyFileNamesQuery()))
+            PrpFiles = (await _mediator.Send(new GetAllPropertyFileNamesBySourceSetQuery()))
                 .Select(s => new SelectListItem(Path.GetFileName(s), s))
                 .ToList();
 
