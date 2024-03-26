@@ -49,7 +49,10 @@ public class Home : PageModel
     public List<SelectListItem> CpuModelValues { get; set; } = new();
     public List<string> Headers { get; set; } = new();
 
-
+    /// <summary>
+    /// OnGet method for the Home page.
+    /// </summary>
+    /// <returns> Page </returns>
     public async Task<IActionResult> OnGet()
     {
         try
@@ -93,14 +96,23 @@ public class Home : PageModel
         }
     }
 
-    public ContentResult OnPostAddConfigItem(Scope scope, string? key, string? value)
+    /// <summary>
+    /// Adds a configuration item to the session.
+    /// </summary>
+    /// <param name="scope"> scope of the configuration item </param>
+    /// <param name="key"> key of the configuration item </param>
+    /// <param name="value"> value of the configuration item </param>
+    /// <returns> JSON response </returns>
+    public IActionResult OnPostAddConfigItem(Scope scope, string? key, string? value)
     {
         if (string.IsNullOrEmpty(key))
-            return new ContentResult
-            {
-                Content = "Key or value is empty.",
-                ContentType = "application/json"
-            };
+            return new JsonResult(new { success = false, responseText = "Key is empty." });
+        
+        if (key.Length > 50)
+            return new JsonResult(new { success = false, responseText = "Key is too long." });
+        
+        if (value is { Length: > 50 })
+            return new JsonResult(new { success = false, responseText = "Value is too long." });
         
         value ??= "";
 
@@ -117,11 +129,7 @@ public class Home : PageModel
         };
 
         if (configurationItems.Contains(newItem))
-            return new ContentResult
-            {
-                Content = "Item already exists.",
-                ContentType = "application/json"
-            };
+            return new JsonResult(new { success = false, responseText = "Item already exists." });
 
         configurationItems.Add(newItem);
 
@@ -134,28 +142,40 @@ public class Home : PageModel
         };
     }
 
-    public JsonResult OnPostDeleteConfigItem(int id)
+    /// <summary>
+    /// Deletes a configuration item from the session.
+    /// </summary>
+    /// <param name="id"> id of the configuration item </param>
+    /// <returns> JSON response </returns>
+    public IActionResult OnPostDeleteConfigItem(int id)
     {
         var configurationItems = HttpContext.Session
                                      .GetComplexData<List<TempConfigData>>(_tempConfigDataListKey) ??
                                  new List<TempConfigData>();
 
-        if (!configurationItems.Remove(new TempConfigData{ Id = id })) 
-            return new JsonResult(new { success = false, responseText = "Item not found." });
-        
-        HttpContext.Session.SetComplexData(_tempConfigDataListKey, configurationItems);
+        if (configurationItems.Remove(new TempConfigData { Id = id }))
+        {
+            HttpContext.Session.SetComplexData(_tempConfigDataListKey, configurationItems);
 
-        return new JsonResult(new { success = true, responseText = "Item removed." });
+            return new JsonResult(new { success = true, responseText = "Item removed." });
+        }
+
+        return new JsonResult(new { success = false, responseText = "Item not found." });
     }
 
-    public ContentResult OnPostAddConstraint(string? expression)
+    /// <summary>
+    /// Adds a constraint item to the session.
+    /// </summary>
+    /// <param name="expression"> constraint expression </param>
+    /// <returns> JSON response </returns>
+    public IActionResult OnPostAddConstraint(string? expression)
     {
         if (string.IsNullOrEmpty(expression))
-            return new ContentResult
-            {
-                Content = "Premise or consequence is empty.",
-                ContentType = "application/json"
-            };
+            return new JsonResult(new{success = false, responseText = "Expression is empty."});
+
+        if (expression.Length > 255)
+            return new JsonResult(new{success = false, responseText = "Expression is too long."});
+        
 
         var constraintItems = HttpContext.Session
                                   .GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey) ??
@@ -168,11 +188,7 @@ public class Home : PageModel
         };
 
         if (constraintItems.Contains(newConstraint))
-            return new ContentResult
-            {
-                Content = "Item already exists.",
-                ContentType = "application/json"
-            };
+            return new JsonResult(new{success = false, responseText = "Item already exists."});
 
         constraintItems.Add(newConstraint);
 
@@ -185,7 +201,12 @@ public class Home : PageModel
         };
     }
 
-    public JsonResult OnPostDeleteConstraint(int id)
+    /// <summary>
+    /// Deletes a constraint item from the session.
+    /// </summary>
+    /// <param name="id"> id of the constraint item </param>
+    /// <returns> JSON response </returns>
+    public IActionResult OnPostDeleteConstraint(int id)
     {
         var constraintItems = HttpContext.Session
                                   .GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey) ??
@@ -201,6 +222,13 @@ public class Home : PageModel
         return new JsonResult(new { success = false, responseText = "Item not found." });
     }
 
+    /// <summary>
+    /// Saves the benchmark with the given id and status.
+    /// </summary>
+    /// <param name="id"> benchmark id </param>
+    /// <param name="status"> benchmark status </param>
+    /// <returns> Page </returns>
+    /// <exception cref="ApplicationException"> No privilege </exception>
     public async Task<IActionResult> OnPostSaveAsync(int id, Status status)
     {
         try
@@ -227,6 +255,13 @@ public class Home : PageModel
         }
     }
 
+    /// <summary>
+    /// Deletes the benchmark with the given id and name.
+    /// </summary>
+    /// <param name="id"> benchmark id </param>
+    /// <param name="name"> benchmark name </param>
+    /// <returns> Page </returns>
+    /// <exception cref="ApplicationException"> No privilege </exception>
     public async Task<IActionResult> OnPostDeleteAsync(int id, string name)
     {
         try
@@ -251,6 +286,11 @@ public class Home : PageModel
         }
     }
 
+    /// <summary>
+    /// Starts the benchmark with the given configuration and constraints.
+    /// </summary>
+    /// <returns> Page </returns>
+    /// <exception cref="ApplicationException"> No privilege </exception>
     public async Task<IActionResult> OnPostStartAsync()
     {
         if (!ModelState.IsValid) return Page();
@@ -273,7 +313,7 @@ public class Home : PageModel
                 configList = configs.Select(c => (c.Scope, c.Key!, c.Value ?? "")).ToList();
 
             if (constraints != null)
-                constraintList = constraints.Select(c => c.Expression ?? "").ToList();
+                constraintList = constraints.Select(c => c.Expression!).ToList();
 
             var config = await _mediator.Send(new CreateConfigurationCommand
             {
@@ -317,6 +357,9 @@ public class Home : PageModel
         }
     }
 
+    /// <summary>
+    /// Loads the form's needed data.
+    /// </summary>
     private async Task LoadFormData()
     {
         try
@@ -348,7 +391,11 @@ public class Home : PageModel
         }
     }
 
-    public JsonResult OnPostDeleteSession()
+    /// <summary>
+    /// Empties the session storage.
+    /// </summary>
+    /// <returns> JSON response </returns>
+    public IActionResult OnPostDeleteSession()
     {
         HttpContext.Session.Remove(_tempConstraintDataListKey);
         HttpContext.Session.Remove(_tempConfigDataListKey);
