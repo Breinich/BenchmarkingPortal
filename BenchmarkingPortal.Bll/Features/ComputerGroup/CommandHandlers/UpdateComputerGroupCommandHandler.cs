@@ -30,12 +30,12 @@ public class UpdateComputerGroupCommandHandler : IRequestHandler<UpdateComputerG
         var user = await _userManager.FindByNameAsync(request.InvokerName);
 
         if (user == null || !await _userManager.IsInRoleAsync(user, Roles.Admin))
-            throw new ArgumentException(new ExceptionMessage<Dal.Entities.ComputerGroup>().NoPrivilege);
+            throw new ArgumentException(ExceptionMessage<Dal.Entities.ComputerGroup>.NoPrivilege);
 
         var computerGroup = await _context.ComputerGroups.FindAsync(new object?[] { request.Id }, 
             cancellationToken: cancellationToken);
         if (computerGroup == null)
-            throw new ArgumentException(new ExceptionMessage<Dal.Entities.ComputerGroup>().ObjectNotFound);
+            throw new ArgumentException( ExceptionMessage<Dal.Entities.ComputerGroup>.ObjectNotFound);
 
         if (request.Description != null)
             computerGroup.Description = request.Description;

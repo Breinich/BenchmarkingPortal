@@ -27,7 +27,7 @@ public class DeleteComputerGroupCommandHandler : IRequestHandler<DeleteComputerG
     {
         var user = await _userManager.FindByNameAsync(request.InvokerName);
         if (user == null || !await _userManager.IsInRoleAsync(user, Roles.Admin))
-            throw new ArgumentException(new ExceptionMessage<Dal.Entities.ComputerGroup>().NoPrivilege);
+            throw new ArgumentException(ExceptionMessage<Dal.Entities.ComputerGroup>.NoPrivilege);
 
         var computerGroup = await _context.ComputerGroups.FindAsync(new object?[] { request.Id}, 
             cancellationToken: cancellationToken);
@@ -46,8 +46,7 @@ public class DeleteComputerGroupCommandHandler : IRequestHandler<DeleteComputerG
                 "Cannot delete computer group with attached workers, first please move them to another group!");
 
         _context.ComputerGroups.Remove(computerGroup ??
-                                       throw new ArgumentException(new ExceptionMessage<Dal.Entities.ComputerGroup>()
-                                           .ObjectNotFound));
+                                       throw new ArgumentException( ExceptionMessage<Dal.Entities.ComputerGroup>.ObjectNotFound));
 
         await _context.SaveChangesAsync(cancellationToken);
     }

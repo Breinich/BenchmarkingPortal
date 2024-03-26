@@ -9,4 +9,5 @@ namespace BenchmarkingPortal.Bll.Features.Configuration.Queries;
 public class GetConfigurationByIdQuery : IRequest<ConfigurationHeader?>
 {
     public int Id { get; init; }
+    public bool IncludeItems { get; init; } = true;
 }

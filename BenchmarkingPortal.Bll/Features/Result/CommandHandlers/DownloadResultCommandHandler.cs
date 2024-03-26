@@ -26,7 +26,7 @@ public class DownloadResultCommandHandler : IRequestHandler<DownloadResultComman
         var benchmark = await _dbContext.Benchmarks.Where(x => x.ResultPath == request.Path)
             .Select(b => new BenchmarkHeader(b)).FirstOrDefaultAsync(cancellationToken);
             
-        if(benchmark == null) throw new ApplicationException(new ExceptionMessage<Dal.Entities.Benchmark>().ObjectNotFound);
+        if(benchmark == null) throw new ApplicationException(ExceptionMessage<Dal.Entities.Benchmark>.ObjectNotFound);
 
         var filePath = request.Path + ".zip";
             

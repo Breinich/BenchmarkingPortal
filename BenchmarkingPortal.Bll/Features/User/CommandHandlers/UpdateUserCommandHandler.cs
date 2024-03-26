@@ -22,12 +22,12 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, UserH
     public async Task<UserHeader> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         var invoker = await _usermanager.FindByNameAsync(request.InvokerName) ??
-                      throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().ObjectNotFound);
+                      throw new ArgumentException(ExceptionMessage<Dal.Entities.User>.ObjectNotFound);
 
         if (await _usermanager.IsInRoleAsync(invoker, Roles.Admin))
         {
             var userEntity = await _usermanager.FindByNameAsync(request.UserName) ??
-                             throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().ObjectNotFound);
+                             throw new ArgumentException(ExceptionMessage<Dal.Entities.User>.ObjectNotFound);
 
             userEntity.Subscription = request.Subscription;
             await _usermanager.UpdateAsync(userEntity);
@@ -45,6 +45,6 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, UserH
             return userHeader;
         }
 
-        throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().NoPrivilege);
+        throw new ArgumentException(ExceptionMessage<Dal.Entities.User>.NoPrivilege);
     }
 }

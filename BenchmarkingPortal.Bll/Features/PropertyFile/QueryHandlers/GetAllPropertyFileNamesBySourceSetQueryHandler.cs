@@ -26,7 +26,7 @@ public class GetAllPropertyFileNamesBySourceSetQueryHandler : IRequestHandler<Ge
         var propertyRoot = _context.SourceSets
             .Where(x => x.Id == request.SourceSetId)
             .Select(x => new SourceSetHeader(x).PropertyFilesPath)
-            .FirstOrDefault() ?? throw new ArgumentException(new ExceptionMessage<Dal.Entities.SourceSet>().ObjectNotFound);
+            .FirstOrDefault() ?? throw new ArgumentException(ExceptionMessage<Dal.Entities.SourceSet>.ObjectNotFound);
         
         return Task.FromResult(Directory.GetFiles(propertyRoot, "*.properties")
             .Select(Path.GetFileName));

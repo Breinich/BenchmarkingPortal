@@ -69,7 +69,7 @@ public class Finished : PageModel
             {
                 Id = id,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(new ExceptionMessage<Benchmark>().NoPrivilege)
+                              throw new ApplicationException(ExceptionMessage<Benchmark>.NoPrivilege)
             }, cancellationToken);
 
             StatusMessage = $"{name} deleted successfully.";

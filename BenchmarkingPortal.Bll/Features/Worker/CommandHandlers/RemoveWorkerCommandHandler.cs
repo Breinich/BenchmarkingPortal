@@ -22,7 +22,7 @@ public class RemoveWorkerCommandHandler : IRequestHandler<RemoveWorkerCommand>
     {
         var worker = await _context.Workers.FindAsync(new object?[] { request.WorkerId }, 
                          cancellationToken: cancellationToken) ??
-                     throw new ArgumentException(new ExceptionMessage<Dal.Entities.Worker>().ObjectNotFound);
+                     throw new ArgumentException(ExceptionMessage<Dal.Entities.Worker>.ObjectNotFound);
 
         var workerDto = new WorkerHeader(worker);
 

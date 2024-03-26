@@ -33,20 +33,20 @@ public class DeleteExecutableCommandHandler : IRequestHandler<DeleteExecutableCo
     {
         var exe = await _context.Executables.FindAsync(new object?[] { request.ExecutableId }, 
                       cancellationToken: cancellationToken) ??
-                  throw new ArgumentException(new ExceptionMessage<Dal.Entities.Executable>().ObjectNotFound);
+                  throw new ArgumentException(ExceptionMessage<Dal.Entities.Executable>.ObjectNotFound);
 
         if (exe.UserName != request.InvokerName)
         {
             var user = await _userManager.FindByNameAsync(request.InvokerName) ??
-                       throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().ObjectNotFound);
+                       throw new ArgumentException(ExceptionMessage<Dal.Entities.User>.ObjectNotFound);
 
             var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);
 
-            if (!admin) throw new ArgumentException(new ExceptionMessage<Dal.Entities.Executable>().NoPrivilege);
+            if (!admin) throw new ArgumentException(ExceptionMessage<Dal.Entities.Executable>.NoPrivilege);
         }
         
         if (exe.Path != request.FileId)
-            throw new ArgumentException(new ExceptionMessage<Dal.Entities.Executable>().ObjectNotFound);
+            throw new ArgumentException(ExceptionMessage<Dal.Entities.Executable>.ObjectNotFound);
 
         var store = new CustomTusDiskStore(Path.Join(_workDir, exe.UserName, "tools"), _mediator);
         await store.DeleteFileAsync(request.FileId, cancellationToken);

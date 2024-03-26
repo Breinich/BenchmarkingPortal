@@ -79,7 +79,7 @@ public class UsersModel : PageModel
                 Subscription = subscribed,
                 Role = role,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(new ExceptionMessage<User>().NoPrivilege)
+                              throw new ApplicationException(ExceptionMessage<User>.NoPrivilege)
             });
 
             StatusMessage = $"{updatedUser.UserName} updated";

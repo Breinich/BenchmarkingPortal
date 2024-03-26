@@ -26,7 +26,7 @@ public class DeleteConfigurationCommandHandler : IRequestHandler<DeleteConfigura
             .Include(c => c.Constraints).FirstOrDefaultAsync(cancellationToken);
 
         if (configuration is null)
-            throw new ArgumentException(new ExceptionMessage<Dal.Entities.Configuration>().ObjectNotFound);
+            throw new ArgumentException(ExceptionMessage<Dal.Entities.Configuration>.ObjectNotFound);
         
         foreach (var item in configuration.ConfigurationItems)
         {

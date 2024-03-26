@@ -30,20 +30,20 @@ public class DeleteSetFileCommandHandler : IRequestHandler<DeleteSetFileCommand>
         
         var setFile = await _context.SetFiles.FindAsync(new object?[] { request.SetFileId },
                           cancellationToken: cancellationToken) ??
-                        throw new ArgumentException(new ExceptionMessage<Dal.Entities.SetFile>().ObjectNotFound);
+                        throw new ArgumentException(ExceptionMessage<Dal.Entities.SetFile>.ObjectNotFound);
 
         if (setFile.UserName != request.InvokerName)
         {
             var user = await _userManager.FindByNameAsync(request.InvokerName) ??
-                       throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().ObjectNotFound);
+                       throw new ArgumentException(ExceptionMessage<Dal.Entities.User>.ObjectNotFound);
 
             var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);
 
-            if (!admin) throw new ArgumentException(new ExceptionMessage<Dal.Entities.SetFile>().NoPrivilege);
+            if (!admin) throw new ArgumentException(ExceptionMessage<Dal.Entities.SetFile>.NoPrivilege);
         }
 
         if (setFile.Path != request.FileId)
-            throw new ArgumentException(new ExceptionMessage<Dal.Entities.SetFile>().ObjectNotFound);
+            throw new ArgumentException(ExceptionMessage<Dal.Entities.SetFile>.ObjectNotFound);
         
         // ITusTerminationStore terminationStore = new CustomTusDiskStore(, _mediator);
 

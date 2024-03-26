@@ -138,7 +138,7 @@ public class Workers : PageModel
                 ComputerGroupId = WorkerWorkerInput.ComputerGroupId,
                 AddedDate = DateTime.UtcNow,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(new ExceptionMessage<Worker>().NoPrivilege)
+                              throw new ApplicationException(ExceptionMessage<Worker>.NoPrivilege)
             });
 
             StatusMessage = $"Worker with id:{result.Id} added successfully";
@@ -184,7 +184,7 @@ public class Workers : PageModel
             {
                 Id = id,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(new ExceptionMessage<ComputerGroup>().NoPrivilege)
+                              throw new ApplicationException(ExceptionMessage<ComputerGroup>.NoPrivilege)
             });
 
             StatusMessage = $"Computer Group {id} deleted successfully";
@@ -209,7 +209,7 @@ public class Workers : PageModel
                 Id = ChangeId,
                 Description = ChangeDescription,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(new ExceptionMessage<ComputerGroup>().NoPrivilege)
+                              throw new ApplicationException(ExceptionMessage<ComputerGroup>.NoPrivilege)
             });
 
             StatusMessage = $"Computer {ChangeId} Group edited successfully";

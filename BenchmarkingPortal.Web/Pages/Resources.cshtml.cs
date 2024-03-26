@@ -78,7 +78,7 @@ public class Resources : PageModel
                 ExecutableId = id,
                 FileId = fileId,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(new ExceptionMessage<Executable>().NoPrivilege)
+                              throw new ApplicationException(ExceptionMessage<Executable>.NoPrivilege)
             });
             StatusMessage = $"{name} deleted successfully.";
 
@@ -102,7 +102,7 @@ public class Resources : PageModel
                 SetFileId = id,
                 FileId = fileId,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(new ExceptionMessage<SetFile>().NoPrivilege)
+                              throw new ApplicationException(ExceptionMessage<SetFile>.NoPrivilege)
             });
             StatusMessage = $"{name} deleted successfully.";
 
@@ -153,7 +153,7 @@ public class Resources : PageModel
                 Path = ExecutableInput.FileUrl,
                 UploadedDate = DateTime.UtcNow,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(new ExceptionMessage<Executable>().NoPrivilege)
+                              throw new ApplicationException(ExceptionMessage<Executable>.NoPrivilege)
             });
 
             ExecutableInput = new ExecutableInputModel();
@@ -184,7 +184,7 @@ public class Resources : PageModel
                 Path = SetFileInput.FileUrl,
                 UploadedDate = DateTime.UtcNow,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(new ExceptionMessage<SetFile>().NoPrivilege)
+                              throw new ApplicationException(ExceptionMessage<SetFile>.NoPrivilege)
             });
 
             SetFileInput = new SetFileInputModel();

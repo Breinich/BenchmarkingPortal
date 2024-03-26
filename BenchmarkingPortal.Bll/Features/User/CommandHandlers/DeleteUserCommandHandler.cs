@@ -31,7 +31,7 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand>
             var user = await _context.Users.Include(u => u.Executables).Include(u => u.SetFiles)
                            .Include(u => u.Benchmarks).Where(u => u.UserName == request.UserName)
                            .FirstOrDefaultAsync(cancellationToken) ??
-                       throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().ObjectNotFound);
+                       throw new ArgumentException(ExceptionMessage<Dal.Entities.User>.ObjectNotFound);
 
             foreach (var executable in user.Executables) executable.User = invoker;
 
@@ -45,7 +45,7 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand>
         }
         else
         {
-            throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().NoPrivilege);
+            throw new ArgumentException(ExceptionMessage<Dal.Entities.User>.NoPrivilege);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using BenchmarkingPortal.Bll.Features.Configuration.Queries;
+﻿using System.Diagnostics;
+using BenchmarkingPortal.Bll.Features.Configuration.Queries;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
 using MediatR;
@@ -21,9 +22,16 @@ public class GetConfigurationByIdQueryHandler : IRequestHandler<GetConfiguration
     
     public async Task<ConfigurationHeader?> Handle(GetConfigurationByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Configurations.Where(c => c.Id == request.Id)
-            .Include(c => c.ConfigurationItems)
-            .Include(c => c.Constraints)
-            .Select(c => new ConfigurationHeader(c)).FirstOrDefaultAsync(cancellationToken);
+        return request.IncludeItems switch
+        {
+            true => await _context.Configurations.Where(c => c.Id == request.Id)
+                .Include(c => c.ConfigurationItems)
+                .Include(c => c.Constraints)
+                .Select(c => new ConfigurationHeader(c))
+                .FirstOrDefaultAsync(cancellationToken),
+            false => await _context.Configurations.Where(c => c.Id == request.Id)
+                .Select(c => new ConfigurationHeader(c))
+                .FirstOrDefaultAsync(cancellationToken)
+        };
     }
 }

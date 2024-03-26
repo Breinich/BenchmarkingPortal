@@ -27,8 +27,7 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
     {
         var benchmarkEntity = await _context.Benchmarks.FindAsync(new object?[] { request.Id}, 
                                   cancellationToken: cancellationToken) ??
-                              throw new ArgumentException(new ExceptionMessage<Dal.Entities.Benchmark>()
-                                  .ObjectNotFound);
+                              throw new ArgumentException(ExceptionMessage<Dal.Entities.Benchmark>.ObjectNotFound);
         
         var benchmarkHeader = new BenchmarkHeader(benchmarkEntity);
 
@@ -36,12 +35,12 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
         if (benchmarkHeader.UserName != request.InvokerName)
         {
             var user = await _userManager.FindByNameAsync(request.InvokerName) ??
-                       throw new ArgumentException(new ExceptionMessage<Dal.Entities.User>().ObjectNotFound);
+                       throw new ArgumentException(ExceptionMessage<Dal.Entities.User>.ObjectNotFound);
             
             var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);
 
             if (!admin)
-                throw new ArgumentException(new ExceptionMessage<Dal.Entities.Benchmark>().NoPrivilege);
+                throw new ArgumentException(ExceptionMessage<Dal.Entities.Benchmark>.NoPrivilege);
         }
 
         if (benchmarkHeader.Status == Status.Finished)
