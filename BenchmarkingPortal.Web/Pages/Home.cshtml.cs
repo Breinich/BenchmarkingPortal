@@ -239,7 +239,7 @@ public class Home : PageModel
                 Status = status,
                 Priority = EditInput.Priority,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(new ExceptionMessage<Benchmark>().NoPrivilege)
+                              throw new ApplicationException(ExceptionMessage<Benchmark>.NoPrivilege)
             });
 
             StatusMessage = $"Benchmark {benchmark.Name} saved.";
@@ -270,7 +270,7 @@ public class Home : PageModel
             {
                 Id = id,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(new ExceptionMessage<Benchmark>().NoPrivilege)
+                              throw new ApplicationException(ExceptionMessage<Benchmark>.NoPrivilege)
             });
 
             StatusMessage = $"Benchmark {name} deleted.";
@@ -317,8 +317,18 @@ public class Home : PageModel
 
             var config = await _mediator.Send(new CreateConfigurationCommand
             {
-                Configurations = configList,
-                Constraints = constraintList
+                Configurations = configList ?? new List<(Scope, string, string)>(),
+                Constraints = constraintList,
+                InvokerName = User.Identity?.Name ??
+                              throw new ApplicationException(ExceptionMessage<Configuration>.NoPrivilege),
+                BenchmarkName = CreateInput.Name,
+                Cpu = CreateInput.Cpu,
+                Ram = CreateInput.Ram,
+                TimeLimit = CreateInput.TimeLimit,
+                HardTimeLimit = CreateInput.HardTimeLimit,
+                ExecutableId = CreateInput.ExecutableId,
+                SetFilePath = CreateInput.SetFilePath,
+                PropertyFilePath = CreateInput.PropertyFilePath,
             });
 
             var benchmark = await _mediator.Send(new StartBenchmarkCommand
@@ -338,7 +348,7 @@ public class Home : PageModel
                 ConfigurationId = config.Id,
                 ComputerGroupId = CreateInput.ComputerGroupId,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(new ExceptionMessage<Benchmark>().NoPrivilege)
+                              throw new ApplicationException(ExceptionMessage<Benchmark>.NoPrivilege)
             });
 
             StatusMessage = $"Benchmark {benchmark.Name} created.";

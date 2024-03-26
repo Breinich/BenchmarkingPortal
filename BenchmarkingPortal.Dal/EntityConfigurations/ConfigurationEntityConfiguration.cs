@@ -13,6 +13,7 @@ public class ConfigurationEntityConfiguration : IEntityTypeConfiguration<Configu
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
+        builder.Property(e => e.XmlFilePath).HasMaxLength(250).IsRequired();
 
         builder.HasMany(p => p.ConfigurationItems).WithOne()
             .HasForeignKey(d => d.ConfigurationId)

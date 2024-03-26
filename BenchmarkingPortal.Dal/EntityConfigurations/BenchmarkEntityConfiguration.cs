@@ -26,7 +26,6 @@ public class BenchmarkEntityConfiguration : IEntityTypeConfiguration<Benchmark>
             v => (Priority)Enum.Parse(typeof(Priority), v)).IsRequired();
         builder.Property(e => e.TimeLimit).IsRequired();
         builder.Property(e => e.HardTimeLimit).IsRequired();
-        builder.Property(e => e.XmlFilePath).HasMaxLength(250).IsRequired();
         builder.Property(e => e.VcloudId).HasMaxLength(100);
 
         builder.HasIndex(e => e.Name).IsUnique();

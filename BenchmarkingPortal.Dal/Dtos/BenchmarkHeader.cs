@@ -24,7 +24,6 @@ public class BenchmarkHeader
         ExecutableId = b.ExecutableId;
         SetFilePath = b.SetFilePath;
         PropertyFilePath = b.PropertyFilePath;
-        XmlFilePath = b.XmlFilePath;
         StartedDate = b.StartedDate;
         ConfigurationId = b.ConfigurationId;
         UserName = b.UserName;
@@ -45,7 +44,6 @@ public class BenchmarkHeader
     public int ExecutableId { get; init; }
     public string? SetFilePath { get; init; }
     public string? PropertyFilePath { get; init; }
-    public string? XmlFilePath { get; set; }
     public DateTime StartedDate { get; set; }
     public int ConfigurationId { get; init; }
     public string UserName { get; init; } = null!;

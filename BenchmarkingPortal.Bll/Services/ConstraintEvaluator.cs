@@ -11,7 +11,7 @@ public class ConstraintEvaluator : ConstraintBaseListener
     /// </summary>
     /// <param name="input"> the input string that should be evaluated</param>
     /// <returns> the delegate that can be used to filter a list of ConfigurationItemHeader</returns>
-    public Predicate<List<ConfigurationItemHeader>>? Evaluate(string input)
+    public Predicate<List<ConfigurationItemHeader>> Evaluate(string input)
     {
         _exprStack.Clear();
         _strStack.Clear();
@@ -25,7 +25,7 @@ public class ConstraintEvaluator : ConstraintBaseListener
         return Result;
     }
 
-    private Predicate<List<ConfigurationItemHeader>>? Result { get; set; }
+    private Predicate<List<ConfigurationItemHeader>> Result { get; set; } = _ => true;
     
     private readonly Stack<Predicate<List<ConfigurationItemHeader>>> _exprStack = new();
     private readonly Stack<string?> _strStack = new();

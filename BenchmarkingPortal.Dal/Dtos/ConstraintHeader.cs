@@ -4,6 +4,8 @@ namespace BenchmarkingPortal.Dal.Dtos;
 
 public class ConstraintHeader
 {
+    public ConstraintHeader() { }
+    
     public ConstraintHeader(Constraint constraint)
     {
         Expression = constraint.Expression;

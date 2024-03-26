@@ -16,7 +16,6 @@ public class Benchmark
     public int CpuModelId { get; set; }
     public string SetFilePath { get; set; } = null!;
     public string PropertyFilePath { get; set; } = null!;
-    public string XmlFilePath { get; set; } = null!;
     public DateTime StartedDate { get; set; }
     public int ConfigurationId { get; set; }
     public string UserName { get; set; } = null!;
