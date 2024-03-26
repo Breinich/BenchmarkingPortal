@@ -4,9 +4,6 @@ using BenchmarkingPortal.Dal.Dtos;
 
 namespace BenchmarkingPortal.Bll.Services;
 
-/// <summary>
-/// 
-/// </summary>
 public class ConstraintEvaluator : ConstraintBaseListener
 {
     /// <summary>

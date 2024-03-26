@@ -10,5 +10,5 @@ namespace BenchmarkingPortal.Bll.Features.Configuration.Commands;
 public class CreateConfigurationCommand : IRequest<ConfigurationHeader>
 {
     public List<(Scope, string, string)>? Configurations { get; init; }
-    public List<(string, string)>? Constraints { get; init; }
+    public List<string>? Constraints { get; init; }
 }

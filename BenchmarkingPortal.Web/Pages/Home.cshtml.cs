@@ -112,11 +112,11 @@ public class Home : PageModel
         {
             Scope = scope,
             Key = key,
-            Value = value
+            Value = value,
+            Id = (scope, key, value).GetHashCode()
         };
-        var different = configurationItems.All(item => item.CheckDifference(newItem));
 
-        if (!different)
+        if (configurationItems.Contains(newItem))
             return new ContentResult
             {
                 Content = "Item already exists.",
@@ -129,23 +129,18 @@ public class Home : PageModel
 
         return new ContentResult
         {
-            Content = JsonConvert.SerializeObject(new { Key = key, Value = value }),
+            Content = JsonConvert.SerializeObject(new { newItem.Id, newItem.Key, newItem.Value}),
             ContentType = "application/json"
         };
     }
 
-    public JsonResult OnPostDeleteConfigItem(Scope scope, string key, string value)
+    public JsonResult OnPostDeleteConfigItem(int id)
     {
         var configurationItems = HttpContext.Session
                                      .GetComplexData<List<TempConfigData>>(_tempConfigDataListKey) ??
                                  new List<TempConfigData>();
 
-        if (!configurationItems.Remove(new TempConfigData
-            {
-                Scope = scope,
-                Key = key,
-                Value = value
-            })) 
+        if (!configurationItems.Remove(new TempConfigData{ Id = id })) 
             return new JsonResult(new { success = false, responseText = "Item not found." });
         
         HttpContext.Session.SetComplexData(_tempConfigDataListKey, configurationItems);
@@ -153,9 +148,9 @@ public class Home : PageModel
         return new JsonResult(new { success = true, responseText = "Item removed." });
     }
 
-    public ContentResult OnPostAddConstraint(string? premise, string? consequence)
+    public ContentResult OnPostAddConstraint(string? expression)
     {
-        if (premise == null || consequence == null || premise == "" || consequence == "")
+        if (string.IsNullOrEmpty(expression))
             return new ContentResult
             {
                 Content = "Premise or consequence is empty.",
@@ -168,12 +163,11 @@ public class Home : PageModel
 
         var newConstraint = new TempConstraintData
         {
-            Premise = premise,
-            Consequence = consequence
+            Id = expression.GetHashCode(),
+            Expression = expression
         };
-        var different = constraintItems.All(item => item.CheckDifference(newConstraint));
 
-        if (!different)
+        if (constraintItems.Contains(newConstraint))
             return new ContentResult
             {
                 Content = "Item already exists.",
@@ -186,22 +180,18 @@ public class Home : PageModel
 
         return new ContentResult
         {
-            Content = JsonConvert.SerializeObject(new { Premise = premise, Consequence = consequence }),
+            Content = JsonConvert.SerializeObject(new { newConstraint.Id, newConstraint.Expression}),
             ContentType = "application/json"
         };
     }
 
-    public JsonResult OnPostDeleteConstraint(string premise, string consequence)
+    public JsonResult OnPostDeleteConstraint(int id)
     {
         var constraintItems = HttpContext.Session
                                   .GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey) ??
                               new List<TempConstraintData>();
 
-        if (constraintItems.Remove(new TempConstraintData
-            {
-                Premise = premise,
-                Consequence = consequence
-            }))
+        if (constraintItems.Remove(new TempConstraintData{ Id = id }))
         {
             HttpContext.Session.SetComplexData(_tempConstraintDataListKey, constraintItems);
 
@@ -277,13 +267,13 @@ public class Home : PageModel
             HttpContext.Session.Remove(_tempConstraintDataListKey);
 
             List<(Scope, string, string)>? configList = null;
-            List<(string, string)>? constraintList = null;
+            List<string>? constraintList = null;
 
             if (configs != null)
-                configList = configs.Select(c => (c.Scope, c.Key, c.Value ?? "")).ToList();
+                configList = configs.Select(c => (c.Scope, c.Key!, c.Value ?? "")).ToList();
 
             if (constraints != null)
-                constraintList = constraints.Select(c => (c.Premise, c.Consequence)).ToList();
+                constraintList = constraints.Select(c => c.Expression ?? "").ToList();
 
             var config = await _mediator.Send(new CreateConfigurationCommand
             {
@@ -426,54 +416,42 @@ public class Home : PageModel
     public class TempConfigData
     {
         public Scope Scope { get; init; }
-        public string Key { get; init; } = null!;
+        public string? Key { get; init; }
         public string? Value { get; init; }
+        
+        public int Id { get; init; }
 
         public override bool Equals(object? obj)
         {
             if (obj == null || GetType() != obj.GetType()) return false;
 
             var other = (TempConfigData)obj;
-            return Scope == other.Scope && Key == other.Key && Value == other.Value;
+            return Scope == other.Scope && Key == other.Key && Value == other.Value || Id == other.Id;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine((int)Scope, Key, Value);
-        }
-
-        public bool CheckDifference(TempConfigData configData)
-        {
-            return configData.Scope switch
-            {
-                Scope.Global => configData.Key != Key,
-                Scope.Local => configData.Key != Key || configData.Value != Value,
-                _ => false
-            };
+            return Key != null ? HashCode.Combine((int)Scope, Key, Value) : Id;
         }
     }
 
     public class TempConstraintData
     {
-        public string Premise { get; init; } = null!;
-        public string Consequence { get; init; } = null!;
+        public int Id { get; init; }
+        
+        public string? Expression { get; init; }
 
         public override bool Equals(object? obj)
         {
             if (obj == null || GetType() != obj.GetType()) return false;
 
             var other = (TempConstraintData)obj;
-            return Premise == other.Premise && Consequence == other.Consequence;
+            return Expression != null && (Expression.Equals(other.Expression) || Id == other.Id);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Premise, Consequence);
-        }
-
-        public bool CheckDifference(TempConstraintData constraintData)
-        {
-            return constraintData.Premise != Premise || constraintData.Consequence != Consequence;
+            return Expression != null ? Expression.GetHashCode() : Id;
         }
     }
 }

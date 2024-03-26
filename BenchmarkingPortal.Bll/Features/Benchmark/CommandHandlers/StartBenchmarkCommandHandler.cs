@@ -281,7 +281,8 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
     private static IEnumerable<IEnumerable<T>> CrossProduct<T>(IEnumerable<IEnumerable<T>> source) => 
         source.Aggregate(
             (IEnumerable<IEnumerable<T>>) new[] { Enumerable.Empty<T>() },
-            (acc, src) => src.SelectMany(x => acc.Select(a => a.Concat(new[] {x}))));
+            (acc, src) => src.SelectMany(x => acc.Select(a => a.Concat(new[] {x})))
+            );
 
     /// <summary>
     /// Starts the benchmark

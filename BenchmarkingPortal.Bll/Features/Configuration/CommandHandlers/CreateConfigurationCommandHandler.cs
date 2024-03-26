@@ -48,8 +48,7 @@ public class CreateConfigurationCommandHandler : IRequestHandler<CreateConfigura
             foreach (var constraint in request.Constraints)
                 await _context.Constraints.AddAsync(new Constraint
                 {
-                    Premise = constraint.Item1,
-                    Consequence = constraint.Item2,
+                    Expression = constraint,
                     ConfigurationId = config.Id
                 }, cancellationToken);
 

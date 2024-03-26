@@ -6,12 +6,10 @@ public class ConstraintHeader
 {
     public ConstraintHeader(Constraint constraint)
     {
-        Premise = constraint.Premise;
-        Consequence = constraint.Consequence;
+        Expression = constraint.Expression;
         ConfigurationId = constraint.ConfigurationId;
     }
     
-    public string? Premise { get; init; }
-    public string? Consequence { get; init; }
+    public string? Expression { get; init; }
     public int ConfigurationId { get; init; }
 }

@@ -10,10 +10,9 @@ public class ConstraintEntityConfiguration : IEntityTypeConfiguration<Constraint
     {
         builder.ToTable("Constraints");
 
-        builder.HasKey(e => new { e.Premise, e.Consequence, e.ConfigurationId });
+        builder.HasKey(e =>  e.Id);
 
-        builder.Property(e => e.Premise).HasMaxLength(50).IsRequired();
-        builder.Property(e => e.Consequence).HasMaxLength(50).IsRequired();
+        builder.Property(e => e.Expression).HasMaxLength(255).IsRequired();
 
         SampleData(builder);
     }

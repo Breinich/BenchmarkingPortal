@@ -2,7 +2,7 @@
 
 public class Constraint
 {
-    public string Premise { get; set; } = null!;
-    public string Consequence { get; set; } = null!;
+    public int Id { get; set; }
+    public string Expression { get; set; } = null!;
     public int ConfigurationId { get; set; }
 }

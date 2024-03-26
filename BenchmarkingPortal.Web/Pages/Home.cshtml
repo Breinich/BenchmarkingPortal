@@ -359,10 +359,7 @@
                     <thead class="table-dark">
                     <tr>
                         <th>
-                            <div class="d-flex justify-content-center">Premise</div>
-                        </th>
-                        <th>
-                            <div class="d-flex justify-content-center">Consequence</div>
+                            <div class="d-flex justify-content-center">Expression</div>
                         </th>
                         <th>
                             <div class="d-flex justify-content-center">Operation</div>
@@ -372,14 +369,11 @@
                     <tbody>
                     <tr id="constraintInput">
                         <td>
-                            <input type="text" id="premise" class="form-control"/>
-                        </td>
-                        <td>
-                            <input type="text" id="consequence" class="form-control"/>
+                            <input type="text" id="expression" class="form-control"/>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center">
-                                <button type="button" class="btn btn-primary m-1" onclick="addConstraint('#premise', '#consequence','#constraintInput')">
+                                <button type="button" class="btn btn-primary m-1" onclick="addConstraint('#expression', '#constraintInput')">
                                     Add
                                 </button>
                             </div>
