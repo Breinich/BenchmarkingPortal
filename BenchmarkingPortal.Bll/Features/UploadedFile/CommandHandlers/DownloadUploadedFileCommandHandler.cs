@@ -11,19 +11,11 @@ namespace BenchmarkingPortal.Bll.Features.UploadedFile.CommandHandlers;
 /// <summary>
 /// Handler for <see cref="DownloadUploadedFileCommand"/>
 /// </summary>
-public class DownloadUploadedFileCommandHandler : IRequestHandler<DownloadUploadedFileCommand, (Stream, string, string)>
+public class DownloadUploadedFileCommandHandler(
+    BenchmarkingDbContext context,
+    PathConfigs pathConfigs)
+    : IRequestHandler<DownloadUploadedFileCommand, (Stream, string, string)>
 {
-    private readonly BenchmarkingDbContext _context;
-    private readonly IMediator _mediator;
-    private readonly string _workDir;
-    
-    public DownloadUploadedFileCommandHandler(BenchmarkingDbContext context, IMediator mediator, PathConfigs pathConfigs)
-    {
-        _context = context;
-        _mediator = mediator;
-        _workDir = pathConfigs.WorkingDir;
-    }
-    
     public async Task<(Stream, string, string)> Handle(DownloadUploadedFileCommand request, CancellationToken cancellationToken)
     {
         var storePath = "";
@@ -31,14 +23,43 @@ public class DownloadUploadedFileCommandHandler : IRequestHandler<DownloadUpload
         switch (extension)
         {
             case ".zip":
-                var exe = await _context.Executables.Where(e => e.Path == request.FileId)
-                    .Select(e => new ExecutableHeader(e)).FirstOrDefaultAsync(cancellationToken);
-                storePath = Path.Join(_workDir, (exe ?? throw new ApplicationException($"File with id {request.FileId} was not found."))
-                    .UserName, "tools");
+                var found = false;
+                var sourceSet = await context.SourceSets.Where(s => s.Path == request.FileId)
+                    .Select(s => new SourceSetHeader(s)).FirstOrDefaultAsync(cancellationToken);
+                if (sourceSet != null)
+                {
+                    found = true;
+                    storePath = Path.Join(pathConfigs.WorkingDir, sourceSet.UserName, pathConfigs.SourceSetDir);
+                }
+                else
+                {
+                    var exe = await context.Executables.Where(e => e.Path == request.FileId)
+                        .Select(e => new ExecutableHeader(e)).FirstOrDefaultAsync(cancellationToken);
+                    if (exe != null)
+                    {
+                        found = true;
+                        storePath = Path.Join(pathConfigs.WorkingDir, exe.UserName, pathConfigs.ExecutableDir);
+                    }
+                }
+                
+                if (!found)
+                    throw new ArgumentException("File not found");
                 break;
+            case ".set":
+                var setFile = await context.SetFiles.Where(s => s.Path == request.FileId)
+                    .Select(s => new SetFileHeader(s)).FirstOrDefaultAsync(cancellationToken);
+                if (setFile == null)
+                    throw new ArgumentException("File not found");
+                var sourceRoot = await context .SourceSets.Where(s => s.Id == setFile.SourceSetId)
+                    .Select(s => s.Name).FirstOrDefaultAsync(cancellationToken) ?? 
+                                 throw new ApplicationException("Set file's source set root directory not found.");
+                storePath = Path.Join(pathConfigs.WorkingDir, setFile.UserName, pathConfigs.SourceSetDir, sourceRoot);
+                break;
+            default:
+                throw new ArgumentException("File not found");
         }
         
-        var store = new CustomTusDiskStore(storePath, _mediator);
+        var store = new CustomTusDiskStore(storePath);
         var file = await store.GetFileAsync(request.FileId, cancellationToken);
 
         var fileStream = await file.GetContentAsync(cancellationToken);
