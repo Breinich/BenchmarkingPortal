@@ -19,7 +19,7 @@ public class DownloadFileEndpoint
             _ => throw new ArgumentException("Invalid file extension.")
         };
 
-        var store = new CustomTusDiskStore(path, mediator);
+        var store = new CustomTusDiskStore(path);
         
         var file = await store.GetFileAsync(fileId, context.RequestAborted);
 
@@ -37,7 +37,7 @@ public class DownloadFileEndpoint
         context.Response.ContentLength = fileStream.Length;
 
         if (metadata.TryGetValue("name", out var nameMeta))
-            context.Response.Headers.Add("Content-Disposition",
+            context.Response.Headers.Append("Content-Disposition",
                 new[] { $"attachment; filename=\"{nameMeta.GetString(Encoding.UTF8)}\"" });
 
         await using (fileStream)
