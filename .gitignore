@@ -369,3 +369,4 @@ FodyWeavers.xsd
 /storage/
 /BenchmarkingPortal.Web/App_Data/tusfiles/
 /BenchmarkingPortal.Migrations.Base/
+/BenchmarkingPortal.Bll/ANTLR_Grammar/.antlr/
