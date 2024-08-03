@@ -4,7 +4,18 @@ let uploadButton;
 let filePath;
 let fileName;
 let upload;
-let fileVersion;
+let file;
+
+// set source set id for new set file modal
+const newSetFileModal = document.getElementById("newSetFile")
+if (newSetFileModal) {
+    newSetFileModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const sourceSetId = button.getAttribute('data-bs-id');
+        const modalSourceSetId = newSetFileModal.querySelector('.modal-body #sourceSetId');
+        modalSourceSetId.value = sourceSetId;
+    });
+}
 
 function uploadFile(num) {
     uploadProgress = document.getElementById('uploadProgress' + num);
@@ -13,13 +24,40 @@ function uploadFile(num) {
     filePath = document.getElementById('filePath' + num);
     fileName = document.getElementById('fileName' + num);
 
-    const file = document.getElementById('droppedFile' + num).files[0];
-    fileVersion = document.getElementById('fileVersion' + num).value;
+    file = document.getElementById('droppedFile' + num).files[0];
 
     uploadProgress.value = 0;
     uploadProgress.removeAttribute('data');
     uploadProgress.style.display = 'block';
     disableUpload();
+    
+    let headers = {
+        'type': null,
+        'sourceSetId': null,
+        'version': null
+    }
+
+    if (file.name === undefined) {
+        return;
+    }
+    
+    let filename = file.name
+    
+    switch (num) {
+        case 1:
+            headers.type = 'exe';
+            headers.version = document.getElementById('exeVersion').value;
+            filename = headers.version + '_' + filename;
+            break;
+        case 2:
+            headers.type = 'sourceSet';
+            break;
+        case 3:
+            headers.type = 'set';
+            headers.sourceSetId = document.getElementById('sourceSetId').value;
+            filename = headers.sourceSetId + '_' + filename;
+            break;
+    }
 
     upload = new tus.Upload(file,
         {
@@ -28,13 +66,11 @@ function uploadFile(num) {
             onProgress: onTusProgress,
             onSuccess: onTusSuccess,
             metadata: {
-                name: fileVersion + '_' + file.name,
+                name: filename,
                 contentType: file.type || 'application/octet-stream',
                 emptyMetaKey: ''
             },
-            headers: {
-                'extension': file.name.split('.').pop()
-            }
+            headers: headers
         });
 
     setProgressTest('Starting upload...');
@@ -52,21 +88,25 @@ function uploadFile(num) {
 }
 
 function cancelUpload() {
-    upload?.abort();
+    upload?.abort(true);
     setProgressTest('Upload aborted');
     uploadProgress.value = 0;
+    resetLocalCache();
     enableUpload();
 }
 
-function resetLocalCache(e) {
-    e.preventDefault();
+function resetLocalCache() {
     localStorage.clear();
-    alert('Cache cleared');
+    console.log('Cache cleared');
 }
 
 function onTusError(error) {
-    alert(error.message.split('#')[1]);
-    enableUpload();
+    debugger;
+    if ('#' in error.message)
+        alert(error.message.split('#')[1]);
+    else
+        alert(error.message);
+    cancelUpload();
 }
 
 function onTusProgress(bytesUploaded, bytesTotal) {

@@ -4,266 +4,300 @@
 @{
     ViewData["Title"] = "Resources";
 }
-<partial name="~/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" for="StatusMessage"/>
+<partial name="~/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" for="StatusMessage" />
 <div class="row">
-<div class="col-6">
-    <div class="row">
-        <div class="col-11">
-            <h3>My Executables</h3>
+    <div class="col-6">
+        <div class="row">
+            <div class="col-11">
+                <h3>My Executables</h3>
+            </div>
+            <div class="col-1 d-flex justify-content-end align-items-center">
+                <button type="button" class="btn btn-primary d-flex justify-content-center align-items-center m-1 p-2" data-bs-toggle="modal" data-bs-target="#newExecutable">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z" />
+                    </svg>
+                </button>
+            </div>
         </div>
-        <div class="col-1 d-flex justify-content-end align-items-center">
-            <button type="button" class="btn btn-primary d-flex justify-content-center align-items-center m-1 p-2" data-bs-toggle="modal" data-bs-target="#newExecutable">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
-                </svg>
-            </button>
-        </div>
-    </div>
-    <div class="tableFixHead">
-        <table class="table table-striped align-middle">
-            <caption hidden>My Executables</caption>
-            <thead class="table-dark">
-            <tr>
-                @foreach (var header in Model.ExeHeaders)
-                {
-                    <th>
-                        <div class="d-flex justify-content-center">@header</div>
-                    </th>
-                }
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model.Executables)
-            {
-                if (item.UserName.Equals(User.Identity?.Name))
-                {
+        <div class="tableFixHead">
+            <table class="table table-striped align-middle">
+                <caption hidden>My Executables</caption>
+                <thead class="table-dark">
                     <tr>
-                        <form class="form" method="post">
-                            <td>
-                                <div class="d-flex justify-content-center">@item.Name:@item.Version</div>
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center">@item.OwnerTool:@item.ToolVersion</div>
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center">@item.UploadedDate</div>
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="Download"
-                                            asp-route-fileId="@item.Path">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
-                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-                                        </svg>
-                                    </button>
-                                    <button type="submit" class="btn btn-danger m-1"
-                                            asp-page-handler="DeleteExecutable" asp-route-id="@item.Id" asp-route-name="@item.Name" asp-route-fileId="@item.Path">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </td>
-                        </form>
+                        @foreach (var header in Model.ExeHeaders)
+                        {
+                            <th>
+                                <div class="d-flex justify-content-center">@header</div>
+                            </th>
+                        }
                     </tr>
-                }
-            }
-            </tbody>
-        </table>
-    </div>
-</div>
-<div class="col-6">
-    <div class="row">
-        <div class="col-11">
-            <h3>My SetFiles</h3>
-        </div>
-        <div class="col-1 d-flex justify-content-end align-items-center">
-            <button type="button" class="btn btn-primary d-flex justify-content-center align-items-center m-1 p-2" data-bs-toggle="modal" data-bs-target="#newSetFile">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
-                </svg>
-            </button>
-        </div>
-    </div>
-    <div class="tableFixHead">
-        <table class="table table-striped align-middle">
-            <caption hidden>My Set Files</caption>
-            <thead class="table-dark">
-            <tr>
-                @foreach (var header in Model.SourceHeaders)
-                {
-                    <th>
-                        <div class="d-flex justify-content-center">@header</div>
-                    </th>
-                }
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model.SetFiles)
-            {
-                if (item.UserName.Equals(User.Identity?.Name))
-                {
-                    <tr>
-                        <form class="form" method="post">
-                            <td>
-                                <div class="d-flex justify-content-center">@item.Name:@item.Version</div>
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center">@item.UploadedDate</div>
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="Download"
-                                            asp-route-fileId="@item.Path">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
-                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-                                        </svg>
-                                    </button>
-                                    <button type="submit" class="btn btn-danger m-1"
-                                            asp-page-handler="DeleteSetFile" asp-route-id="@item.Id" asp-route-name="@item.Name" asp-route-fileId="@item.Path">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </td>
-                        </form>
-                    </tr>
-                }
-            }
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div class="col-6">
-    <div class="row">
-        <div class="col-11">
-            <h3>Others' Executables</h3>
-        </div>
-    </div>
-    <div class="tableFixHead">
-        <table class="table table-striped align-middle">
-            <caption hidden>Others' Executables</caption>
-            <thead class="table-dark">
-            <tr>
-                @foreach (var header in Model.ExeHeaders)
-                {
-                    <th>
-                        <div class="d-flex justify-content-center">@header</div>
-                    </th>
-                }
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model.Executables)
-            {
-                if (!item.UserName.Equals(User.Identity?.Name))
-                {
-                    <tr>
-                        <form class="form" method="post">
-                            <td>
-                                <div class="d-flex justify-content-center">@item.Name:@item.Version</div>
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center">@item.OwnerTool:@item.ToolVersion</div>
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center">@item.UploadedDate</div>
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="Download"
-                                            asp-route-fileId="@item.Path">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
-                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-                                        </svg>
-                                    </button>
-                                    @if ((await AuthorizationService.AuthorizeAsync(User, Policies.RequireAdministratorRole)).Succeeded)
-                                    {
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Executables)
+                    {
+                        if (item.UserName.Equals(User.Identity?.Name))
+                        {
+                            <tr>
+                                <form class="form" method="post">
+                                <td>
+                                    <div class="d-flex justify-content-center">@item.Name:@item.Version</div>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center">@item.OwnerTool:@item.ToolVersion</div>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center">@item.UploadedDate</div>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center">
+                                        <button type="submit" class="btn btn-primary m-1" asp-page-handler="Download"
+                                                asp-route-fileId="@item.Path">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+                                            </svg>
+                                        </button>
                                         <button type="submit" class="btn btn-danger m-1"
                                                 asp-page-handler="DeleteExecutable" asp-route-id="@item.Id" asp-route-name="@item.Name" asp-route-fileId="@item.Path">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
                                             </svg>
                                         </button>
-                                    }
-                                </div>
-                            </td>
-                        </form>
-                    </tr>
-                }
-            }
-            </tbody>
-        </table>
-    </div>
-</div>
-<div class="col-6">
-    <div class="row">
-        <div class="col-11">
-            <h3>Others' Set Files</h3>
+                                    </div>
+                                </td>
+                                </form>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="tableFixHead">
-        <table class="table table-striped align-middle">
-            <caption hidden>Others' Set Files</caption>
-            <thead class="table-dark">
-            <tr>
-                @foreach (var header in Model.SourceHeaders)
-                {
-                    <th>
-                        <div class="d-flex justify-content-center">@header</div>
-                    </th>
-                }
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model.SetFiles)
-            {
-                if (!item.UserName.Equals(User.Identity?.Name))
-                {
+    <div class="col-6">
+        <div class="row">
+            <div class="col-11">
+                <h3>My Source Sets</h3>
+            </div>
+            <div class="col-1 d-flex justify-content-end align-items-center">
+                <button type="button" class="btn btn-primary d-flex justify-content-center align-items-center m-1 p-2" data-bs-toggle="modal" data-bs-target="#newSourceSet">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="tableFixHead">
+            <table class="table table-striped align-middle">
+                <caption hidden>My Source Sets</caption>
+                <thead class="table-dark">
                     <tr>
-                        <form class="form" method="post">
+                        @foreach (var header in Model.SourceHeaders)
+                        {
+                            <th>
+                                <div class="d-flex justify-content-center">@header</div>
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.SourceSets.Where(item => item.UserName!.Equals(User.Identity?.Name)))
+                    {
+                        <tr>
+                            <form class="form" method="post">
                             <td>
-                                <div class="d-flex justify-content-center">@item.Name:@item.Version</div>
+                                <div class="d-flex justify-content-center">@item.Name</div>
                             </td>
                             <td>
                                 <div class="d-flex justify-content-center">@item.UploadedDate</div>
                             </td>
                             <td>
                                 <div class="d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="Download"
-                                            asp-route-fileId="@item.Path">
+                                    <button type="button" class="btn btn-primary m-1" data-bs-toggle="modal" data-bs-target="@($"#setFilesModal{item.Id}")">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
+                                            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="btn btn-primary m-1" data-bs-toggle="modal" data-bs-id="@item.Id" data-bs-target="#newSetFile">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z" />
+                                        </svg>
+                                    </button>
+                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="Download" asp-route-fileId="@item.Path">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
-                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+                                        </svg>
+                                    </button>
+                                    <button type="submit" class="btn btn-danger m-1"
+                                            asp-page-handler="DeleteSourceSet" asp-route-id="@item.Id" asp-route-name="@item.Name" asp-route-fileId="@item.Path">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                            </form>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="row">
+            <div class="col-11">
+                <h3>Others' Executables</h3>
+            </div>
+        </div>
+        <div class="tableFixHead">
+            <table class="table table-striped align-middle">
+                <caption hidden>Others' Executables</caption>
+                <thead class="table-dark">
+                    <tr>
+                        @foreach (var header in Model.ExeHeaders)
+                        {
+                            <th>
+                                <div class="d-flex justify-content-center">@header</div>
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Executables.Where(item => !item.UserName.Equals(User.Identity?.Name)))
+                    {
+                        <tr>
+                            <form class="form" method="post">
+                            <td>
+                                <div class="d-flex justify-content-center">@item.Name</div>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center">@item.UploadedDate</div>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="Download" asp-route-fileId="@item.Path">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                            </form>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="row">
+            <div class="col-11">
+                <h3>Others' Source Sets</h3>
+            </div>
+        </div>
+        <div class="tableFixHead">
+            <table class="table table-striped align-middle">
+                <caption hidden>Others' Source Sets</caption>
+                <thead class="table-dark">
+                    <tr>
+                        @foreach (var header in Model.SourceHeaders)
+                        {
+                            <th>
+                                <div class="d-flex justify-content-center">@header</div>
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.SourceSets.Where(item => !item.UserName!.Equals(User.Identity?.Name)))
+                    {
+                        <tr>
+                            <form class="form" method="post">
+                            <td>
+                                <div class="d-flex justify-content-center">@item.Name</div>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center">@item.UploadedDate</div>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    <button type="button" class="btn btn-primary m-1" data-bs-toggle="modal" data-bs-target="@($"#setFilesModal{item.Id}")">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
+                                            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
+                                        </svg>
+                                    </button>
+                                    <button type="submit" class="btn btn-primary m-1" asp-page-handler="Download" asp-route-fileId="@item.Path">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
                                         </svg>
                                     </button>
                                     @if ((await AuthorizationService.AuthorizeAsync(User, Policies.RequireAdministratorRole)).Succeeded)
                                     {
-                                        <button type="submit" class="btn btn-danger m-1"
-                                                asp-page-handler="DeleteSetFile" asp-route-id="@item.Id" asp-route-name="@item.Name" asp-route-fileId="@item.Path">
+                                        <button type="submit" class="btn btn-danger m-1" asp-page-handler="DeleteSourceSet" asp-route-id="@item.Id" asp-route-name="@item.Name" asp-route-fileId="@item.Path">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
                                             </svg>
                                         </button>
                                     }
                                 </div>
                             </td>
-                        </form>
-                    </tr>
-                }
-            }
-            </tbody>
-        </table>
+                            </form>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
-</div>
 
-<!-- Modal -->
+<!-- Modals for set files -->
+@foreach (var item in Model.SourceSets)
+{
+    <div class="modal fade" id="@("setFilesModal" + item.Id)" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewSetFilesTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewSetFilesTitle">Set files in Source Set: @item.Name</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped align-middle">
+                        <caption hidden>Set files in Source Set: @item.Name</caption>
+                        <thead class="table-dark">
+                            <tr>
+                                @foreach (var header in Model.SetFileHeaders)
+                                {
+                                    <td>
+                                        <div class="d-flex justify-content-center">@header</div>
+                                    </td>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var setFile in Model.SetFiles[item.Id])
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex justify-content-center">@setFile</div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Modal for uploading a new executable -->
 <form method="post">
     <div class="modal fade" id="newExecutable" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticExeBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
@@ -274,32 +308,32 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-floating mb-4">
-                        <input asp-for="ExecutableInput.Name" class="form-control" id="fileName1" placeholder="new executable's unique name" hidden/>
+                        <input asp-for="ExecutableInput.Name" class="form-control" id="fileName1" placeholder="new executable's unique name" hidden />
                     </div>
                     <div class="form-floating mb-4">
-                        <input asp-for="ExecutableInput.Version" class="form-control" id="fileVersion1" placeholder="the version of the executable" value="1.0"/>
+                        <input asp-for="ExecutableInput.Version" class="form-control" id="exeVersion" placeholder="the version of the executable" value="1.0" />
                         <label asp-for="ExecutableInput.Version" class="form-label"></label>
                         <span asp-validation-for="ExecutableInput.Version" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-4">
-                        <input asp-for="ExecutableInput.OwnerTool" class="form-control" placeholder="the executable's owner tool's name"/>
+                        <input asp-for="ExecutableInput.OwnerTool" class="form-control" placeholder="the executable's owner tool's name" />
                         <label asp-for="ExecutableInput.OwnerTool" class="form-label"></label>
                         <span asp-validation-for="ExecutableInput.OwnerTool" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-4">
-                        <input asp-for="ExecutableInput.ToolVersion" class="form-control" placeholder="the executable's owner tool's version"/>
+                        <input asp-for="ExecutableInput.ToolVersion" class="form-control" placeholder="the executable's owner tool's version" />
                         <label asp-for="ExecutableInput.ToolVersion" class="form-label"></label>
                         <span asp-validation-for="ExecutableInput.ToolVersion" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-4">
-                        <input asp-for="ExecutableInput.FileUrl" id="filePath1" hidden/>
+                        <input asp-for="ExecutableInput.FileUrl" id="filePath1" hidden />
                         <div class="row">
                             <div class="col-6">
-                                <input type="file" name="droppedFile1" id="droppedFile1" class="form-control" accept="application/zip,zip"/>
+                                <input type="file" name="droppedFile1" id="droppedFile1" class="form-control" accept="application/zip,zip" />
                             </div>
                             <div class="col-6">
-                                <input type="button" id="uploadButton1" class="btn btn-primary m-1" value="Upload" onclick="uploadFile(1)"/>
-                                <input type="button" id="cancelUploadButton1" value="Cancel" class="btn btn-secondary m-1" onclick="cancelUpload()" disabled/>
+                                <input type="button" id="uploadButton1" class="btn btn-primary m-1" value="Upload" onclick="uploadFile(1)" />
+                                <input type="button" id="cancelUploadButton1" value="Cancel" class="btn btn-secondary m-1" onclick="cancelUpload()" disabled />
                             </div>
                         </div>
                         <progress value="0" max="100" id="uploadProgress1" style="display:none"></progress>
@@ -315,37 +349,70 @@
     </div>
 </form>
 
-<!-- Modal -->
+<!-- Modal for uploading a new source set -->
+<form method="post">
+    <div class="modal fade" id="newSourceSet" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticSrcBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticSrcBackdropLabel">Upload a new Source Set</h5>
+                    <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="resetLocalCache()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-4">
+                        <input asp-for="SourceSetInput.Name" class="form-control" id="fileName2" placeholder="new set file's unique name" hidden />
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input asp-for="SourceSetInput.FileUrl" id="filePath2" hidden />
+                        <div class="row">
+                            <div class="col-6">
+                                <input type="file" name="droppedFile2" id="droppedFile2" class="form-control" accept="application/zip,zip" />
+                            </div>
+                            <div class="col-6">
+                                <input type="button" id="uploadButton2" class="btn btn-primary m-1" value="Upload" onclick="uploadFile(2)" />
+                                <input type="button" id="cancelUploadButton2" value="Cancel" class="btn btn-secondary m-1" onclick="cancelUpload()" disabled />
+                            </div>
+                        </div>
+                        <progress value="0" max="100" id="uploadProgress2" style="display:none"></progress>
+                        <span asp-validation-for="SourceSetInput.FileUrl" class="text-danger"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetLocalCache()">Cancel</button>
+                        <button type="submit" asp-page-handler="UploadSourceSet" class="btn btn-primary">Upload</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Modal for uploading a new set file -->
 <form method="post">
     <div class="modal fade" id="newSetFile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticSrcBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticSrcBackdropLabel">Upload a new Set File</h5>
+                    <h5 class="modal-title" id="staticSetBackdropLabel">Upload a new Set File</h5>
                     <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="resetLocalCache()"></button>
                 </div>
                 <div class="modal-body">
+                    <input asp-for="SetFileInput.SourceSetId" id="sourceSetId" hidden />
                     <div class="form-floating mb-4">
-                        <input asp-for="SetFileInput.Name" class="form-control" id="fileName2" placeholder="new set file's unique name" hidden/>
+                        <input asp-for="SetFileInput.Name" class="form-control" id="fileName3" placeholder="new set file's unique name" hidden />
                     </div>
                     <div class="form-floating mb-4">
-                        <input asp-for="SetFileInput.Version" class="form-control" id="fileVersion2" placeholder="the version of the set file" value="1.0"/>
-                        <label asp-for="SetFileInput.Version" class="form-label"></label>
-                        <span asp-validation-for="SetFileInput.Version" class="text-danger"></span>
-                    </div>
-                    <div class="form-floating mb-4">
-                        <input asp-for="SetFileInput.FileUrl" id="filePath2" hidden/>
+                        <input asp-for="SetFileInput.FileUrl" id="filePath3" hidden />
                         <div class="row">
                             <div class="col-6">
-                                <input type="file" name="droppedFile2" id="droppedFile2" class="form-control" accept=".set"/>
+                                <input type="file" name="droppedFile3" id="droppedFile3" class="form-control" accept=".set" />
                             </div>
                             <div class="col-6">
-                                <input type="button" id="uploadButton2" class="btn btn-primary m-1" value="Upload" onclick="uploadFile(2)"/>
-                                <input type="button" id="cancelUploadButton2" value="Cancel" class="btn btn-secondary m-1" onclick="cancelUpload()" disabled/>
+                                <input type="button" id="uploadButton3" class="btn btn-primary m-1" value="Upload" onclick="uploadFile(3)" />
+                                <input type="button" id="cancelUploadButton3" value="Cancel" class="btn btn-secondary m-1" onclick="cancelUpload()" disabled />
                             </div>
                         </div>
-                        <progress value="0" max="100" id="uploadProgress2" style="display:none"></progress>
-                        <span asp-validation-for="ExecutableInput.FileUrl" class="text-danger"></span>
+                        <progress value="0" max="100" id="uploadProgress3" style="display:none"></progress>
+                        <span asp-validation-for="SetFileInput.FileUrl" class="text-danger"></span>
                     </div>
                     <div class="modal-footer">
                         <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetLocalCache()">Cancel</button>
@@ -358,7 +425,7 @@
 </form>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial"/>
+    <partial name="_ValidationScriptsPartial" />
     <script src="~/lib/tusdotnet/tus.min.js"></script>
     <script src="~/js/resources.js"></script>
 }
