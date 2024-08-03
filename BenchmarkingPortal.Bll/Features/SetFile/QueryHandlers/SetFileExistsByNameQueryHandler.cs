@@ -1,23 +1,24 @@
 ﻿using BenchmarkingPortal.Bll.Features.SetFile.Queries;
+using BenchmarkingPortal.Bll.Services;
 using BenchmarkingPortal.Dal;
+using BenchmarkingPortal.Dal.Dtos;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.SetFile.QueryHandlers;
 
-public class SetFileExistsByNameQueryHandler : IRequestHandler<SetFileExistsByNameQuery, bool>
+public class SetFileExistsByNameQueryHandler(BenchmarkingDbContext dbContext, PathConfigs pathConfigs)
+    : IRequestHandler<SetFileExistsByNameQuery, bool>
 {
-    private readonly BenchmarkingDbContext _dbContext;
-    
-    public SetFileExistsByNameQueryHandler(BenchmarkingDbContext dbContext)
+    public async Task<bool> Handle(SetFileExistsByNameQuery request, CancellationToken cancellationToken)
     {
-        _dbContext = dbContext;
-    }
-    
-    public Task<bool> Handle(SetFileExistsByNameQuery request, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException("This feature is not fully implemented yet.");
+        var sourceSets = await dbContext.SourceSets.Select(s => new SourceSetHeader(s)).ToListAsync(cancellationToken);
         
-        return _dbContext.SetFiles.AnyAsync(x => x.Version + "+" + x.Name + ".set" == request.FileName, cancellationToken);
+        if (sourceSets.Count == 0)
+            return false;
+
+        return sourceSets.Any(set => Directory.Exists(Path.Join(
+            pathConfigs.WorkingDir, set.UserName, pathConfigs.SourceSetDir, set.SetFilesDir, request.FileName
+            )));
     }
 }
