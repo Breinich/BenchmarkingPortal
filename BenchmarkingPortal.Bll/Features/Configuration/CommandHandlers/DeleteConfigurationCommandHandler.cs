@@ -38,6 +38,8 @@ public class DeleteConfigurationCommandHandler : IRequestHandler<DeleteConfigura
             _context.Remove(constraint);
         }
         
+        File.Delete(configuration.XmlFilePath);
+        
         _context.Configurations.Remove(configuration);
         await _context.SaveChangesAsync(cancellationToken);
     }
