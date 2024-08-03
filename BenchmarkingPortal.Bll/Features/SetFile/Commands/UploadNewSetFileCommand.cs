@@ -7,7 +7,6 @@ public class UploadNewSetFileCommand : IRequest<SetFileHeader>
 {
     public string Name { get; init; } = null!;
     public string Path { get; init; } = null!;
-    public string? Version { get; set; }
     public DateTime UploadedDate { get; init; }
     public int SourceSetId { get; init; }
     public string InvokerName { get; init; } = null!;

@@ -5,21 +5,11 @@ using MediatR;
 
 namespace BenchmarkingPortal.Bll.Features.SetFile.CommandHandlers;
 
-public class UploadNewSetFileCommandHandler : IRequestHandler<UploadNewSetFileCommand, SetFileHeader>
+public class UploadNewSetFileCommandHandler(BenchmarkingDbContext context)
+    : IRequestHandler<UploadNewSetFileCommand, SetFileHeader>
 {
-    private readonly BenchmarkingDbContext _context;
-
-    public UploadNewSetFileCommandHandler(BenchmarkingDbContext context)
-    {
-        _context = context;
-    }
-
-
     public async Task<SetFileHeader> Handle(UploadNewSetFileCommand request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException("This feature is not fully implemented yet.");
-        
-        request.Version ??= "1.0";
 
         var setFile = new Dal.Entities.SetFile
         {
@@ -27,11 +17,11 @@ public class UploadNewSetFileCommandHandler : IRequestHandler<UploadNewSetFileCo
             Path = request.Path,
             UserName = request.InvokerName,
             UploadedDate = request.UploadedDate,
-            Version = request.Version
+            SourceSetId = request.SourceSetId
         };
 
-        await _context.SetFiles.AddAsync(setFile, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SetFiles.AddAsync(setFile, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         return new SetFileHeader(setFile);
     }
