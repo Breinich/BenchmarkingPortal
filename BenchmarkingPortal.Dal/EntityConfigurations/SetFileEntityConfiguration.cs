@@ -16,7 +16,6 @@ public class SetFileEntityConfiguration : IEntityTypeConfiguration<SetFile>
         builder.Property(e => e.Name).HasMaxLength(50).IsRequired();
         builder.Property(e => e.Path).HasMaxLength(50).IsRequired();
         builder.Property(e => e.UploadedDate).IsRequired();
-        builder.Property(e => e.Version).HasMaxLength(50).IsRequired();
 
         builder.HasOne(d => d.User).WithMany(p => p.SetFiles)
             .HasForeignKey(d => d.UserName)
@@ -29,7 +28,7 @@ public class SetFileEntityConfiguration : IEntityTypeConfiguration<SetFile>
             .OnDelete(DeleteBehavior.SetNull)
             .HasConstraintName("FK_SetFile_SourceSet");
         
-        builder.HasIndex(e => new {e.Name, e.Version}).IsUnique();
+        builder.HasIndex(e => new {e.Name, e.SourceSetId}).IsUnique();
 
         SampleData(builder);
     }
