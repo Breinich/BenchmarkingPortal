@@ -17,7 +17,7 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.13")
+                .HasAnnotation("ProductVersion", "8.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -92,11 +92,6 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<string>("XmlFilePath")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("character varying(250)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ComputerGroupId");
@@ -150,6 +145,11 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("XmlFilePath")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Configurations", (string)null);
@@ -180,18 +180,21 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
 
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.Constraint", b =>
                 {
-                    b.Property<string>("Premise")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Consequence")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ConfigurationId")
                         .HasColumnType("integer");
 
-                    b.HasKey("Premise", "Consequence", "ConfigurationId");
+                    b.Property<string>("Expression")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ConfigurationId");
 
@@ -299,18 +302,13 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                         .IsRequired()
                         .HasColumnType("character varying(256)");
 
-                    b.Property<string>("Version")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("SourceSetId");
 
                     b.HasIndex("UserName");
 
-                    b.HasIndex("Name", "Version")
+                    b.HasIndex("Name", "SourceSetId")
                         .IsUnique();
 
                     b.ToTable("PropertyFiles", (string)null);
@@ -344,18 +342,13 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                         .IsRequired()
                         .HasColumnType("character varying(256)");
 
-                    b.Property<string>("Version")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("SourceSetId");
 
                     b.HasIndex("UserName");
 
-                    b.HasIndex("Name", "Version")
+                    b.HasIndex("Name", "SourceSetId")
                         .IsUnique();
 
                     b.ToTable("SetFiles", (string)null);
@@ -374,10 +367,13 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<string>("Root")
+                    b.Property<string>("Path")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("UploadedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserName")
                         .IsRequired()

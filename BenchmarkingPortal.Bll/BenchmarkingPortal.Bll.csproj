@@ -1,13 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Features\SourceSet\" />
         <Folder Include="Features\Worker\CommandHandlers\" />
         <Folder Include="Features\Worker\Commands\" />
         <Folder Include="Features\Worker\Queries\" />
@@ -28,10 +27,12 @@
 
     <ItemGroup>
         <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
-        <PackageReference Include="CliWrap" Version="3.6.4" />
-        <PackageReference Include="MediatR" Version="12.0.1" />
-        <PackageReference Include="SSH.NET" Version="2023.0.0" />
-        <PackageReference Include="tusdotnet" Version="2.7.1" />
+        <PackageReference Include="CliWrap" Version="3.6.6" />
+        <PackageReference Include="MediatR" Version="12.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.5" />
+        <PackageReference Include="SSH.NET" Version="2024.0.0" />
+        <PackageReference Include="tusdotnet" Version="2.8.0" />
     </ItemGroup>
 
     <ItemGroup>
