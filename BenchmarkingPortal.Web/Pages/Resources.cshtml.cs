@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Authentication;
 using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Executable.Commands;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
@@ -28,6 +29,7 @@ public class Resources(IMediator mediator) : PageModel
     /// The status message.
     /// </summary>
     [TempData] public string? StatusMessage { get; set; }
+    public const string ExceptionMessageStart = "Error: ";
 
     /// <summary>
     /// List of executables.
@@ -91,15 +93,15 @@ public class Resources(IMediator mediator) : PageModel
             Executables = (await mediator.Send(new GetAllExecutablesQuery())).ToList();
             
             SourceSets = (await mediator.Send(new GetAllSourceSetsQuery())).ToList();
-            foreach (var set in SourceSets)
+            foreach (var setId in SourceSets.Select(s => s.Id))
             {
-                if(!SetFiles.ContainsKey(set.Id))
+                if(!SetFiles.ContainsKey(setId))
                 {
-                    SetFiles[set.Id] = [];
+                    SetFiles[setId] = [];
                 }
-                SetFiles[set.Id] = (await mediator.Send( new GetSetFileNamesBySourceSetIdQuery
+                SetFiles[setId] = (await mediator.Send( new GetSetFileNamesBySourceSetIdQuery
                 {
-                    SourceSetId = set.Id,
+                    SourceSetId = setId,
                 })).Select(f => Path.GetFileName(f)).ToList();
             }
 
@@ -108,7 +110,7 @@ public class Resources(IMediator mediator) : PageModel
         catch (Exception e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
+            StatusMessage = ExceptionMessageStart + (e.InnerException ?? e).Message;
 
             return RedirectToPage();
         }
@@ -121,7 +123,7 @@ public class Resources(IMediator mediator) : PageModel
     /// <param name="name">The executable name.</param>
     /// <param name="fileId">The file id.</param>
     /// <returns></returns>
-    /// <exception cref="ApplicationException">If the user is not authenticated.</exception>
+    /// <exception cref="AuthenticationException">If the user is not authenticated.</exception>
     public async Task<IActionResult> OnPostDeleteExecutableAsync(int id, string name, string fileId)
     {
         try
@@ -131,7 +133,7 @@ public class Resources(IMediator mediator) : PageModel
                 ExecutableId = id,
                 FileId = fileId,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(ExceptionMessage<Executable>.NoPrivilege)
+                              throw new AuthenticationException(ExceptionMessage<Executable>.NoPrivilege)
             });
             StatusMessage = $"{name} deleted successfully.";
 
@@ -140,7 +142,7 @@ public class Resources(IMediator mediator) : PageModel
         catch (Exception e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
+            StatusMessage = ExceptionMessageStart + (e.InnerException ?? e).Message;
 
             return RedirectToPage();
         }
@@ -153,7 +155,7 @@ public class Resources(IMediator mediator) : PageModel
     /// <param name="name">The set file name.</param>
     /// <param name="fileId">The file id.</param>
     /// <returns></returns>
-    /// <exception cref="ApplicationException">If the user is not authenticated.</exception>
+    /// <exception cref="AuthenticationException">If the user is not authenticated.</exception>
     public async Task<IActionResult> OnPostDeleteSourceSetAsync(int id, string name, string fileId)
     {
         try
@@ -163,7 +165,7 @@ public class Resources(IMediator mediator) : PageModel
                 Id = id,
                 FileId = fileId,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(ExceptionMessage<SetFile>.NoPrivilege)
+                              throw new AuthenticationException(ExceptionMessage<SetFile>.NoPrivilege)
             });
             StatusMessage = $"{name} deleted successfully.";
 
@@ -172,7 +174,7 @@ public class Resources(IMediator mediator) : PageModel
         catch (Exception e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
+            StatusMessage = ExceptionMessageStart + (e.InnerException ?? e).Message;
 
             return RedirectToPage();
         }
@@ -201,7 +203,7 @@ public class Resources(IMediator mediator) : PageModel
         catch (Exception e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + e.Message;
+            StatusMessage = ExceptionMessageStart + e.Message;
 
             return RedirectToPage();
         }
@@ -211,7 +213,7 @@ public class Resources(IMediator mediator) : PageModel
     /// Uploads a new executable.
     /// </summary>
     /// <returns></returns>
-    /// <exception cref="ApplicationException">If the user is not authenticated.</exception>
+    /// <exception cref="AuthenticationException">If the user is not authenticated.</exception>
     public async Task<IActionResult> OnPostUploadExecutableAsync()
     {
         try
@@ -225,7 +227,7 @@ public class Resources(IMediator mediator) : PageModel
                 Path = ExecutableInput.FileUrl,
                 UploadedDate = DateTime.UtcNow,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(ExceptionMessage<Executable>.NoPrivilege)
+                              throw new AuthenticationException(ExceptionMessage<Executable>.NoPrivilege)
             });
 
             ExecutableInput = new ExecutableInputModel();
@@ -239,7 +241,7 @@ public class Resources(IMediator mediator) : PageModel
             ExecutableInput = new ExecutableInputModel();
 
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
+            StatusMessage = ExceptionMessageStart + (e.InnerException ?? e).Message;
 
             return RedirectToPage();
         }
@@ -249,7 +251,7 @@ public class Resources(IMediator mediator) : PageModel
     /// Uploads a new set file.
     /// </summary>
     /// <returns></returns>
-    /// <exception cref="ApplicationException">If the user is not authenticated.</exception>
+    /// <exception cref="AuthenticationException">If the user is not authenticated.</exception>
     public async Task<IActionResult> OnPostUploadSetFileAsync()
     {
         try
@@ -261,7 +263,7 @@ public class Resources(IMediator mediator) : PageModel
                 SourceSetId = SetFileInput.SourceSetId,
                 UploadedDate = DateTime.UtcNow,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(ExceptionMessage<SetFile>.NoPrivilege)
+                              throw new AuthenticationException(ExceptionMessage<SetFile>.NoPrivilege)
             });
 
             SetFileInput = new SetFileInputModel();
@@ -275,7 +277,7 @@ public class Resources(IMediator mediator) : PageModel
             SetFileInput = new SetFileInputModel();
 
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
+            StatusMessage = ExceptionMessageStart + (e.InnerException ?? e).Message;
 
             return RedirectToPage();
         }
@@ -285,7 +287,7 @@ public class Resources(IMediator mediator) : PageModel
     /// Uploads a new source set.
     /// </summary>
     /// <returns></returns>
-    /// <exception cref="ApplicationException">If the user is not authenticated.</exception>
+    /// <exception cref="AuthenticationException">If the user is not authenticated.</exception>
     public async Task<IActionResult> OnPostUploadSourceSetAsync()
     {
         try
@@ -296,7 +298,7 @@ public class Resources(IMediator mediator) : PageModel
                 Path = SourceSetInput.FileUrl,
                 UploadedDate = DateTime.UtcNow,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(ExceptionMessage<SourceSet>.NoPrivilege)
+                              throw new AuthenticationException(ExceptionMessage<SourceSet>.NoPrivilege)
             });
 
             SourceSetInput = new SourceSetInputModel();
@@ -310,7 +312,7 @@ public class Resources(IMediator mediator) : PageModel
             SourceSetInput = new SourceSetInputModel();
 
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
+            StatusMessage = ExceptionMessageStart + (e.InnerException ?? e).Message;
 
             return RedirectToPage();
         }
