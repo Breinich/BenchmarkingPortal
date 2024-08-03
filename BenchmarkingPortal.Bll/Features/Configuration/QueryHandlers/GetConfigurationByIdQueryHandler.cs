@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using BenchmarkingPortal.Bll.Features.Configuration.Queries;
+﻿using BenchmarkingPortal.Bll.Features.Configuration.Queries;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
 using MediatR;

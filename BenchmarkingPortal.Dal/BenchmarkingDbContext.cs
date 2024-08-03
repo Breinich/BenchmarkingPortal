@@ -3,7 +3,6 @@ using BenchmarkingPortal.Dal.EntityConfigurations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace BenchmarkingPortal.Dal;
 
