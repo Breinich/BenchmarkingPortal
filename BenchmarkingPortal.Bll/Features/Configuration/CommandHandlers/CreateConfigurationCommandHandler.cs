@@ -14,20 +14,12 @@ namespace BenchmarkingPortal.Bll.Features.Configuration.CommandHandlers;
 /// The handler for the <see cref="CreateConfigurationCommand"/>
 /// </summary>
 // ReSharper disable once UnusedType.Global
-public class CreateConfigurationCommandHandler : IRequestHandler<CreateConfigurationCommand, ConfigurationHeader>
+public class CreateConfigurationCommandHandler(
+    BenchmarkingDbContext context,
+    PathConfigs pathConfigs,
+    IMediator mediator)
+    : IRequestHandler<CreateConfigurationCommand, ConfigurationHeader>
 {
-    private readonly BenchmarkingDbContext _context;
-    private readonly string _workDir;
-    private readonly IMediator _mediator;
-
-    public CreateConfigurationCommandHandler(BenchmarkingDbContext context,  PathConfigs pathConfigs, IMediator mediator)
-    {
-        _context = context;
-        _workDir = pathConfigs.WorkingDir;
-        _mediator = mediator;
-    }
-
-
     public async Task<ConfigurationHeader> Handle(CreateConfigurationCommand request,
         CancellationToken cancellationToken)
     {
@@ -66,10 +58,10 @@ public class CreateConfigurationCommandHandler : IRequestHandler<CreateConfigura
             UserName = request.InvokerName
         };
         
-        Directory.CreateDirectory(Path.Join(_workDir, newBenchmark.UserName, "benchmarks"));
-        var xmlFilePath = Path.Join(_workDir, newBenchmark.UserName, "benchmarks", newBenchmark.Name + ".xml");
+        Directory.CreateDirectory(Path.Join(pathConfigs.WorkingDir, newBenchmark.UserName, pathConfigs.BenchmarkDir));
+        var xmlFilePath = Path.Join(pathConfigs.WorkingDir, newBenchmark.UserName, pathConfigs.BenchmarkDir, newBenchmark.Name + ".xml");
         
-        var exe = await _mediator.Send(new GetExecutableByIdQuery
+        var exe = await mediator.Send(new GetExecutableByIdQuery
         {
             Id = newBenchmark.ExecutableId
         }, cancellationToken) ?? throw new ApplicationException("The according executable not found.");
@@ -92,12 +84,12 @@ public class CreateConfigurationCommandHandler : IRequestHandler<CreateConfigura
             XmlFilePath = xmlFilePath
         };
 
-        await _context.Configurations.AddAsync(config, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.Configurations.AddAsync(config, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         
         foreach (var configItem in configHeader.ConfigurationItems)
-            await _context.ConfigurationItems.AddAsync(new ConfigurationItem
+            await context.ConfigurationItems.AddAsync(new ConfigurationItem
             {
                 Key = configItem.Key!,
                 Value = configItem.Value!,
@@ -105,17 +97,17 @@ public class CreateConfigurationCommandHandler : IRequestHandler<CreateConfigura
                 ConfigurationId = config.Id
             }, cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         if (configHeader.Constraints != null)
             foreach (var constraint in configHeader.Constraints)
-                await _context.Constraints.AddAsync(new Constraint
+                await context.Constraints.AddAsync(new Constraint
                 {
                     Expression = constraint.Expression!,
                     ConfigurationId = config.Id
                 }, cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         return new ConfigurationHeader
         {
@@ -129,9 +121,10 @@ public class CreateConfigurationCommandHandler : IRequestHandler<CreateConfigura
     /// </summary>
     /// <param name="config">Configuration info</param>
     /// <param name="newBenchmark">Benchmark info</param>
-    /// <param name="xmlFilePath"> The path to write the XML file to</param>
+    /// <param name="xmlFilePath">The path to write the XML file to</param>
     /// <param name="exeToolName">The name of the executable's owner tool</param>
-    private static async Task<List<List<ConfigurationItemHeader>>> CreateXmlSetup(ConfigurationHeader config, BenchmarkHeader newBenchmark, string xmlFilePath, string? exeToolName)
+    private static async Task<List<List<ConfigurationItemHeader>>> CreateXmlSetup(ConfigurationHeader config, 
+        BenchmarkHeader newBenchmark, string xmlFilePath, string? exeToolName)
     {
         var removedConfigs = new List<List<ConfigurationItemHeader>>();
             
@@ -175,10 +168,7 @@ public class CreateConfigurationCommandHandler : IRequestHandler<CreateConfigura
             foreach (var item in config.ConfigurationItems.Where(ci => ci.Scope == Scope.Local).ToList())
             {
                 if (optionList.Count == 0)
-                    optionList.Add(new List<ConfigurationItemHeader>
-                    {
-                        item
-                    });
+                    optionList.Add([item]);
                 else
                 {
                     var found = false;
@@ -190,7 +180,7 @@ public class CreateConfigurationCommandHandler : IRequestHandler<CreateConfigura
                     }
 
                     if (!found)
-                        optionList.Add(new List<ConfigurationItemHeader> { item });
+                        optionList.Add([item]);
                 }
             }
                 
@@ -266,10 +256,10 @@ public class CreateConfigurationCommandHandler : IRequestHandler<CreateConfigura
                         Path.ChangeExtension(Path.GetFileName(newBenchmark.SetFilePath!)
                             .TrimStart('.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', '-', '+'), null));
                     await writer.WriteStartElementAsync(null, "includesfile", null);
-                    await writer.WriteStringAsync(Path.Join("..", "..", "sv-benchmarks", "c", Path.GetFileName(newBenchmark.SetFilePath!)));
+                    await writer.WriteStringAsync(Path.Join("..", "..", newBenchmark.SetFilePath!));
                     await writer.WriteEndElementAsync();
                     await writer.WriteStartElementAsync(null, "propertyfile", null);
-                    await writer.WriteStringAsync(Path.Join("..", "..", "sv-benchmarks", "c", "properties", Path.GetFileName(newBenchmark.PropertyFilePath!)));
+                    await writer.WriteStringAsync(Path.Join("..", "..", newBenchmark.PropertyFilePath!));
                     await writer.WriteEndElementAsync();
                     await writer.WriteEndElementAsync();
                     await writer.WriteEndElementAsync();

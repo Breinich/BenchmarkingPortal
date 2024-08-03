@@ -1,11 +1,6 @@
-﻿using MediatR;
-using tusdotnet.Stores;
+﻿using tusdotnet.Stores;
 
 namespace BenchmarkingPortal.Bll.Tus;
 
-public class CustomTusDiskStore : TusDiskStore
-{
-    public CustomTusDiskStore(string path, IMediator mediator) : 
-        base(path, true, TusDiskBufferSize.Default, new CustomGuidProvider(mediator))
-    { }
-}
+public class CustomTusDiskStore(string path)
+    : TusDiskStore(path, true, TusDiskBufferSize.Default, new CustomGuidProvider());

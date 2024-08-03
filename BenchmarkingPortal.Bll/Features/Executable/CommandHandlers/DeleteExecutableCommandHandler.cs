@@ -12,35 +12,24 @@ namespace BenchmarkingPortal.Bll.Features.Executable.CommandHandlers;
 /// Handler for <see cref="DeleteExecutableCommand"/>
 /// </summary>
 // ReSharper disable once UnusedType.Global
-public class DeleteExecutableCommandHandler : IRequestHandler<DeleteExecutableCommand>
+public class DeleteExecutableCommandHandler(
+    BenchmarkingDbContext context,
+    UserManager<Dal.Entities.User> userManager,
+    PathConfigs pathConfigs)
+    : IRequestHandler<DeleteExecutableCommand>
 {
-    private readonly BenchmarkingDbContext _context;
-    private readonly UserManager<Dal.Entities.User> _userManager;
-    private readonly string _workDir;
-    private readonly IMediator _mediator;
-
-    public DeleteExecutableCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager, 
-        PathConfigs pathConfigs, IMediator mediator)
-    {
-        _context = context;
-        _userManager = userManager;
-        _workDir = pathConfigs.WorkingDir;
-        _mediator = mediator;
-    }
-
-
     public async Task Handle(DeleteExecutableCommand request, CancellationToken cancellationToken)
     {
-        var exe = await _context.Executables.FindAsync(new object?[] { request.ExecutableId }, 
+        var exe = await context.Executables.FindAsync(new object?[] { request.ExecutableId }, 
                       cancellationToken: cancellationToken) ??
                   throw new ArgumentException(ExceptionMessage<Dal.Entities.Executable>.ObjectNotFound);
 
         if (exe.UserName != request.InvokerName)
         {
-            var user = await _userManager.FindByNameAsync(request.InvokerName) ??
+            var user = await userManager.FindByNameAsync(request.InvokerName) ??
                        throw new ArgumentException(ExceptionMessage<Dal.Entities.User>.ObjectNotFound);
 
-            var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);
+            var admin = await userManager.IsInRoleAsync(user, Roles.Admin);
 
             if (!admin) throw new ArgumentException(ExceptionMessage<Dal.Entities.Executable>.NoPrivilege);
         }
@@ -48,10 +37,12 @@ public class DeleteExecutableCommandHandler : IRequestHandler<DeleteExecutableCo
         if (exe.Path != request.FileId)
             throw new ArgumentException(ExceptionMessage<Dal.Entities.Executable>.ObjectNotFound);
 
-        var store = new CustomTusDiskStore(Path.Join(_workDir, exe.UserName, "tools"), _mediator);
-        await store.DeleteFileAsync(request.FileId, cancellationToken);
+        context.Remove(exe);
+        await context.SaveChangesAsync(cancellationToken);
         
-        _context.Remove(exe);
-        await _context.SaveChangesAsync(cancellationToken);
+        var store = new CustomTusDiskStore(Path.Join(pathConfigs.WorkingDir, exe.UserName, pathConfigs.ExecutableDir));
+        await store.DeleteFileAsync(request.FileId, cancellationToken);
+
+        new Task(() => Directory.Delete(Path.Join(pathConfigs.WorkingDir, exe.UserName, pathConfigs.ExecutableDir, exe.Name), true)).Start();
     }
 }

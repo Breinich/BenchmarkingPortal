@@ -1,7 +1,5 @@
-using System.Xml;
 using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
-using BenchmarkingPortal.Bll.Features.Configuration.CommandHandlers;
 using BenchmarkingPortal.Bll.Features.Configuration.Queries;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
 using BenchmarkingPortal.Bll.Services;
@@ -18,25 +16,13 @@ namespace BenchmarkingPortal.Bll.Features.Benchmark.CommandHandlers;
 /// The handler for the <see cref="StartBenchmarkCommand"/>.
 /// </summary>
 // ReSharper disable once UnusedType.Global
-public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkCommand, BenchmarkHeader>
+public class StartBenchmarkCommandHandler(
+    BenchmarkingDbContext context,
+    PathConfigs pathConfigs,
+    IMediator mediator,
+    IBenchmarkQueue queue)
+    : IRequestHandler<StartBenchmarkCommand, BenchmarkHeader>
 {
-    private readonly BenchmarkingDbContext _context;
-    private readonly string _vcloudBenchmarkPath;
-    private readonly string _workDir;
-    private readonly string _vcloudHost;
-    private readonly IMediator _mediator;
-    private readonly IBenchmarkQueue _queue;
-
-    public StartBenchmarkCommandHandler(BenchmarkingDbContext context, PathConfigs pathConfigs, IMediator mediator, IBenchmarkQueue queue)
-    {
-        _context = context;
-        _vcloudBenchmarkPath = pathConfigs.VcloudBenchmarkPath;
-        _workDir = pathConfigs.WorkingDir;
-        _vcloudHost = pathConfigs.VcloudHost;
-        _mediator = mediator;
-        _queue = queue;
-    }
-
     /// <summary>
     /// Creates a configuration XML file for the benchmark and starts the benchmark
     /// </summary>
@@ -50,7 +36,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         // Value validations first:
 
         // Checking whether the name of the new benchmark is unique
-        var nameCount =  await _context.Benchmarks.Where(b => b.Name.Equals(request.Name)).Select(b => b.Id)
+        var nameCount =  await context.Benchmarks.Where(b => b.Name.Equals(request.Name)).Select(b => b.Id)
             .CountAsync(cancellationToken);
         if (nameCount > 0)
             throw new ArgumentOutOfRangeException(nameof(request), request.Name,
@@ -80,12 +66,12 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         // The other values will be checked by the scheduler
         
         
-        var exe = await _mediator.Send(new GetExecutableByIdQuery
+        var exe = await mediator.Send(new GetExecutableByIdQuery
         {
             Id = newBenchmark.ExecutableId
         }, cancellationToken) ?? throw new ApplicationException("The according executable not found.");
         
-        var config = await _mediator.Send(new GetConfigurationByIdQuery
+        var config = await mediator.Send(new GetConfigurationByIdQuery
         {
             Id = newBenchmark.ConfigurationId,
             IncludeItems = false
@@ -94,7 +80,7 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
         
         var startedDate = DateTime.UtcNow;
         
-        var resultDir = Path.Join(_workDir, newBenchmark.UserName, "results", 
+        var resultDir = Path.Join(pathConfigs.WorkingDir, newBenchmark.UserName, pathConfigs.ResultsDir, 
             exe.Name + "_" + startedDate.ToString("yyyy-MM-dd_HH-mm-ss"));
         // prepare results directory
         Directory.CreateDirectory(resultDir);
@@ -126,8 +112,8 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
             ResultPath = newBenchmark.ResultPath,
         };
 
-        _context.Benchmarks.Add(benchmark);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.Benchmarks.Add(benchmark);
+        await context.SaveChangesAsync(cancellationToken);
 
         // Returning the benchmark with the generated Id from the DB
         return new BenchmarkHeader(benchmark);
@@ -144,15 +130,15 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
     private async Task QueueBenchmark(BenchmarkHeader newBenchmark, ExecutableHeader exe, ConfigurationHeader config,
         CancellationToken cancellationToken)
     {
-        var xmlRelativePath = config.XmlFilePath![_workDir.Length..].TrimStart(Path.DirectorySeparatorChar);
-        var toolDir = Path.Join(exe.UserName, "tools", exe.Name);
+        var xmlRelativePath = config.XmlFilePath![pathConfigs.WorkingDir.Length..].TrimStart(Path.DirectorySeparatorChar);
+        var toolDir = Path.Join(exe.UserName, pathConfigs.ExecutableDir, exe.Name);
 
         var outputLogPath = Path.Join(newBenchmark.ResultPath!, "output.log");
         var errorLogPath = Path.Join(newBenchmark.ResultPath!, "error.log");
         
         using var forcefulCts = new CancellationTokenSource();
         
-        var cmd = Cli.Wrap(_vcloudBenchmarkPath)
+        var cmd = Cli.Wrap(pathConfigs.VcloudBenchmarkPath)
             .WithArguments(args =>
             {
                 args
@@ -161,18 +147,18 @@ public class StartBenchmarkCommandHandler : IRequestHandler<StartBenchmarkComman
                     .Add(xmlRelativePath)
                     .Add("--tool-directory").Add(toolDir)
                     .Add("--vcloudAdditionalFiles").Add(toolDir)
-                    .Add("-o").Add(newBenchmark.ResultPath![_workDir.Length..].TrimStart(Path.DirectorySeparatorChar))
+                    .Add("-o").Add(newBenchmark.ResultPath![pathConfigs.WorkingDir.Length..].TrimStart(Path.DirectorySeparatorChar))
                     .Add("--vcloudPriority").Add(newBenchmark.Priority.ToString());
-                if(!string.IsNullOrEmpty(_vcloudHost))
-                    args.Add("--vcloudMaster").Add(_vcloudHost);
-                if(!string.IsNullOrEmpty(newBenchmark.CpuModelValue) && !newBenchmark.CpuModelValue.Equals("-"))
+                if(!string.IsNullOrWhiteSpace(pathConfigs.VcloudHost))
+                    args.Add("--vcloudMaster").Add(pathConfigs.VcloudHost);
+                if(!string.IsNullOrWhiteSpace(newBenchmark.CpuModelValue) && !newBenchmark.CpuModelValue.Equals("-"))
                     args.Add("--vcloudCPUModel").Add(newBenchmark.CpuModelValue);
             })
-            .WithWorkingDirectory(_workDir)
+            .WithWorkingDirectory(pathConfigs.WorkingDir)
             .WithStandardOutputPipe(PipeTarget.ToFile(outputLogPath))
             .WithStandardErrorPipe(PipeTarget.ToFile(errorLogPath))
             .WithValidation(CommandResultValidation.None);
 
-        await _queue.QueueBenchmarkAsync(new BenchmarkTask(newBenchmark, cmd), cancellationToken);
+        await queue.QueueBenchmarkAsync(new BenchmarkTask(newBenchmark, cmd), cancellationToken);
     }
 }
