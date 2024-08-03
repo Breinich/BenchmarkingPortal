@@ -51,7 +51,7 @@ public class LoginModel : PageModel
 
     public async Task OnGetAsync(string returnUrl = null)
     {
-        if (!string.IsNullOrEmpty(ErrorMessage)) ModelState.AddModelError(string.Empty, ErrorMessage);
+        if (!string.IsNullOrWhiteSpace(ErrorMessage)) ModelState.AddModelError(string.Empty, ErrorMessage);
 
         returnUrl ??= Url.Content("~/");
 

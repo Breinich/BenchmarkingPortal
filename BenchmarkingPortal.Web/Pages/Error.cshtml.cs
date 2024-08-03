@@ -18,7 +18,7 @@ public class ErrorModel : PageModel
 
     public string? RequestId { get; set; }
 
-    public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+    public bool ShowRequestId => !string.IsNullOrWhiteSpace(RequestId);
 
     public string? ExceptionMessage { get; set; }
 
