@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BenchmarkingPortal.Dal.EntityConfigurations;
 
+/// <summary>
+/// Entity configuration for the SourceSet entity.
+/// </summary>
 public class SourceSetEntityConfiguration : IEntityTypeConfiguration<SourceSet>
 {
     public void Configure(EntityTypeBuilder<SourceSet> builder)
@@ -13,7 +16,8 @@ public class SourceSetEntityConfiguration : IEntityTypeConfiguration<SourceSet>
         builder.HasKey(s => s.Id);
 
         builder.Property(s => s.Name).HasMaxLength(50).IsRequired();
-        builder.Property(s => s.Root).HasMaxLength(50).IsRequired();
+        builder.Property(e => e.Path).HasMaxLength(50).IsRequired();
+        builder.Property(e => e.UploadedDate).IsRequired();
 
         builder.HasOne(s => s.User).WithMany(u => u.SourceSets)
             .HasForeignKey(s => s.UserName)
