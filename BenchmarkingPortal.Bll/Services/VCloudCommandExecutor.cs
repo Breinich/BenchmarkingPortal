@@ -17,9 +17,9 @@ public class VCloudCommandExecutor : ICommandExecutor
     {
         _logger = logger;
         
-        _ivyPath = Path.Combine(pathConfigs.VcloudDirectory, "lib", _ivyJarName);
+        _ivyPath = Path.Combine(pathConfigs.VcloudDir, "lib", _ivyJarName);
         _ivyDownloadUrl = "https://www.sosy-lab.org/ivy/org.apache.ivy/ivy/" + _ivyJarName;
-        _vcloudDirAsync = pathConfigs.VcloudDirectory;
+        _vcloudDirAsync = pathConfigs.VcloudDir;
     }
 
     public async Task InitializeAsync()
@@ -46,7 +46,7 @@ public class VCloudCommandExecutor : ICommandExecutor
 
         _terminal.OutputDataReceived += (_, e) =>
         {
-            if (!string.IsNullOrEmpty(e.Data))
+            if (!string.IsNullOrWhiteSpace(e.Data))
             {
                 _logger.LogInformation($"Output: {e.Data}");
             }
@@ -54,7 +54,7 @@ public class VCloudCommandExecutor : ICommandExecutor
 
         _terminal.ErrorDataReceived += (_, e) =>
         {
-            if (!string.IsNullOrEmpty(e.Data))
+            if (!string.IsNullOrWhiteSpace(e.Data))
             {
                 _logger.LogError($"Error: {e.Data}");
             }
@@ -85,7 +85,7 @@ public class VCloudCommandExecutor : ICommandExecutor
         
         var gatherer = new DataReceivedEventHandler((_, eventArgs) =>
         {
-            if (!string.IsNullOrEmpty(eventArgs.Data))
+            if (!string.IsNullOrWhiteSpace(eventArgs.Data))
             {
                 result += eventArgs.Data + "\n";
             }

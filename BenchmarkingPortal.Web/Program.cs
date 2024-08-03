@@ -1,6 +1,3 @@
-using System.IO.Compression;
-using System.Net;
-using System.Text;
 using BenchmarkingPortal;
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
@@ -15,6 +12,8 @@ using BenchmarkingPortal.Bll.Features.PropertyFile.Queries;
 using BenchmarkingPortal.Bll.Features.Result.Commands;
 using BenchmarkingPortal.Bll.Features.SetFile.Commands;
 using BenchmarkingPortal.Bll.Features.SetFile.Queries;
+using BenchmarkingPortal.Bll.Features.SourceSet.Commands;
+using BenchmarkingPortal.Bll.Features.SourceSet.Queries;
 using BenchmarkingPortal.Bll.Features.UploadedFile.Commands;
 using BenchmarkingPortal.Bll.Features.User.Commands;
 using BenchmarkingPortal.Bll.Features.User.Queries;
@@ -28,18 +27,12 @@ using BenchmarkingPortal.Dal.SeedInterfaces;
 using BenchmarkingPortal.Dal.SeedService;
 using BenchmarkingPortal.Web.Endpoints;
 using BenchmarkingPortal.Web.Hosting;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Primitives;
 using tusdotnet;
-using tusdotnet.Models;
-using tusdotnet.Models.Concatenation;
-using tusdotnet.Models.Configuration;
-using tusdotnet.Models.Expiration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -160,19 +153,25 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
         typeof(GetAllComputerGroupsWithStatsQuery).Assembly,
         typeof(DeleteComputerGroupCommand).Assembly,
         typeof(UpdateComputerGroupCommand).Assembly,
-        typeof(GetAllSetFileNamesQuery).Assembly,
+        typeof(GetSetFileNamesBySourceSetIdQuery).Assembly,
         typeof(CreateUserCommand).Assembly,
         typeof(SetFileExistsByNameQuery).Assembly,
         typeof(ExecutableExistsByNameQuery).Assembly,
         typeof(GetExecutableByPathQuery).Assembly,
         typeof(GetSetFileByPathQuery).Assembly,
-        typeof(GetAllPropertyFileNamesBySourceSetQuery).Assembly,
+        typeof(GetPropertyFileNamesBySourceSetQuery).Assembly,
         typeof(GetExecutableByIdQuery).Assembly,
         typeof(GetConfigurationByIdQuery).Assembly,
         typeof(DeleteConfigurationCommand).Assembly,
         typeof(DownloadResultCommand).Assembly,
         typeof(DownloadUploadedFileCommand).Assembly,
-        typeof(GetAllCpuModelsQuery).Assembly
+        typeof(GetAllCpuModelsQuery).Assembly,
+        typeof(UploadNewSourceSetCommand).Assembly,
+        typeof(GetAllSourceSetsQuery).Assembly,
+        typeof(DeleteSourceSetCommand).Assembly,
+        typeof(GetSourceSetByIdQuery).Assembly,
+        typeof(SourceSetExistsByNameQuery).Assembly,
+        typeof(GetAllPropertyFilesQuery).Assembly
     ));
 
 builder.Services.Configure<FormOptions>(x =>
@@ -188,9 +187,15 @@ builder.Services.AddSingleton<PathConfigs>(_ => new PathConfigs
 {
     WorkingDir = builder.Configuration["Storage:WorkingDir"] ?? 
                  throw new ApplicationException("Missing working directory path configuration!"),
+    ExecutableDir = "tools",
+    SourceSetDir = "source-sets",
+    ResultsDir = "results",
+    SetFileDir = "c",
+    PropertyFilesDir = Path.Join("c", "properties"),
+    BenchmarkDir = "benchmarks",
     VcloudBenchmarkPath = Path.Join(builder.Configuration["Storage:WorkingDir"], "benchexec", "contrib", 
         "vcloud-benchmark.py"),
-    VcloudDirectory = Path.Join(builder.Configuration["Storage:WorkingDir"], "benchexec", "contrib", 
+    VcloudDir = Path.Join(builder.Configuration["Storage:WorkingDir"], "benchexec", "contrib", 
         "vcloud"),
     WorkerConfig = builder.Configuration["Storage:WorkerConfig"] ?? 
                    throw new ApplicationException("Missing worker config path configuration!"),
@@ -245,148 +250,8 @@ app.UseSession();
 app.MapGet("/files/{fileId}", DownloadFileEndpoint.HandleRoute);
 
 // Setup tusdotnet for the /files/ path.
-app.MapTus("/files/", TusConfigurationFactory);
+app.MapTus("/files/", TusUtil.TusConfigurationFactory);
 
 app.MapRazorPages();
 
 app.Run();
-
-static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpContext)
-{
-    var logger = httpContext.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger<Program>();
-
-    if (httpContext.Request.Headers["extension"] == StringValues.Empty)
-    {
-        throw new ApplicationException("Missing extension path from request headers");
-    }
-
-    var diskStorePath = (httpContext.Request.Headers["extension"][0] ??
-                         throw new ApplicationException("Missing extension path value from request headers"))
-        switch
-        {
-            "zip" => Path.Join(httpContext.RequestServices.GetRequiredService<PathConfigs>().WorkingDir, 
-                httpContext.User.Identity?.Name, "tools"),
-            _ => throw new ArgumentException("Invalid extension path value from request headers")
-        };
-    
-    Directory.CreateDirectory(diskStorePath);
-
-    var config = new DefaultTusConfiguration
-    {
-        Store = new CustomTusDiskStore(diskStorePath, httpContext.RequestServices.GetRequiredService<IMediator>()),
-        MetadataParsingStrategy = MetadataParsingStrategy.AllowEmptyValues,
-        UsePipelinesIfAvailable = true,
-        Events = new Events
-        {
-            OnAuthorizeAsync = ctx =>
-            {
-                // Note: This event is called even if RequireAuthorization is called on the endpoint.
-                // In that case this event is not required but can be used as fine-grained authorization control.
-                // This event can also be used as a "on request started" event to prefetch data or similar.
-
-                var user = ctx.HttpContext.User;
-                if (!user.IsInRole(Roles.Admin) && !user.IsInRole(Roles.User))
-                {
-                    ctx.FailRequest(HttpStatusCode.Forbidden, "You must be logged in to upload files");
-                    return Task.CompletedTask;
-                }
-
-                // Verify different things depending on the intent of the request.
-                // E.g.:
-                //   Does the file about to be written belong to this user?
-                //   Is the current user allowed to create new files or have they reached their quota?
-                //   etc etc
-                switch (ctx.Intent)
-                {
-                    case IntentType.CreateFile:
-                        break;
-                    case IntentType.ConcatenateFiles:
-                        break;
-                    case IntentType.WriteFile:
-                        break;
-                    case IntentType.DeleteFile:
-                        break;
-                    case IntentType.GetFileInfo:
-                        break;
-                    case IntentType.GetOptions:
-                        break;
-                }
-
-                return Task.CompletedTask;
-            },
-
-            OnBeforeCreateAsync = async ctx =>
-            {
-                // Partial files are not complete so we do not need to validate the metadata
-                if (ctx.FileConcatenation is FileConcatPartial) return;
-
-                if (!ctx.Metadata.ContainsKey("name") || ctx.Metadata["name"].HasEmptyValue)
-                    ctx.FailRequest("#Name metadata must be specified.#");
-                
-                var mediator = ctx.HttpContext.RequestServices.GetRequiredService<IMediator>();
-                var fileName = ctx.Metadata["name"].GetString(Encoding.UTF8);
-                
-                if(await mediator.Send(new SetFileExistsByNameQuery
-                   {
-                       FileName = fileName
-                   }) 
-                   || 
-                   await mediator.Send(new ExecutableExistsByNameQuery
-                   {
-                       FileName = fileName
-                   })
-                   || 
-                   File.Exists(Path.Join(diskStorePath, fileName)))
-                    ctx.FailRequest("#File with this name already exists.#");
-                
-                if (!fileName.EndsWith(".zip") && !fileName.EndsWith(".set"))
-                    ctx.FailRequest("#Invalid file extension.#");
-            },
-            OnCreateCompleteAsync = ctx =>
-            {
-                logger.LogInformation($"Created file {ctx.FileId} using {ctx.Store.GetType().FullName}");
-                return Task.CompletedTask;
-            },
-            OnBeforeDeleteAsync = ctx =>
-            {
-                // Can the file be deleted? If not call ctx.FailRequest(<message>);
-                return Task.CompletedTask;
-            },
-            OnDeleteCompleteAsync = ctx =>
-            {
-                logger.LogInformation($"Deleted file {ctx.FileId} using {ctx.Store.GetType().FullName}");
-                if (ctx.FileId.Split(".").Last() == "zip")
-                {
-                    Directory.Delete(Path.Join(diskStorePath, Path.ChangeExtension(ctx.FileId, null)), true);
-                }
-                return Task.CompletedTask;
-            },
-            OnFileCompleteAsync = ctx =>
-            {
-                logger.LogInformation($"Upload of {ctx.FileId} completed using {ctx.Store.GetType().FullName}");
-                // If the store implements ITusReadableStore one could access the completed file here.
-                // The default TusDiskStore implements this interface:
-                // var file = await ctx.GetFileAsync();
-
-                if (ctx.FileId.Split(".").Last() == "zip")
-                {
-                    ZipFile.ExtractToDirectory(Path.Join(diskStorePath, ctx.FileId), diskStorePath, true);
-                }
-                
-                File.Delete(Path.Join(diskStorePath, ctx.FileId + ".uploadlength"));
-                File.Delete(Path.Join(diskStorePath, ctx.FileId + ".chunkstart"));
-                File.Delete(Path.Join(diskStorePath, ctx.FileId + ".chunkcomplete"));
-                File.Delete(Path.Join(diskStorePath, ctx.FileId + ".expiration"));
-
-                return Task.CompletedTask;
-            }
-        },
-        // Set an expiration time where incomplete files can no longer be updated.
-        // This value can either be absolute or sliding.
-        // Absolute expiration will be saved per file on create
-        // Sliding expiration will be saved per file on create and updated on each patch/update.
-        Expiration = new SlidingExpiration(TimeSpan.FromMinutes(5))
-    };
-
-    return Task.FromResult(config);
-}
