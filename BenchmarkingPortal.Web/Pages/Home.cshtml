@@ -186,13 +186,13 @@
 
 
 <!-- Modal -->
-<form method="post">
+<form method="post" id="newBenchmarkForm">
 <div class="modal fade" id="newBenchmark" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
 <div class="modal-content">
 <div class="modal-header">
     <h5 class="modal-title" id="staticBackdropLabel">Start a new benchmark</h5>
-    <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteSession()"></button>
+    <button id="escapeButton" type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="deleteSession()"></button>
 </div>
 <div class="modal-body">
     <div class="container">
@@ -385,8 +385,11 @@
 
 
             <div class="modal-footer">
-                <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteSession()">Cancel</button>
-                <button type="submit" asp-page-handler="Start" class="btn btn-primary">Start</button>
+                <button id="cancelButton" type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="deleteSession()">Cancel</button>
+                <button id="saveConfigButton" type="submit" asp-page-handler="Config" class="btn btn-primary" onclick="addConfig()">Save Config</button>
+                
+                <button id="deleteConfigButton" type="reset" class="btn btn-secondary" hidden>Delete Configuration</button>
+                <button id="startButton" type="submit" class="btn btn-primary" hidden>Start</button>
             </div>
         </div>
     </div>

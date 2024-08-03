@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Newtonsoft.Json;
 
 namespace BenchmarkingPortal.Web.Pages;
 
@@ -105,7 +104,7 @@ public class Home : PageModel
     /// <returns> JSON response </returns>
     public IActionResult OnPostAddConfigItem(Scope scope, string? key, string? value)
     {
-        if (string.IsNullOrEmpty(key))
+        if (string.IsNullOrWhiteSpace(key))
             return new JsonResult(new { success = false, responseText = "Key is empty." });
         
         if (key.Length > 50)
@@ -135,11 +134,7 @@ public class Home : PageModel
 
         HttpContext.Session.SetComplexData(_tempConfigDataListKey, configurationItems);
 
-        return new ContentResult
-        {
-            Content = JsonConvert.SerializeObject(new { newItem.Id, newItem.Key, newItem.Value}),
-            ContentType = "application/json"
-        };
+        return new JsonResult(new { configId = newItem.Id, configKey = newItem.Key, configValue = newItem.Value});
     }
 
     /// <summary>
@@ -170,7 +165,7 @@ public class Home : PageModel
     /// <returns> JSON response </returns>
     public IActionResult OnPostAddConstraint(string? expression)
     {
-        if (string.IsNullOrEmpty(expression))
+        if (string.IsNullOrWhiteSpace(expression))
             return new JsonResult(new{success = false, responseText = "Expression is empty."});
 
         if (expression.Length > 255)
@@ -194,11 +189,7 @@ public class Home : PageModel
 
         HttpContext.Session.SetComplexData(_tempConstraintDataListKey, constraintItems);
 
-        return new ContentResult
-        {
-            Content = JsonConvert.SerializeObject(new { newConstraint.Id, newConstraint.Expression}),
-            ContentType = "application/json"
-        };
+        return new JsonResult(new { constraintId = newConstraint.Id, expression = newConstraint.Expression});
     }
 
     /// <summary>
@@ -287,11 +278,11 @@ public class Home : PageModel
     }
 
     /// <summary>
-    /// Starts the benchmark with the given configuration and constraints.
+    /// Saves the configuration with the given data.
     /// </summary>
-    /// <returns> Page </returns>
+    /// <returns> JSON response </returns>
     /// <exception cref="ApplicationException"> No privilege </exception>
-    public async Task<IActionResult> OnPostStartAsync()
+    public async Task<IActionResult> OnPostConfigAsync()
     {
         if (!ModelState.IsValid) return Page();
 
@@ -302,9 +293,6 @@ public class Home : PageModel
             
             var constraints = HttpContext.Session
                 .GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey);
-
-            HttpContext.Session.Remove(_tempConfigDataListKey);
-            HttpContext.Session.Remove(_tempConstraintDataListKey);
 
             List<(Scope, string, string)>? configList = null;
             List<string>? constraintList = null;
@@ -331,6 +319,54 @@ public class Home : PageModel
                 PropertyFilePath = CreateInput.PropertyFilePath,
             });
 
+            return new JsonResult(new { success = true, responseText = "Configuration saved.", configId = config.Id });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
+
+            return new JsonResult(new { success = false, responseText = StatusMessage });
+        }
+    }
+    
+    /// <summary>
+    /// Deletes the configuration with the given id.
+    /// </summary>
+    /// <param name="id"> configuration id </param>
+    /// <returns> JSON response </returns>
+    public async Task<IActionResult> OnDeleteConfigAsync(int id)
+    {
+        try
+        {
+            await _mediator.Send(new DeleteConfigurationCommand
+            {
+                Id = id,
+            });
+
+            return new JsonResult(new { success = true, responseText = "Configuration deleted." });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
+
+            return new JsonResult(new { success = false, responseText = StatusMessage });
+        }
+    }
+
+    /// <summary>
+    /// Starts the benchmark with the given configuration.
+    /// </summary>
+    /// <param name="configId"> configuration id </param>
+    /// <returns> Page </returns>
+    /// <exception cref="ApplicationException"> No privilege </exception>
+    public async Task<IActionResult> OnPostStartAsync(int configId)
+    {
+        if (!ModelState.IsValid) return Page();
+
+        try
+        {
             var benchmark = await _mediator.Send(new StartBenchmarkCommand
             {
                 Name = CreateInput.Name,
@@ -345,13 +381,16 @@ public class Home : PageModel
                 CpuModelId = CreateInput.CpuModelId,
                 CpuModelValue = CpuModels.Where(c => c.Id == CreateInput.CpuModelId)
                     .Select(c => c.Value).FirstOrDefault(),
-                ConfigurationId = config.Id,
+                ConfigurationId = configId,
                 ComputerGroupId = CreateInput.ComputerGroupId,
                 InvokerName = User.Identity?.Name ??
                               throw new ApplicationException(ExceptionMessage<Benchmark>.NoPrivilege)
             });
 
             StatusMessage = $"Benchmark {benchmark.Name} created.";
+            
+            HttpContext.Session.Remove(_tempConfigDataListKey);
+            HttpContext.Session.Remove(_tempConstraintDataListKey);
 
             return RedirectToPage();
         }
@@ -359,7 +398,7 @@ public class Home : PageModel
         {
             HttpContext.Session.Remove(_tempConfigDataListKey);
             HttpContext.Session.Remove(_tempConstraintDataListKey);
-
+            
             Console.WriteLine(e);
             StatusMessage = "Error: " + (e.InnerException ?? e).Message;
 
@@ -378,12 +417,12 @@ public class Home : PageModel
                 .Select(eh => new SelectListItem(eh.Name + ":" + eh.Version, eh.Id.ToString()))
                 .ToList();
 
-            SetFiles = (await _mediator.Send(new GetAllSetFileNamesQuery()))
-                .Select(s => new SelectListItem(Path.GetFileName(s), s))
+            SetFiles = (await _mediator.Send(new GetAllSetFilesQuery()))
+                .Select(s => new SelectListItem(Path.GetFileName(s.Path), s.Path))
                 .ToList();
             
-            PrpFiles = (await _mediator.Send(new GetAllPropertyFileNamesBySourceSetQuery()))
-                .Select(s => new SelectListItem(Path.GetFileName(s), s))
+            PrpFiles = (await _mediator.Send(new GetAllPropertyFilesQuery()))
+                .Select(s => new SelectListItem(Path.GetFileName(s.Path), s.Path))
                 .ToList();
 
             ComputerGroups = (await _mediator.Send(new GetAllComputerGroupsQuery()))
