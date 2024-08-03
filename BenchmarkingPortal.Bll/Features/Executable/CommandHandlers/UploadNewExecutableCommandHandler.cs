@@ -20,8 +20,8 @@ public class UploadNewExecutableCommandHandler(BenchmarkingDbContext context, Pa
         if (!Directory.Exists(Path.Join(pathConfigs.WorkingDir, request.InvokerName, pathConfigs.ExecutableDir, request.Name)))
         {
             // deleting the already uploaded zip and metadata
-            File.Delete(Path.Join(pathConfigs.WorkingDir, request.InvokerName, request.Path));
-            File.Delete(Path.Join(pathConfigs.WorkingDir, request.InvokerName, request.Path + ".metadata"));
+            File.Delete(Path.Join(pathConfigs.WorkingDir, request.InvokerName, pathConfigs.ExecutableDir, request.Path));
+            File.Delete(Path.Join(pathConfigs.WorkingDir, request.InvokerName, pathConfigs.ExecutableDir, request.Path + ".metadata"));
             throw new ArgumentException("The root folder inside the zip of the tool directory doesn't have " +
                                         "the name of the zip file, please make sure to use the same zip name as the " +
                                         "tool directory name!\n" +
