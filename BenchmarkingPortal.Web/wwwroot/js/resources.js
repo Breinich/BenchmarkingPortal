@@ -1,6 +1,9 @@
 ﻿let uploadProgress;
 let cancelUploadButton;
 let uploadButton;
+let escapeButton;
+let okButton;
+let cancelButton;
 let filePath;
 let fileName;
 let upload;
@@ -21,6 +24,9 @@ function uploadFile(num) {
     uploadProgress = document.getElementById('uploadProgress' + num);
     cancelUploadButton = document.getElementById('cancelUploadButton' + num);
     uploadButton = document.getElementById('uploadButton' + num);
+    escapeButton = document.getElementById('escapeButton' + num);
+    okButton = document.getElementById('okButton' + num);
+    cancelButton = document.getElementById('cancelButton' + num);
     filePath = document.getElementById('filePath' + num);
     fileName = document.getElementById('fileName' + num);
 
@@ -93,6 +99,7 @@ function cancelUpload() {
     uploadProgress.value = 0;
     resetLocalCache();
     enableUpload();
+    okButton.setAttribute('disabled', 'disabled');
 }
 
 function resetLocalCache() {
@@ -118,6 +125,7 @@ function onTusSuccess() {
     filePath.value = upload.url.split('/').pop();
     fileName.value = upload.file.name;
     enableUpload();
+    okButton.removeAttribute('disabled');
 }
 
 function setProgressTest(text) {
@@ -126,10 +134,15 @@ function setProgressTest(text) {
 
 function enableUpload() {
     uploadButton.removeAttribute('disabled');
+    cancelButton.removeAttribute('disabled');
+    escapeButton.removeAttribute('disabled');
     cancelUploadButton.setAttribute('disabled', 'disabled');
+    okButton.setAttribute('disabled', 'disabled');
 }
 
 function disableUpload() {
     uploadButton.setAttribute('disabled', 'disabled');
+    cancelButton.setAttribute('disabled', 'disabled');
+    escapeButton.setAttribute('disabled', 'disabled');
     cancelUploadButton.removeAttribute('disabled');
 }

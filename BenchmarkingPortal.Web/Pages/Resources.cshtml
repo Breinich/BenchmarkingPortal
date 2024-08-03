@@ -304,7 +304,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticExeBackdropLabel">Upload a new Executable</h5>
-                    <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="resetLocalCache()"></button>
+                    <button id="escapeButton1" type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="resetLocalCache()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-floating mb-4">
@@ -340,8 +340,8 @@
                         <span asp-validation-for="ExecutableInput.FileUrl" class="text-danger"></span>
                     </div>
                     <div class="modal-footer">
-                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetLocalCache()">Cancel</button>
-                        <button type="submit" asp-page-handler="UploadExecutable" class="btn btn-primary">Add</button>
+                        <button id="cancelButton1" type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetLocalCache()">Cancel</button>
+                        <button id="okButton1" AuthenticationException type="submit" asp-page-handler="UploadExecutable" class="btn btn-primary" disabled>Add</button>
                     </div>
                 </div>
             </div>
@@ -356,7 +356,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticSrcBackdropLabel">Upload a new Source Set</h5>
-                    <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="resetLocalCache()"></button>
+                    <button id="escapeButton2" type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="resetLocalCache()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-floating mb-4">
@@ -377,8 +377,8 @@
                         <span asp-validation-for="SourceSetInput.FileUrl" class="text-danger"></span>
                     </div>
                     <div class="modal-footer">
-                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetLocalCache()">Cancel</button>
-                        <button type="submit" asp-page-handler="UploadSourceSet" class="btn btn-primary">Upload</button>
+                        <button id="cancelButton2" type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetLocalCache()">Cancel</button>
+                        <button id="okButton2" type="submit" asp-page-handler="UploadSourceSet" class="btn btn-primary" disabled>Upload</button>
                     </div>
                 </div>
             </div>
@@ -393,7 +393,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticSetBackdropLabel">Upload a new Set File</h5>
-                    <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="resetLocalCache()"></button>
+                    <button id="escapeButton3" type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="resetLocalCache()"></button>
                 </div>
                 <div class="modal-body">
                     <input asp-for="SetFileInput.SourceSetId" id="sourceSetId" hidden />
@@ -415,8 +415,8 @@
                         <span asp-validation-for="SetFileInput.FileUrl" class="text-danger"></span>
                     </div>
                     <div class="modal-footer">
-                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetLocalCache()">Cancel</button>
-                        <button type="submit" asp-page-handler="UploadSetFile" class="btn btn-primary">Upload</button>
+                        <button id="cancelButton3" type="reset" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetLocalCache()">Cancel</button>
+                        <button id="okButton3" type="submit" asp-page-handler="UploadSetFile" class="btn btn-primary" disabled>Upload</button>
                     </div>
                 </div>
             </div>
