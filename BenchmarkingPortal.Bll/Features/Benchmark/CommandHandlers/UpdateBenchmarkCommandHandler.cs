@@ -12,20 +12,12 @@ namespace BenchmarkingPortal.Bll.Features.Benchmark.CommandHandlers;
 /// Handler for the <see cref="UpdateBenchmarkCommand"/>.
 /// </summary>
 // ReSharper disable once UnusedType.Global
-public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkCommand, BenchmarkHeader>
+public class UpdateBenchmarkCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager)
+    : IRequestHandler<UpdateBenchmarkCommand, BenchmarkHeader>
 {
-    private readonly BenchmarkingDbContext _context;
-    private readonly UserManager<Dal.Entities.User> _userManager;
-
-    public UpdateBenchmarkCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager)
-    {
-        _context = context;
-        _userManager = userManager;
-    }
-    
     public async Task<BenchmarkHeader> Handle(UpdateBenchmarkCommand request, CancellationToken cancellationToken)
     {
-        var benchmarkEntity = await _context.Benchmarks.FindAsync(new object?[] { request.Id}, 
+        var benchmarkEntity = await context.Benchmarks.FindAsync(new object?[] { request.Id}, 
                                   cancellationToken: cancellationToken) ??
                               throw new ArgumentException(ExceptionMessage<Dal.Entities.Benchmark>.ObjectNotFound);
         
@@ -34,10 +26,10 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
         // Only the owner or the administrators have the permission to modify a specific benchmark
         if (benchmarkHeader.UserName != request.InvokerName)
         {
-            var user = await _userManager.FindByNameAsync(request.InvokerName) ??
+            var user = await userManager.FindByNameAsync(request.InvokerName) ??
                        throw new ArgumentException(ExceptionMessage<Dal.Entities.User>.ObjectNotFound);
             
-            var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);
+            var admin = await userManager.IsInRoleAsync(user, Roles.Admin);
 
             if (!admin)
                 throw new ArgumentException(ExceptionMessage<Dal.Entities.Benchmark>.NoPrivilege);
@@ -72,7 +64,7 @@ public class UpdateBenchmarkCommandHandler : IRequestHandler<UpdateBenchmarkComm
         benchmarkEntity.Priority = benchmarkHeader.Priority;
         benchmarkEntity.Status = benchmarkHeader.Status;
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         return benchmarkHeader;
     }

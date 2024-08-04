@@ -12,20 +12,12 @@ namespace BenchmarkingPortal.Bll.Features.Benchmark.CommandHandlers;
 /// <summary>
 /// The handler for the <see cref="DeleteBenchmarkCommand"/>.
 /// </summary>
-public class DeleteBenchmarkCommandHandler : IRequestHandler<DeleteBenchmarkCommand>
+public class DeleteBenchmarkCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager)
+    : IRequestHandler<DeleteBenchmarkCommand>
 {
-    private readonly BenchmarkingDbContext _context;
-    private readonly UserManager<Dal.Entities.User> _userManager;
-
-    public DeleteBenchmarkCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager)
-    {
-        _context = context;
-        _userManager = userManager;
-    }
-
     public async Task Handle(DeleteBenchmarkCommand request, CancellationToken cancellationToken)
     {
-        var benchmark = await _context.Benchmarks.Where(b => b.Id == request.Id).Select(b => b)
+        var benchmark = await context.Benchmarks.Where(b => b.Id == request.Id).Select(b => b)
                             .FirstAsync(cancellationToken) ??
                         throw new ArgumentException(ExceptionMessage<Dal.Entities.Benchmark>.ObjectNotFound);
 
@@ -34,11 +26,11 @@ public class DeleteBenchmarkCommandHandler : IRequestHandler<DeleteBenchmarkComm
         // Only the owner or the administrators have the permission to delete a specific benchmark
         if (benchmarkHeader.UserName != request.InvokerName)
         {
-            var user = await _userManager.FindByNameAsync(request.InvokerName) ??
+            var user = await userManager.FindByNameAsync(request.InvokerName) ??
                        throw new ArgumentException(ExceptionMessage<Dal.Entities.User>.ObjectNotFound);
 
 
-            var admin = await _userManager.IsInRoleAsync(user, Roles.Admin);
+            var admin = await userManager.IsInRoleAsync(user, Roles.Admin);
 
             if (!admin)
                 throw new ArgumentException(ExceptionMessage<Dal.Entities.Benchmark>.NoPrivilege);
@@ -55,7 +47,7 @@ public class DeleteBenchmarkCommandHandler : IRequestHandler<DeleteBenchmarkComm
             File.Delete(benchmarkHeader.ResultPath + ".zip");
         }
 
-        _context.Benchmarks.Remove(benchmark);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.Benchmarks.Remove(benchmark);
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

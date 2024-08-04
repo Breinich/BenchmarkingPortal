@@ -10,18 +10,12 @@ namespace BenchmarkingPortal.Bll.Features.Benchmark.QueryHandlers;
 /// Handler for <see cref="GetBenchmarkByResultPathQuery"/>
 /// </summary>
 // ReSharper disable once UnusedType.Global
-public class GetBenchmarkByResultPathQueryHandler : IRequestHandler<GetBenchmarkByResultPathQuery, BenchmarkHeader?>
+public class GetBenchmarkByResultPathQueryHandler(BenchmarkingDbContext dbContext)
+    : IRequestHandler<GetBenchmarkByResultPathQuery, BenchmarkHeader?>
 {
-    private readonly BenchmarkingDbContext _dbContext;
-    
-    public GetBenchmarkByResultPathQueryHandler(BenchmarkingDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-    
     public async Task<BenchmarkHeader?> Handle(GetBenchmarkByResultPathQuery request, CancellationToken cancellationToken)
     {
-        return await _dbContext.Benchmarks.Where(x => x.ResultPath == request.ResultPath)
+        return await dbContext.Benchmarks.Where(x => x.ResultPath == request.ResultPath)
             .Select(b => new BenchmarkHeader(b)).FirstOrDefaultAsync(cancellationToken);
     }
 }

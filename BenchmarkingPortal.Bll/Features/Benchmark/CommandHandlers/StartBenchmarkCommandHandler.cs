@@ -30,7 +30,7 @@ public class StartBenchmarkCommandHandler(
     /// <param name="cancellationToken">cancellation token</param>
     /// <returns>A copy of the information of the benchmark</returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    /// <exception cref="ApplicationException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     public async Task<BenchmarkHeader> Handle(StartBenchmarkCommand request, CancellationToken cancellationToken)
     {
         // Value validations first:
@@ -69,13 +69,13 @@ public class StartBenchmarkCommandHandler(
         var exe = await mediator.Send(new GetExecutableByIdQuery
         {
             Id = newBenchmark.ExecutableId
-        }, cancellationToken) ?? throw new ApplicationException("The according executable not found.");
+        }, cancellationToken) ?? throw new ArgumentException("The according executable not found.");
         
         var config = await mediator.Send(new GetConfigurationByIdQuery
         {
             Id = newBenchmark.ConfigurationId,
             IncludeItems = false
-        }, cancellationToken) ?? throw new ApplicationException("The according configuration not found.");
+        }, cancellationToken) ?? throw new ArgumentException("The according configuration not found.");
         
         
         var startedDate = DateTime.UtcNow;
