@@ -10,18 +10,12 @@ namespace BenchmarkingPortal.Bll.Features.Configuration.CommandHandlers;
 /// The handler for the <see cref="DeleteConfigurationCommand"/>.
 /// </summary>
 // ReSharper disable once UnusedType.Global
-public class DeleteConfigurationCommandHandler : IRequestHandler<DeleteConfigurationCommand>
+public class DeleteConfigurationCommandHandler(BenchmarkingDbContext context)
+    : IRequestHandler<DeleteConfigurationCommand>
 {
-    private readonly BenchmarkingDbContext _context;
-    
-    public DeleteConfigurationCommandHandler(BenchmarkingDbContext context)
-    {
-        _context = context;
-    }
-    
     public async Task Handle(DeleteConfigurationCommand request, CancellationToken cancellationToken)
     {
-        var configuration = await _context.Configurations
+        var configuration = await context.Configurations
             .Where(c => c.Id == request.Id).Include(c => c.ConfigurationItems)
             .Include(c => c.Constraints).FirstOrDefaultAsync(cancellationToken);
 
@@ -30,17 +24,17 @@ public class DeleteConfigurationCommandHandler : IRequestHandler<DeleteConfigura
         
         foreach (var item in configuration.ConfigurationItems)
         {
-            _context.Remove(item);
+            context.Remove(item);
         }
 
         foreach (var constraint in configuration.Constraints)
         {
-            _context.Remove(constraint);
+            context.Remove(constraint);
         }
         
         File.Delete(configuration.XmlFilePath);
         
-        _context.Configurations.Remove(configuration);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.Configurations.Remove(configuration);
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

@@ -12,27 +12,20 @@ namespace BenchmarkingPortal.Bll.Features.ComputerGroup.CommandHandlers;
 /// Command handler for the <see cref="UpdateComputerGroupCommand"/>
 /// </summary>
 // ReSharper disable once UnusedType.Global
-public class UpdateComputerGroupCommandHandler : IRequestHandler<UpdateComputerGroupCommand, ComputerGroupHeader>
+public class UpdateComputerGroupCommandHandler(
+    BenchmarkingDbContext context,
+    UserManager<Dal.Entities.User> userManager)
+    : IRequestHandler<UpdateComputerGroupCommand, ComputerGroupHeader>
 {
-    private readonly BenchmarkingDbContext _context;
-    private readonly UserManager<Dal.Entities.User> _userManager;
-
-    public UpdateComputerGroupCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager)
-    {
-        _context = context;
-        _userManager = userManager;
-    }
-
-
     public async Task<ComputerGroupHeader> Handle(UpdateComputerGroupCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByNameAsync(request.InvokerName);
+        var user = await userManager.FindByNameAsync(request.InvokerName);
 
-        if (user == null || !await _userManager.IsInRoleAsync(user, Roles.Admin))
+        if (user == null || !await userManager.IsInRoleAsync(user, Roles.Admin))
             throw new ArgumentException(ExceptionMessage<Dal.Entities.ComputerGroup>.NoPrivilege);
 
-        var computerGroup = await _context.ComputerGroups.FindAsync(new object?[] { request.Id }, 
+        var computerGroup = await context.ComputerGroups.FindAsync(new object?[] { request.Id }, 
             cancellationToken: cancellationToken);
         if (computerGroup == null)
             throw new ArgumentException( ExceptionMessage<Dal.Entities.ComputerGroup>.ObjectNotFound);
@@ -59,7 +52,7 @@ public class UpdateComputerGroupCommandHandler : IRequestHandler<UpdateComputerG
             }
         }
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
         return new ComputerGroupHeader(computerGroup);
     }
 }
