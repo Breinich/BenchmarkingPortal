@@ -9,15 +9,9 @@ namespace BenchmarkingPortal.Bll.Features.ComputerGroup.CommandHandlers;
 /// Command handler for the <see cref="CreateComputerGroupCommand"/>
 /// </summary>
 // ReSharper disable once UnusedType.Global
-public class CreateComputerGroupCommandHandler : IRequestHandler<CreateComputerGroupCommand, ComputerGroupHeader>
+public class CreateComputerGroupCommandHandler(BenchmarkingDbContext context)
+    : IRequestHandler<CreateComputerGroupCommand, ComputerGroupHeader>
 {
-    private readonly BenchmarkingDbContext _context;
-
-    public CreateComputerGroupCommandHandler(BenchmarkingDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<ComputerGroupHeader> Handle(CreateComputerGroupCommand request,
         CancellationToken cancellationToken)
     {
@@ -27,8 +21,8 @@ public class CreateComputerGroupCommandHandler : IRequestHandler<CreateComputerG
         if (request.Name != null) computerGroup.Name = request.Name;
         if (request.Hostname != null) computerGroup.Hostname = request.Hostname;
 
-        await _context.ComputerGroups.AddAsync(computerGroup, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.ComputerGroups.AddAsync(computerGroup, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         return new ComputerGroupHeader
         {

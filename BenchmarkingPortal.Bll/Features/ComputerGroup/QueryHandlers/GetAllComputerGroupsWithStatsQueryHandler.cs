@@ -10,21 +10,13 @@ namespace BenchmarkingPortal.Bll.Features.ComputerGroup.QueryHandlers;
 /// Handler for <see cref="GetAllComputerGroupsWithStatsQuery"/>
 /// </summary>
 // ReSharper disable once UnusedType.Global
-public class GetAllComputerGroupsWithStatsQueryHandler : 
+public class GetAllComputerGroupsWithStatsQueryHandler(BenchmarkingDbContext context) :
     IRequestHandler<GetAllComputerGroupsWithStatsQuery, IEnumerable<ComputerGroupHeader>>
 {
-    private readonly BenchmarkingDbContext _context;
-
-    public GetAllComputerGroupsWithStatsQueryHandler(BenchmarkingDbContext context)
-    {
-        _context = context;
-    }
-
-
     public async Task<IEnumerable<ComputerGroupHeader>> Handle(GetAllComputerGroupsWithStatsQuery request,
         CancellationToken cancellationToken)
     {
-        var computerGroups = await _context.ComputerGroups
+        var computerGroups = await context.ComputerGroups
             .Include(x => x.Workers)
             .Include(x => x.Benchmarks)
             .Select(x => new ComputerGroupHeader(x)

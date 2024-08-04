@@ -64,7 +64,7 @@ public class CreateConfigurationCommandHandler(
         var exe = await mediator.Send(new GetExecutableByIdQuery
         {
             Id = newBenchmark.ExecutableId
-        }, cancellationToken) ?? throw new ApplicationException("The according executable not found.");
+        }, cancellationToken) ?? throw new ArgumentException("The according executable not found.");
 
         var configHeader = new ConfigurationHeader
         {
@@ -143,7 +143,7 @@ public class CreateConfigurationCommandHandler(
             "https://www.sosy-lab.org/benchexec/benchmark-2.3.dtd", null);
             
         await writer.WriteStartElementAsync(null, "benchmark", null);
-        await writer.WriteAttributeStringAsync(null, "tool", null, exeToolName ?? throw new ApplicationException("According executable not found."));
+        await writer.WriteAttributeStringAsync(null, "tool", null, exeToolName ?? throw new ArgumentException("According executable not found."));
         await writer.WriteAttributeStringAsync(null, "timelimit", null, 
             newBenchmark.TimeLimit+"s");
         await writer.WriteAttributeStringAsync(null, "hardtimelimit", null,
