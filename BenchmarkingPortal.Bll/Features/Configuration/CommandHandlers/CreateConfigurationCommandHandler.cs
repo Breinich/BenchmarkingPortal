@@ -20,6 +20,15 @@ public class CreateConfigurationCommandHandler(
     IMediator mediator)
     : IRequestHandler<CreateConfigurationCommand, ConfigurationHeader>
 {
+    
+    /// <summary>
+    /// Handles the <see cref="CreateConfigurationCommand"/>
+    /// </summary>
+    /// <param name="request"> The request data </param>
+    /// <param name="cancellationToken"> Cancellation token </param>
+    /// <returns> The id of the created configuration </returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     public async Task<ConfigurationHeader> Handle(CreateConfigurationCommand request,
         CancellationToken cancellationToken)
     {
@@ -117,12 +126,14 @@ public class CreateConfigurationCommandHandler(
     }
 
     /// <summary>
-    /// Creates the XML file for the benchmark
+    /// Creates the XML setup for the benchmark
     /// </summary>
-    /// <param name="config">Configuration info</param>
-    /// <param name="newBenchmark">Benchmark info</param>
-    /// <param name="xmlFilePath">The path to write the XML file to</param>
-    /// <param name="exeToolName">The name of the executable's owner tool</param>
+    /// <param name="config"> The configuration header </param>
+    /// <param name="newBenchmark"> The benchmark header </param>
+    /// <param name="xmlFilePath"> The path to the XML file </param>
+    /// <param name="exeToolName"> The name of the executable tool </param>
+    /// <returns> The removed configurations </returns>
+    /// <exception cref="ArgumentException"></exception>
     private static async Task<List<List<ConfigurationItemHeader>>> CreateXmlSetup(ConfigurationHeader config, 
         BenchmarkHeader newBenchmark, string xmlFilePath, string? exeToolName)
     {
