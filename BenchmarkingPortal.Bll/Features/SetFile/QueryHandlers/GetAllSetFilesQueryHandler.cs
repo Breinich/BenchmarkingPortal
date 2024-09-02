@@ -6,19 +6,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.SetFile.QueryHandlers;
 
-public class GetAllSetFilesQueryHandler : IRequestHandler<GetAllSetFilesQuery, IEnumerable<SetFileHeader>>
+/// <summary>
+/// Query handler for getting all set files.
+/// </summary>
+/// <param name="context"> BenchmarkingDbContext instance. </param>
+public class GetAllSetFilesQueryHandler(BenchmarkingDbContext context)
+    : IRequestHandler<GetAllSetFilesQuery, IEnumerable<SetFileHeader>>
 {
-    private readonly BenchmarkingDbContext _context;
-
-    public GetAllSetFilesQueryHandler(BenchmarkingDbContext context)
-    {
-        _context = context;
-    }
-
-
+    
+    /// <summary>
+    /// Handle method for getting all set files.
+    /// </summary>
+    /// <param name="request"> GetAllSetFilesQuery instance. </param>
+    /// <param name="cancellationToken"> CancellationToken instance. </param>
+    /// <returns></returns>
     public async Task<IEnumerable<SetFileHeader>> Handle(GetAllSetFilesQuery request,
         CancellationToken cancellationToken)
     {   
-        return await _context.SetFiles.Select(s => new SetFileHeader(s)).ToListAsync(cancellationToken);
+        return await context.SetFiles.Select(s => new SetFileHeader(s)).ToListAsync(cancellationToken);
     }
 }
