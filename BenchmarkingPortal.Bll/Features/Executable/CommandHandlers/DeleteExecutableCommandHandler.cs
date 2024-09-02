@@ -5,6 +5,7 @@ using BenchmarkingPortal.Bll.Tus;
 using BenchmarkingPortal.Dal;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BenchmarkingPortal.Bll.Features.Executable.CommandHandlers;
 
@@ -18,6 +19,13 @@ public class DeleteExecutableCommandHandler(
     PathConfigs pathConfigs)
     : IRequestHandler<DeleteExecutableCommand>
 {
+    
+    /// <summary>
+    /// Handles the <see cref="DeleteExecutableCommand"/>
+    /// </summary>
+    /// <param name="request"> The executable to delete </param>
+    /// <param name="cancellationToken"> The token to monitor for cancellation requests </param>
+    /// <exception cref="ArgumentException"> Thrown when the invoker is not an admin or the executable is in use </exception>
     public async Task Handle(DeleteExecutableCommand request, CancellationToken cancellationToken)
     {
         var exe = await context.Executables.FindAsync(new object?[] { request.ExecutableId }, 
@@ -36,6 +44,11 @@ public class DeleteExecutableCommandHandler(
         
         if (exe.Path != request.FileId)
             throw new ArgumentException(ExceptionMessage<Dal.Entities.Executable>.ObjectNotFound);
+        
+        var benchmarksCount = await context.Benchmarks
+            .CountAsync(b => b.ExecutableId == request.ExecutableId, cancellationToken);
+        if (benchmarksCount > 0)
+            throw new ArgumentException(ExceptionMessage<Dal.Entities.Executable>.InUse);
 
         context.Remove(exe);
         await context.SaveChangesAsync(cancellationToken);
