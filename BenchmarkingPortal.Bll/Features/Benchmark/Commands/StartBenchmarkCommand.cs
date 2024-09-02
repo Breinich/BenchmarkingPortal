@@ -18,6 +18,7 @@ public class StartBenchmarkCommand : IRequest<BenchmarkHeader>
     public int CpuModelId { get; init; }
     public string? CpuModelValue { get; init; }
     public int ExecutableId { get; init; }
+    public int SourceSetId { get; init; }
     public string SetFilePath { get; init; } = null!;
     public string PropertyFilePath { get; init; } = null!;
     public int ConfigurationId { get; init; }
