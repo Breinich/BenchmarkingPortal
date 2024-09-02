@@ -1,4 +1,5 @@
-﻿using BenchmarkingPortal.Bll.Exceptions;
+﻿using System.Security.Authentication;
+using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
 using BenchmarkingPortal.Bll.Features.CpuModel.Queries;
@@ -69,7 +70,7 @@ public class Finished : PageModel
             {
                 Id = id,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(ExceptionMessage<Benchmark>.NoPrivilege)
+                              throw new AuthenticationException(ExceptionMessage<Benchmark>.NoPrivilege)
             }, cancellationToken);
 
             StatusMessage = $"{name} deleted successfully.";
