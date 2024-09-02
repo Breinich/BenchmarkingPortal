@@ -1,51 +1,44 @@
-﻿using BenchmarkingPortal.Dal.Entities;
+﻿using System.Security;
+using BenchmarkingPortal.Dal.Entities;
 using BenchmarkingPortal.Dal.SeedInterfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
 namespace BenchmarkingPortal.Dal.SeedService;
 
-public class UserSeedService : IUserSeedService
+public class UserSeedService(UserManager<User> userManager, IConfiguration configuration)
+    : IUserSeedService
 {
-    private readonly IConfiguration _configuration;
-    private readonly UserManager<User> _userManager;
-
-    public UserSeedService(UserManager<User> userManager, IConfiguration configuration)
-    {
-        _userManager = userManager;
-        _configuration = configuration;
-    }
-
     public async Task SeedUserAsync()
     {
-        if (!(await _userManager.GetUsersInRoleAsync(Roles.Admin)).Any())
+        if (!(await userManager.GetUsersInRoleAsync(Roles.Admin)).Any())
         {
             var user = new User
             {
-                UserName = _configuration["Users:AdminUserName"] ??
-                           throw new ApplicationException("Admin username not set in configuration."),
-                Email = _configuration["Users:AdminEmail"] ??
-                        throw new ApplicationException("Admin email not set in configuration."),
+                UserName = configuration["Users:AdminUserName"] ??
+                           throw new SecurityException("Admin username not set in configuration."),
+                Email = configuration["Users:AdminEmail"] ??
+                        throw new SecurityException("Admin email not set in configuration."),
                 SecurityStamp = Guid.NewGuid().ToString()
             };
 
-            var pass = _configuration["Users:AdminPassword"] ??
-                       throw new ApplicationException("Admin password not set in configuration.");
-            var createResult = await _userManager.CreateAsync(user, pass);
+            var pass = configuration["Users:AdminPassword"] ??
+                       throw new SecurityException("Admin password not set in configuration.");
+            var createResult = await userManager.CreateAsync(user, pass);
 
             if (!createResult.Succeeded)
-                throw new ApplicationException("Administrator could not be created: " +
-                                               string.Join(", ",
-                                                   createResult.Errors
-                                                       .Select(e => e.Description)));
+                throw new SecurityException("Administrator could not be created: " +
+                                            string.Join(", ",
+                                                createResult.Errors
+                                                    .Select(e => e.Description)));
 
-            var addToRoleResult = await _userManager.AddToRoleAsync(user, Roles.Admin);
+            var addToRoleResult = await userManager.AddToRoleAsync(user, Roles.Admin);
 
             if (!addToRoleResult.Succeeded)
-                throw new ApplicationException("Administrator could not be added to role: " +
-                                               string.Join(", ",
-                                                   addToRoleResult.Errors
-                                                       .Select(e => e.Description)));
+                throw new SecurityException("Administrator could not be added to role: " +
+                                            string.Join(", ",
+                                                addToRoleResult.Errors
+                                                    .Select(e => e.Description)));
         }
 
         //await SeedTestUsersAsync();
@@ -54,7 +47,7 @@ public class UserSeedService : IUserSeedService
     // ReSharper disable once UnusedMember.Local
     private async Task SeedTestUsersAsync()
     {
-        if (_userManager.Users.Count() < 10)
+        if (userManager.Users.Count() < 10)
         {
             var random = new Random();
             for (var i = 0; i < 10; i++)
@@ -68,7 +61,7 @@ public class UserSeedService : IUserSeedService
 
                 var pass = $"{i}.769+87656_{i * random.Next(100)}_ikhFDGHhoihf";
 
-                var createResult = await _userManager.CreateAsync(user, pass);
+                var createResult = await userManager.CreateAsync(user, pass);
 
                 if (!createResult.Succeeded)
                     throw new ApplicationException("Test user could not be created: " +
@@ -76,7 +69,7 @@ public class UserSeedService : IUserSeedService
                                                        createResult.Errors
                                                            .Select(e => e.Description)));
 
-                var addToRoleResult = await _userManager.AddToRoleAsync(user, Roles.Guest);
+                var addToRoleResult = await userManager.AddToRoleAsync(user, Roles.Guest);
 
                 if (!addToRoleResult.Succeeded)
                     throw new ApplicationException("Test user could not be added to role: " +
@@ -96,7 +89,7 @@ public class UserSeedService : IUserSeedService
 
                 var pass = $"{i}.769+87656_{i * random.Next(100)}_ikhZTUJJihf";
 
-                var createResult = await _userManager.CreateAsync(user, pass);
+                var createResult = await userManager.CreateAsync(user, pass);
 
                 if (!createResult.Succeeded)
                     throw new ApplicationException("Test user could not be created: " +
@@ -104,7 +97,7 @@ public class UserSeedService : IUserSeedService
                                                        createResult.Errors
                                                            .Select(e => e.Description)));
 
-                var addToRoleResult = await _userManager.AddToRoleAsync(user, Roles.User);
+                var addToRoleResult = await userManager.AddToRoleAsync(user, Roles.User);
 
                 if (!addToRoleResult.Succeeded)
                     throw new ApplicationException("Test user could not be added to role: " +
