@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Authentication;
 using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
@@ -8,6 +9,7 @@ using BenchmarkingPortal.Bll.Features.CpuModel.Queries;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
 using BenchmarkingPortal.Bll.Features.PropertyFile.Queries;
 using BenchmarkingPortal.Bll.Features.SetFile.Queries;
+using BenchmarkingPortal.Bll.Features.SourceSet.Queries;
 using BenchmarkingPortal.Dal.Dtos;
 using BenchmarkingPortal.Dal.Entities;
 using MediatR;
@@ -19,17 +21,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace BenchmarkingPortal.Web.Pages;
 
 [Authorize(Policy = Policies.RequireApprovedUser)]
-public class Home : PageModel
+public class Home(IMediator mediator) : PageModel
 {
-    private readonly IMediator _mediator;
-
-    private readonly string _tempConfigDataListKey = "TempConfigDataList";
-    private readonly string _tempConstraintDataListKey = "TempConstraintDataList";
-
-    public Home(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    private const string TempConfigDataListKey = "TempConfigDataList";
+    private const string TempConstraintDataListKey = "TempConstraintDataList";
+    private const string ErrorBeginning = "Error: ";
 
     [TempData] public string? StatusMessage { get; set; }
 
@@ -37,16 +33,17 @@ public class Home : PageModel
 
     [BindProperty] public CreateInputModel CreateInput { get; init; } = new();
 
-    public List<BenchmarkHeader> UnfinishedBenchmarks { get; set; } = new();
-    public List<CpuModelHeader> CpuModels { get; set; } = new();
+    public List<BenchmarkHeader> UnfinishedBenchmarks { get; set; } = [];
+    public List<CpuModelHeader> CpuModels { get; set; } = [];
     
-    public List<SelectListItem> Priorities { get; set; } = new();
-    public List<SelectListItem> Executables { get; set; } = new();
-    public List<SelectListItem> SetFiles { get; set; } = new();
-    public List<SelectListItem> PrpFiles { get; set; } = new();
-    public List<SelectListItem> ComputerGroups { get; set; } = new();
-    public List<SelectListItem> CpuModelValues { get; set; } = new();
-    public List<string> Headers { get; set; } = new();
+    public List<SelectListItem> Priorities { get; set; } = [];
+    public List<SelectListItem> Executables { get; set; } = [];
+    public List<SelectListItem> SourceSets { get; set; } = [];
+    public List<SelectListItem> SetFiles { get; set; } = [];
+    public List<SelectListItem> PrpFiles { get; set; } = [];
+    public List<SelectListItem> ComputerGroups { get; set; } = [];
+    public List<SelectListItem> CpuModelValues { get; set; } = [];
+    public List<string> Headers { get; set; } = [];
 
     /// <summary>
     /// OnGet method for the Home page.
@@ -58,18 +55,18 @@ public class Home : PageModel
         {
             OnPostDeleteSession();
 
-            Headers = new List<string>
-            {
-                "Name", "Started", "Status", "RAM", "CPU", "CPU model", "Executable", "Set File", "Progress", "Priority",
-                "Actions"
-            };
+            Headers =
+            [
+                "Name", "Started", "Status", "RAM", "CPU", "CPU model", "Executable", "Set File", "Progress",
+                "Priority", "Actions"
+            ];
 
-            UnfinishedBenchmarks = (await _mediator.Send(new GetAllBenchmarksQuery
+            UnfinishedBenchmarks = (await mediator.Send(new GetAllBenchmarksQuery
             {
                 Finished = false
             })).ToList();
 
-            CpuModels = (await _mediator.Send(new GetAllCpuModelsQuery())).ToList();
+            CpuModels = (await mediator.Send(new GetAllCpuModelsQuery())).ToList();
             
             Priorities = Enum.GetValues(typeof(Priority))
                 .Cast<Priority>()
@@ -89,10 +86,36 @@ public class Home : PageModel
         catch (Exception e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
+            StatusMessage = ErrorBeginning + (e.InnerException ?? e).Message;
 
             return RedirectToPage();
         }
+    }
+
+    /// <summary>
+    /// Returns the name of the property files located in the given source set
+    /// </summary>
+    /// <param name="sourceSetId"> the id of the chosen source set</param>
+    /// <returns> JSON response </returns>
+    public async Task<IActionResult> OnGetPropertyFilesAsync(int sourceSetId)
+    {
+        return new JsonResult((await mediator.Send(new GetPropertyFileNamesBySourceSetQuery
+        {
+            SourceSetId = sourceSetId
+        })).Select(p => new SelectListItem(p, p)).ToList());
+    }
+
+    /// <summary>
+    /// Returns the names of the set files located in the given source set
+    /// </summary>
+    /// <param name="sourceSetId"> the id of the chosen source set </param>
+    /// <returns> JSON response </returns>
+    public async Task<IActionResult> OnGetSetFilesAsync(int sourceSetId)
+    {
+        return new JsonResult((await mediator.Send(new GetSetFileNamesBySourceSetIdQuery
+        {
+            SourceSetId = sourceSetId
+        })).Select(s => new SelectListItem(s, s)).ToList());
     }
 
     /// <summary>
@@ -116,8 +139,7 @@ public class Home : PageModel
         value ??= "";
 
         var configurationItems = HttpContext.Session
-                                     .GetComplexData<List<TempConfigData>>(_tempConfigDataListKey) ??
-                                 new List<TempConfigData>();
+                                     .GetComplexData<List<TempConfigData>>(TempConfigDataListKey) ?? [];
 
         var newItem = new TempConfigData
         {
@@ -132,7 +154,7 @@ public class Home : PageModel
 
         configurationItems.Add(newItem);
 
-        HttpContext.Session.SetComplexData(_tempConfigDataListKey, configurationItems);
+        HttpContext.Session.SetComplexData(TempConfigDataListKey, configurationItems);
 
         return new JsonResult(new { configId = newItem.Id, configKey = newItem.Key, configValue = newItem.Value});
     }
@@ -145,17 +167,14 @@ public class Home : PageModel
     public IActionResult OnPostDeleteConfigItem(int id)
     {
         var configurationItems = HttpContext.Session
-                                     .GetComplexData<List<TempConfigData>>(_tempConfigDataListKey) ??
-                                 new List<TempConfigData>();
+                                     .GetComplexData<List<TempConfigData>>(TempConfigDataListKey) ?? [];
 
-        if (configurationItems.Remove(new TempConfigData { Id = id }))
-        {
-            HttpContext.Session.SetComplexData(_tempConfigDataListKey, configurationItems);
+        if (!configurationItems.Remove(new TempConfigData { Id = id }))
+            return new JsonResult(new { success = false, responseText = "Item not found." });
+        
+        HttpContext.Session.SetComplexData(TempConfigDataListKey, configurationItems);
 
-            return new JsonResult(new { success = true, responseText = "Item removed." });
-        }
-
-        return new JsonResult(new { success = false, responseText = "Item not found." });
+        return new JsonResult(new { success = true, responseText = "Item removed." });
     }
 
     /// <summary>
@@ -173,8 +192,7 @@ public class Home : PageModel
         
 
         var constraintItems = HttpContext.Session
-                                  .GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey) ??
-                              new List<TempConstraintData>();
+                                  .GetComplexData<List<TempConstraintData>>(TempConstraintDataListKey) ?? [];
 
         var newConstraint = new TempConstraintData
         {
@@ -187,7 +205,7 @@ public class Home : PageModel
 
         constraintItems.Add(newConstraint);
 
-        HttpContext.Session.SetComplexData(_tempConstraintDataListKey, constraintItems);
+        HttpContext.Session.SetComplexData(TempConstraintDataListKey, constraintItems);
 
         return new JsonResult(new { constraintId = newConstraint.Id, expression = newConstraint.Expression});
     }
@@ -200,17 +218,14 @@ public class Home : PageModel
     public IActionResult OnPostDeleteConstraint(int id)
     {
         var constraintItems = HttpContext.Session
-                                  .GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey) ??
-                              new List<TempConstraintData>();
+                                  .GetComplexData<List<TempConstraintData>>(TempConstraintDataListKey) ?? [];
 
-        if (constraintItems.Remove(new TempConstraintData{ Id = id }))
-        {
-            HttpContext.Session.SetComplexData(_tempConstraintDataListKey, constraintItems);
+        if (!constraintItems.Remove(new TempConstraintData { Id = id }))
+            return new JsonResult(new { success = false, responseText = "Item not found." });
+        
+        HttpContext.Session.SetComplexData(TempConstraintDataListKey, constraintItems);
 
-            return new JsonResult(new { success = true, responseText = "Item removed." });
-        }
-
-        return new JsonResult(new { success = false, responseText = "Item not found." });
+        return new JsonResult(new { success = true, responseText = "Item removed." });
     }
 
     /// <summary>
@@ -219,18 +234,18 @@ public class Home : PageModel
     /// <param name="id"> benchmark id </param>
     /// <param name="status"> benchmark status </param>
     /// <returns> Page </returns>
-    /// <exception cref="ApplicationException"> No privilege </exception>
+    /// <exception cref="AuthenticationException"> No privilege </exception>
     public async Task<IActionResult> OnPostSaveAsync(int id, Status status)
     {
         try
         {
-            var benchmark = await _mediator.Send(new UpdateBenchmarkCommand
+            var benchmark = await mediator.Send(new UpdateBenchmarkCommand
             {
                 Id = id,
                 Status = status,
                 Priority = EditInput.Priority,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(ExceptionMessage<Benchmark>.NoPrivilege)
+                              throw new AuthenticationException(ExceptionMessage<Benchmark>.NoPrivilege)
             });
 
             StatusMessage = $"Benchmark {benchmark.Name} saved.";
@@ -240,7 +255,7 @@ public class Home : PageModel
         catch (Exception e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
+            StatusMessage = ErrorBeginning + (e.InnerException ?? e).Message;
 
             return RedirectToPage();
         }
@@ -252,16 +267,16 @@ public class Home : PageModel
     /// <param name="id"> benchmark id </param>
     /// <param name="name"> benchmark name </param>
     /// <returns> Page </returns>
-    /// <exception cref="ApplicationException"> No privilege </exception>
+    /// <exception cref="AuthenticationException"> No privilege </exception>
     public async Task<IActionResult> OnPostDeleteAsync(int id, string name)
     {
         try
         {
-            await _mediator.Send(new DeleteBenchmarkCommand
+            await mediator.Send(new DeleteBenchmarkCommand
             {
                 Id = id,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(ExceptionMessage<Benchmark>.NoPrivilege)
+                              throw new AuthenticationException(ExceptionMessage<Benchmark>.NoPrivilege)
             });
 
             StatusMessage = $"Benchmark {name} deleted.";
@@ -271,7 +286,7 @@ public class Home : PageModel
         catch (Exception e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
+            StatusMessage = ErrorBeginning + (e.InnerException ?? e).Message;
 
             return RedirectToPage();
         }
@@ -281,7 +296,7 @@ public class Home : PageModel
     /// Saves the configuration with the given data.
     /// </summary>
     /// <returns> JSON response </returns>
-    /// <exception cref="ApplicationException"> No privilege </exception>
+    /// <exception cref="AuthenticationException"> No privilege </exception>
     public async Task<IActionResult> OnPostConfigAsync()
     {
         if (!ModelState.IsValid) return Page();
@@ -289,10 +304,10 @@ public class Home : PageModel
         try
         {
             var configs = HttpContext.Session
-                .GetComplexData<List<TempConfigData>>(_tempConfigDataListKey);
+                .GetComplexData<List<TempConfigData>>(TempConfigDataListKey);
             
             var constraints = HttpContext.Session
-                .GetComplexData<List<TempConstraintData>>(_tempConstraintDataListKey);
+                .GetComplexData<List<TempConstraintData>>(TempConstraintDataListKey);
 
             List<(Scope, string, string)>? configList = null;
             List<string>? constraintList = null;
@@ -303,12 +318,12 @@ public class Home : PageModel
             if (constraints != null)
                 constraintList = constraints.Select(c => c.Expression!).ToList();
 
-            var config = await _mediator.Send(new CreateConfigurationCommand
+            var config = await mediator.Send(new CreateConfigurationCommand
             {
-                Configurations = configList ?? new List<(Scope, string, string)>(),
+                Configurations = configList ?? [],
                 Constraints = constraintList,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(ExceptionMessage<Configuration>.NoPrivilege),
+                              throw new AuthenticationException(ExceptionMessage<Configuration>.NoPrivilege),
                 BenchmarkName = CreateInput.Name,
                 Cpu = CreateInput.Cpu,
                 Ram = CreateInput.Ram,
@@ -324,7 +339,7 @@ public class Home : PageModel
         catch (Exception e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
+            StatusMessage = ErrorBeginning + (e.InnerException ?? e).Message;
 
             return new JsonResult(new { success = false, responseText = StatusMessage });
         }
@@ -339,7 +354,7 @@ public class Home : PageModel
     {
         try
         {
-            await _mediator.Send(new DeleteConfigurationCommand
+            await mediator.Send(new DeleteConfigurationCommand
             {
                 Id = id,
             });
@@ -349,7 +364,7 @@ public class Home : PageModel
         catch (Exception e)
         {
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
+            StatusMessage = ErrorBeginning + (e.InnerException ?? e).Message;
 
             return new JsonResult(new { success = false, responseText = StatusMessage });
         }
@@ -360,17 +375,18 @@ public class Home : PageModel
     /// </summary>
     /// <param name="configId"> configuration id </param>
     /// <returns> Page </returns>
-    /// <exception cref="ApplicationException"> No privilege </exception>
+    /// <exception cref="AuthenticationException"> No privilege </exception>
     public async Task<IActionResult> OnPostStartAsync(int configId)
     {
         if (!ModelState.IsValid) return Page();
 
         try
         {
-            var benchmark = await _mediator.Send(new StartBenchmarkCommand
+            var benchmark = await mediator.Send(new StartBenchmarkCommand
             {
                 Name = CreateInput.Name,
                 ExecutableId = CreateInput.ExecutableId,
+                SourceSetId = CreateInput.SourceSetId,
                 SetFilePath = CreateInput.SetFilePath,
                 PropertyFilePath = CreateInput.PropertyFilePath,
                 Priority = CreateInput.Priority,
@@ -384,23 +400,23 @@ public class Home : PageModel
                 ConfigurationId = configId,
                 ComputerGroupId = CreateInput.ComputerGroupId,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(ExceptionMessage<Benchmark>.NoPrivilege)
+                              throw new AuthenticationException(ExceptionMessage<Benchmark>.NoPrivilege)
             });
 
             StatusMessage = $"Benchmark {benchmark.Name} created.";
             
-            HttpContext.Session.Remove(_tempConfigDataListKey);
-            HttpContext.Session.Remove(_tempConstraintDataListKey);
+            HttpContext.Session.Remove(TempConfigDataListKey);
+            HttpContext.Session.Remove(TempConstraintDataListKey);
 
             return RedirectToPage();
         }
         catch (Exception e)
         {
-            HttpContext.Session.Remove(_tempConfigDataListKey);
-            HttpContext.Session.Remove(_tempConstraintDataListKey);
+            HttpContext.Session.Remove(TempConfigDataListKey);
+            HttpContext.Session.Remove(TempConstraintDataListKey);
             
             Console.WriteLine(e);
-            StatusMessage = "Error: " + (e.InnerException ?? e).Message;
+            StatusMessage = ErrorBeginning + (e.InnerException ?? e).Message;
 
             return RedirectToPage();
         }
@@ -413,19 +429,15 @@ public class Home : PageModel
     {
         try
         {
-            Executables = (await _mediator.Send(new GetAllExecutablesQuery()))
+            Executables = (await mediator.Send(new GetAllExecutablesQuery()))
                 .Select(eh => new SelectListItem(eh.Name + ":" + eh.Version, eh.Id.ToString()))
                 .ToList();
 
-            SetFiles = (await _mediator.Send(new GetAllSetFilesQuery()))
-                .Select(s => new SelectListItem(Path.GetFileName(s.Path), s.Path))
-                .ToList();
-            
-            PrpFiles = (await _mediator.Send(new GetAllPropertyFilesQuery()))
-                .Select(s => new SelectListItem(Path.GetFileName(s.Path), s.Path))
+            SourceSets = (await mediator.Send(new GetAllSourceSetsQuery()))
+                .Select(ss => new SelectListItem(ss.Name, ss.Id.ToString()))
                 .ToList();
 
-            ComputerGroups = (await _mediator.Send(new GetAllComputerGroupsQuery()))
+            ComputerGroups = (await mediator.Send(new GetAllComputerGroupsQuery()))
                 .Select(c => new SelectListItem(c.Id + ": " + c.Description, c.Id.ToString()))
                 .ToList();
 
@@ -436,7 +448,7 @@ public class Home : PageModel
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            StatusMessage = "Error: " + (ex.InnerException ?? ex).Message;
+            StatusMessage = ErrorBeginning + (ex.InnerException ?? ex).Message;
         }
     }
 
@@ -446,8 +458,8 @@ public class Home : PageModel
     /// <returns> JSON response </returns>
     public IActionResult OnPostDeleteSession()
     {
-        HttpContext.Session.Remove(_tempConstraintDataListKey);
-        HttpContext.Session.Remove(_tempConfigDataListKey);
+        HttpContext.Session.Remove(TempConstraintDataListKey);
+        HttpContext.Session.Remove(TempConfigDataListKey);
 
         return new JsonResult(new { success = true, responseText = "Session cleared." });
     }
@@ -491,6 +503,10 @@ public class Home : PageModel
         [Required]
         [Display(Name = "Executable")]
         public int ExecutableId { get; init; }
+
+        [Required]
+        [Display(Name = "Source Set")]
+        public int SourceSetId { get; init; }
 
         [Required]
         [StringLength(250)]
