@@ -16,6 +16,13 @@ public class DeleteComputerGroupCommandHandler(
     UserManager<Dal.Entities.User> userManager)
     : IRequestHandler<DeleteComputerGroupCommand>
 {
+    
+    /// <summary>
+    /// Handles the <see cref="DeleteComputerGroupCommand"/>
+    /// </summary>
+    /// <param name="request"> The computer group to delete </param>
+    /// <param name="cancellationToken"> The token to monitor for cancellation requests </param>
+    /// <exception cref="ArgumentException"> Thrown when the invoker is not an admin </exception>
     public async Task Handle(DeleteComputerGroupCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByNameAsync(request.InvokerName);
@@ -30,13 +37,8 @@ public class DeleteComputerGroupCommandHandler(
         var benchmarksCount = await context.Benchmarks
             .CountAsync(b => b.ComputerGroupId == request.Id, cancellationToken);
 
-        if (benchmarksCount > 0)
-            throw new ArgumentException(
-                "Cannot delete computer group with running benchmarks, first please wait for them to finish!");
-
-        if (workersCount > 0)
-            throw new ArgumentException(
-                "Cannot delete computer group with attached workers, first please move them to another group!");
+        if (benchmarksCount > 0 || workersCount > 0)
+            throw new ArgumentException(ExceptionMessage<Dal.Entities.ComputerGroup>.InUse);
 
         context.ComputerGroups.Remove(computerGroup ??
                                        throw new ArgumentException( ExceptionMessage<Dal.Entities.ComputerGroup>.ObjectNotFound));
