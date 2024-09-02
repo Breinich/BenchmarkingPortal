@@ -1,4 +1,5 @@
-﻿using BenchmarkingPortal.Bll.Features.UploadedFile.Commands;
+﻿using BenchmarkingPortal.Bll.Exceptions;
+using BenchmarkingPortal.Bll.Features.UploadedFile.Commands;
 using BenchmarkingPortal.Bll.Services;
 using BenchmarkingPortal.Bll.Tus;
 using BenchmarkingPortal.Dal;
@@ -50,9 +51,9 @@ public class DownloadUploadedFileCommandHandler(
                     .Select(s => new SetFileHeader(s)).FirstOrDefaultAsync(cancellationToken);
                 if (setFile == null)
                     throw new ArgumentException("File not found");
-                var sourceRoot = await context .SourceSets.Where(s => s.Id == setFile.SourceSetId)
+                var sourceRoot = await context.SourceSets.Where(s => s.Id == setFile.SourceSetId)
                     .Select(s => s.Name).FirstOrDefaultAsync(cancellationToken) ?? 
-                                 throw new ApplicationException("Set file's source set root directory not found.");
+                                 throw new ArgumentException(ExceptionMessage<Dal.Entities.SourceSet>.ObjectNotFound);
                 storePath = Path.Join(pathConfigs.WorkingDir, setFile.UserName, pathConfigs.SourceSetDir, sourceRoot);
                 break;
             default:
