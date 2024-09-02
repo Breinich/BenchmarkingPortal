@@ -2,6 +2,7 @@ using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Configuration.Queries;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
+using BenchmarkingPortal.Bll.Features.SourceSet.Queries;
 using BenchmarkingPortal.Bll.Services;
 using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
@@ -57,6 +58,7 @@ public class StartBenchmarkCommandHandler(
             CpuModelId = request.CpuModelId,
             CpuModelValue = request.CpuModelValue,
             ExecutableId = request.ExecutableId,
+            SourceSetId = request.SourceSetId,
             SetFilePath = request.SetFilePath,
             PropertyFilePath = request.PropertyFilePath,
             ConfigurationId = request.ConfigurationId,
@@ -69,13 +71,18 @@ public class StartBenchmarkCommandHandler(
         var exe = await mediator.Send(new GetExecutableByIdQuery
         {
             Id = newBenchmark.ExecutableId
-        }, cancellationToken) ?? throw new ArgumentException("The according executable not found.");
+        }, cancellationToken) ?? throw new ArgumentException(ExceptionMessage<Dal.Entities.Executable>.ObjectNotFound);
+
+        _ = await mediator.Send(new GetSourceSetByIdQuery
+        {
+            Id = newBenchmark.SourceSetId
+        }, cancellationToken) ?? throw new ArgumentException(ExceptionMessage<Dal.Entities.SourceSet>.ObjectNotFound);
         
         var config = await mediator.Send(new GetConfigurationByIdQuery
         {
             Id = newBenchmark.ConfigurationId,
             IncludeItems = false
-        }, cancellationToken) ?? throw new ArgumentException("The according configuration not found.");
+        }, cancellationToken) ?? throw new ArgumentException(ExceptionMessage<Dal.Entities.Configuration>.ObjectNotFound);
         
         
         var startedDate = DateTime.UtcNow;
@@ -104,6 +111,7 @@ public class StartBenchmarkCommandHandler(
             CpuModelId = newBenchmark.CpuModelId,
             ComputerGroupId = newBenchmark.ComputerGroupId,
             ExecutableId = newBenchmark.ExecutableId,
+            SourceSetId = newBenchmark.SourceSetId,
             SetFilePath = newBenchmark.SetFilePath,
             PropertyFilePath = newBenchmark.PropertyFilePath,
             StartedDate = newBenchmark.StartedDate,
@@ -126,7 +134,6 @@ public class StartBenchmarkCommandHandler(
     /// <param name="exe">The executable, that will be used</param>
     /// <param name="config">The configuration, that will be used</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <exception cref="ApplicationException">Shows server-side problem</exception>
     private async Task QueueBenchmark(BenchmarkHeader newBenchmark, ExecutableHeader exe, ConfigurationHeader config,
         CancellationToken cancellationToken)
     {
