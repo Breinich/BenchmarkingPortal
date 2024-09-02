@@ -1,3 +1,4 @@
+using System.Configuration;
 using BenchmarkingPortal;
 using BenchmarkingPortal.Bll.Features.Benchmark.Commands;
 using BenchmarkingPortal.Bll.Features.Benchmark.Queries;
@@ -140,7 +141,6 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
         typeof(DeleteExecutableCommand).Assembly,
         typeof(UploadNewExecutableCommand).Assembly,
         typeof(GetAllExecutablesQuery).Assembly,
-        typeof(DeleteSetFileCommand).Assembly,
         typeof(UploadNewSetFileCommand).Assembly,
         typeof(GetAllSetFilesQuery).Assembly,
         typeof(AddWorkerCommand).Assembly,
@@ -186,7 +186,7 @@ builder.Services.Configure<KestrelServerOptions>(o => o.Limits.MaxRequestBodySiz
 builder.Services.AddSingleton<PathConfigs>(_ => new PathConfigs
 {
     WorkingDir = builder.Configuration["Storage:WorkingDir"] ?? 
-                 throw new ApplicationException("Missing working directory path configuration!"),
+                 throw new ConfigurationErrorsException("Missing working directory path configuration!"),
     ExecutableDir = "tools",
     SourceSetDir = "source-sets",
     ResultsDir = "results",
@@ -198,13 +198,13 @@ builder.Services.AddSingleton<PathConfigs>(_ => new PathConfigs
     VcloudDir = Path.Join(builder.Configuration["Storage:WorkingDir"], "benchexec", "contrib", 
         "vcloud"),
     WorkerConfig = builder.Configuration["Storage:WorkerConfig"] ?? 
-                   throw new ApplicationException("Missing worker config path configuration!"),
+                   throw new ConfigurationErrorsException("Missing worker config path configuration!"),
     SshConfig = builder.Configuration["Storage:SshConfig"] ??
-                throw new ApplicationException("Missing ssh config path configuration!"),
+                throw new ConfigurationErrorsException("Missing ssh config path configuration!"),
     SshPubKey = builder.Configuration["Storage:SshPubKey"] ??
-               throw new ApplicationException("Missing ssh public key path configuration!"),
+               throw new ConfigurationErrorsException("Missing ssh public key path configuration!"),
     VcloudHost = builder.Configuration["VCloud:Hostname"] ?? 
-                 throw new ApplicationException("Missing vcloud hostname configuration!"),
+                 throw new ConfigurationErrorsException("Missing vcloud hostname configuration!"),
     Tab = "    ",
 });
 
