@@ -12,6 +12,13 @@ namespace BenchmarkingPortal.Bll.Features.SourceSet.CommandHandlers;
 public class DeleteSourceSetCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager, 
     PathConfigs pathConfigs) : IRequestHandler<DeleteSourceSetCommand>
 {
+    
+    /// <summary>
+    /// Deletes a source set.
+    /// </summary>
+    /// <param name="request"> The source set to delete </param>
+    /// <param name="cancellationToken"> The token to monitor for cancellation requests </param>
+    /// <exception cref="ArgumentException"> Thrown when the invoker is not an admin </exception>
     public async Task Handle(DeleteSourceSetCommand request, CancellationToken cancellationToken)
     {
         var sourceSet = await context.SourceSets.FindAsync([request.Id], cancellationToken: cancellationToken) ??
@@ -26,6 +33,11 @@ public class DeleteSourceSetCommandHandler(BenchmarkingDbContext context, UserMa
 
             if (!admin) throw new ArgumentException(ExceptionMessage<Dal.Entities.SourceSet>.NoPrivilege);
         }
+        
+        var benchmarksCount = await context.Benchmarks
+            .CountAsync(b => b.SourceSetId == request.Id, cancellationToken);
+        if (benchmarksCount > 0)
+            throw new ArgumentException(ExceptionMessage<Dal.Entities.SourceSet>.InUse);
 
         var setFilesStore = new CustomTusDiskStore(Path.Join(
             pathConfigs.WorkingDir, sourceSet.UserName, pathConfigs.SourceSetDir, 
