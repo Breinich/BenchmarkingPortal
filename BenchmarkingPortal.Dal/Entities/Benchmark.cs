@@ -59,6 +59,11 @@ public class Benchmark
     /// The id of the used executable.
     /// </summary>
     public int ExecutableId { get; set; }
+
+    /// <summary>
+    /// The id of the used source set.
+    /// </summary>
+    public int SourceSetId { get; set; }
     
     /// <summary>
     /// The id of the used CPU model.
@@ -109,6 +114,11 @@ public class Benchmark
     /// The used executable.
     /// </summary>
     public virtual Executable Executable { get; set; } = null!;
+    
+    /// <summary>
+    /// The used source set.
+    /// </summary>
+    public virtual SourceSet SourceSet { get; set; } = null!;
     
     /// <summary>
     /// The owner of the benchmark.

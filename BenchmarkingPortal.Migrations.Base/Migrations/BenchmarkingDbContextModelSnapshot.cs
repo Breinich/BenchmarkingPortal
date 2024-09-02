@@ -74,6 +74,9 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
 
+                    b.Property<int>("SourceSetId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("StartedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -104,6 +107,8 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
 
                     b.HasIndex("Name")
                         .IsUnique();
+
+                    b.HasIndex("SourceSetId");
 
                     b.HasIndex("UserName");
 
@@ -671,6 +676,12 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Benchmark_Executable");
 
+                    b.HasOne("BenchmarkingPortal.Dal.Entities.SourceSet", "SourceSet")
+                        .WithMany("Benchmarks")
+                        .HasForeignKey("SourceSetId")
+                        .IsRequired()
+                        .HasConstraintName("FK_Benchmark_SourceSet");
+
                     b.HasOne("BenchmarkingPortal.Dal.Entities.User", "User")
                         .WithMany("Benchmarks")
                         .HasForeignKey("UserName")
@@ -685,6 +696,8 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
                     b.Navigation("CpuModel");
 
                     b.Navigation("Executable");
+
+                    b.Navigation("SourceSet");
 
                     b.Navigation("User");
                 });
@@ -882,6 +895,8 @@ namespace BenchmarkingPortal.Migrations.Base.Migrations
 
             modelBuilder.Entity("BenchmarkingPortal.Dal.Entities.SourceSet", b =>
                 {
+                    b.Navigation("Benchmarks");
+
                     b.Navigation("PropertyFiles");
 
                     b.Navigation("SetFiles");

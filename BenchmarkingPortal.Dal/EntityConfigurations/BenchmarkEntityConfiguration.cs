@@ -44,6 +44,11 @@ public class BenchmarkEntityConfiguration : IEntityTypeConfiguration<Benchmark>
             .HasForeignKey(d => d.ExecutableId)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_Benchmark_Executable");
+        
+        builder.HasOne(d => d.SourceSet).WithMany(p => p.Benchmarks)
+            .HasForeignKey(d => d.SourceSetId)
+            .OnDelete(DeleteBehavior.ClientSetNull)
+            .HasConstraintName("FK_Benchmark_SourceSet");
 
         builder.HasOne(d => d.User).WithMany(p => p.Benchmarks)
             .HasForeignKey(d => d.UserName)

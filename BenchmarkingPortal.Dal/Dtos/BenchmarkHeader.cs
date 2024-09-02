@@ -30,6 +30,7 @@ public class BenchmarkHeader
         CpuModelId = b.CpuModelId;
         ComputerGroupId = b.ComputerGroupId;
         ExecutableId = b.ExecutableId;
+        SourceSetId = b.SourceSetId;
         SetFilePath = b.SetFilePath;
         PropertyFilePath = b.PropertyFilePath;
         StartedDate = b.StartedDate;
@@ -97,6 +98,11 @@ public class BenchmarkHeader
     /// <see cref="Benchmark.ExecutableId"/>
     /// </summary>
     public int ExecutableId { get; init; }
+    
+    /// <summary>
+    /// <see cref="Benchmark.SourceSetId"/>
+    /// </summary>
+    public int SourceSetId { get; init; }
 
     /// <summary>
     /// <see cref="Benchmark.SetFilePath"/>

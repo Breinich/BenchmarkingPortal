@@ -1,4 +1,6 @@
-﻿namespace BenchmarkingPortal.Dal.Entities;
+﻿using System.Collections;
+
+namespace BenchmarkingPortal.Dal.Entities;
 
 /// <summary>
 /// Represents a source set.
@@ -40,6 +42,11 @@ public class SourceSet
     /// The property files associated with the source set.
     /// </summary>
     public virtual ICollection<PropertyFile> PropertyFiles { get; } = new List<PropertyFile>();
+    
+    /// <summary>
+    /// The benchmarks associated with the source set.
+    /// </summary>
+    public virtual ICollection<Benchmark> Benchmarks { get; } = new List<Benchmark>();
     
     /// <summary>
     /// The user who uploaded the source set.
