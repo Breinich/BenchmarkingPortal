@@ -256,21 +256,28 @@
                 </div>
             </div>
             <!-- third row -->
-            <div class="col-6">
+            <div class="col-3">
                 <div class="form-floating mb-4">
-                    <select asp-for="CreateInput.SetFilePath" asp-items="Model.SetFiles" class="form-control"></select>
+                    <select asp-for="CreateInput.SourceSetId" asp-items="Model.SourceSets" class="form-control"></select>
+                    <label asp-for="CreateInput.SourceSetId" class="form-label"></label>
+                    <span asp-validation-for="CreateInput.SourceSetId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-floating mb-4">
+                    <select asp-for="CreateInput.SetFilePath" asp-items="Model.SetFiles" class="form-control" disabled></select>
                     <label asp-for="CreateInput.SetFilePath" class="form-label"></label>
                     <span asp-validation-for="CreateInput.SetFilePath" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-4">
                 <div class="form-floating mb-4">
-                    <select asp-for="CreateInput.PropertyFilePath" asp-items="Model.PrpFiles" class="form-control"></select>
+                    <select asp-for="CreateInput.PropertyFilePath" asp-items="Model.PrpFiles" class="form-control" disabled></select>
                     <label asp-for="CreateInput.PropertyFilePath" class="form-label"></label>
                     <span asp-validation-for="CreateInput.PropertyFilePath" class="text-danger"></span>
                 </div>
             </div>
-            <div class="col-2">
+            <div class="col-1">
                 <div class="form-floating mb-4">
                     <select asp-for="CreateInput.Priority" asp-items="Model.Priorities" class="form-control"></select>
                     <label asp-for="CreateInput.Priority" class="form-label"></label>
