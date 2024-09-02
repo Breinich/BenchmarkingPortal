@@ -15,6 +15,13 @@ namespace BenchmarkingPortal.Bll.Features.Benchmark.CommandHandlers;
 public class DeleteBenchmarkCommandHandler(BenchmarkingDbContext context, UserManager<Dal.Entities.User> userManager)
     : IRequestHandler<DeleteBenchmarkCommand>
 {
+    
+    /// <summary>
+    /// The handler for the <see cref="DeleteBenchmarkCommand"/>.
+    /// </summary>
+    /// <param name="request"> The benchmark to delete. </param>
+    /// <param name="cancellationToken"> The token to monitor for cancellation requests. </param>
+    /// <exception cref="ArgumentException"> Thrown when the benchmark is not found, the user has no privilege to delete the benchmark, or the benchmark is not finished. </exception>
     public async Task Handle(DeleteBenchmarkCommand request, CancellationToken cancellationToken)
     {
         var benchmark = await context.Benchmarks.Where(b => b.Id == request.Id).Select(b => b)
@@ -38,7 +45,7 @@ public class DeleteBenchmarkCommandHandler(BenchmarkingDbContext context, UserMa
 
         // Only finished benchmarks are allowed to delete
         if (benchmarkHeader.Status != Status.Finished)
-            throw new ArgumentException("The benchmark, that wanted to be deleted hasn't been finished yet.");
+            throw new ArgumentException(ExceptionMessage<Dal.Entities.Benchmark>.InUse);
 
 
         if (benchmarkHeader.ResultPath != null)
