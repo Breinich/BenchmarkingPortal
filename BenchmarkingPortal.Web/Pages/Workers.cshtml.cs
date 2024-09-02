@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Authentication;
 using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.ComputerGroup.Commands;
 using BenchmarkingPortal.Bll.Features.ComputerGroup.Queries;
@@ -138,7 +139,7 @@ public class Workers : PageModel
                 ComputerGroupId = WorkerWorkerInput.ComputerGroupId,
                 AddedDate = DateTime.UtcNow,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(ExceptionMessage<Worker>.NoPrivilege)
+                              throw new AuthenticationException(ExceptionMessage<Worker>.NoPrivilege)
             });
 
             StatusMessage = $"Worker with id:{result.Id} added successfully";
@@ -184,7 +185,7 @@ public class Workers : PageModel
             {
                 Id = id,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(ExceptionMessage<ComputerGroup>.NoPrivilege)
+                              throw new AuthenticationException(ExceptionMessage<ComputerGroup>.NoPrivilege)
             });
 
             StatusMessage = $"Computer Group {id} deleted successfully";
@@ -209,7 +210,7 @@ public class Workers : PageModel
                 Id = ChangeId,
                 Description = ChangeDescription,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(ExceptionMessage<ComputerGroup>.NoPrivilege)
+                              throw new AuthenticationException(ExceptionMessage<ComputerGroup>.NoPrivilege)
             });
 
             StatusMessage = $"Computer {ChangeId} Group edited successfully";
