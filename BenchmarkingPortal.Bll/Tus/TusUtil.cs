@@ -1,10 +1,12 @@
 ﻿using System.IO.Compression;
 using System.Net;
 using System.Text;
+using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.Executable.Queries;
 using BenchmarkingPortal.Bll.Features.SetFile.Queries;
 using BenchmarkingPortal.Bll.Features.SourceSet.Queries;
 using BenchmarkingPortal.Bll.Services;
+using BenchmarkingPortal.Dal.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,7 +39,7 @@ public class TusUtil
         SourceSet
     }
     
-    public static Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpContext)
+    public static async Task<DefaultTusConfiguration> TusConfigurationFactory(HttpContext httpContext)
     {
         var logger = httpContext.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger<TusUtil>();
         var mediator = httpContext.RequestServices.GetRequiredService<IMediator>();
@@ -45,14 +47,14 @@ public class TusUtil
 
         if (httpContext.Request.Headers["type"] == StringValues.Empty)
         {
-            throw new ApplicationException("Missing type information from request headers");
+            throw new ArgumentException("Missing type information from request headers");
         }
 
         string diskStorePath;
         UploadType uploadType;
         
         // Determine the type of upload and set the disk store path accordingly
-        switch (httpContext.Request.Headers["type"][0] ?? throw new ApplicationException("Missing type value from header"))
+        switch (httpContext.Request.Headers["type"][0] ?? throw new ArgumentException("Missing type value from header"))
         {
             case "exe":
                 diskStorePath = Path.Join(pathConfig.WorkingDir, httpContext.User.Identity?.Name, pathConfig.ExecutableDir);
@@ -60,12 +62,11 @@ public class TusUtil
                 break;
             case "set":
                 var sourceSetId = int.Parse(httpContext.Request.Headers["sourceSetId"][0] ??
-                                        throw new ApplicationException("Missing sourceSetId value from request headers"));
-                var sourceSet = mediator.Send(new GetSourceSetByIdQuery {Id = sourceSetId}).Result;
-                if (sourceSet == null)
-                    throw new ApplicationException("Source set not found");
+                                        throw new ArgumentException("Missing sourceSetId value from request headers"));
+                var sourceSet = await mediator.Send(new GetSourceSetByIdQuery {Id = sourceSetId}) 
+                                ?? throw new ArgumentException(ExceptionMessage<SourceSet>.ObjectNotFound);
                 diskStorePath = Path.Join(pathConfig.WorkingDir, httpContext.User.Identity?.Name, pathConfig.SourceSetDir, 
-                    sourceSet.Name ?? throw new ApplicationException("Source set root path not found"), pathConfig.SetFileDir);
+                    sourceSet.Name ?? throw new ArgumentException("Source set root path not found"), pathConfig.SetFileDir);
                 uploadType = UploadType.Set;
                 break;
             case "sourceSet":
@@ -73,7 +74,7 @@ public class TusUtil
                 uploadType = UploadType.SourceSet;
                 break;
             default:
-                throw new ApplicationException("Invalid type value from header");
+                throw new ArgumentException("Invalid type value from header");
         }
                 
         Directory.CreateDirectory(diskStorePath);
@@ -205,6 +206,6 @@ public class TusUtil
             Expiration = new SlidingExpiration(TimeSpan.FromMinutes(5))
         };
 
-        return Task.FromResult(config);
+        return config;
     }
 }
