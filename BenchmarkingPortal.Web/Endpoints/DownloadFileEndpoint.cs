@@ -6,12 +6,12 @@ using tusdotnet.Models;
 
 namespace BenchmarkingPortal.Web.Endpoints;
 
-public class DownloadFileEndpoint
+public static class DownloadFileEndpoint
 {
     public static async Task HandleRoute(HttpContext context, PathConfigs pathConfigs, IMediator mediator)
     {
         var fileId = (string)(context.Request.RouteValues["fileId"] ?? 
-                     throw new ApplicationException("Missing fileId from route"));
+                     throw new ArgumentException("Missing fileId from route"));
 
         var path = fileId.Split(".").Last() switch
         {
