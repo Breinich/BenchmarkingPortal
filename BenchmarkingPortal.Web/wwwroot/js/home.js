@@ -164,6 +164,9 @@ function addConfig(){
     });
 }
 
+//TODO: populate the possible property and set file paths upon selecting a source set via ajax maybe
+//TODO: until then those select inputs should be disabled
+
 function startBenchmark(id) {
     // enable loading animation
     
