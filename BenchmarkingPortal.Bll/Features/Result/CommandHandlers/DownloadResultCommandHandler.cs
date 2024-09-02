@@ -5,6 +5,7 @@ using BenchmarkingPortal.Dal;
 using BenchmarkingPortal.Dal.Dtos;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ArgumentException = System.ArgumentException;
 
 namespace BenchmarkingPortal.Bll.Features.Result.CommandHandlers;
 
@@ -12,21 +13,14 @@ namespace BenchmarkingPortal.Bll.Features.Result.CommandHandlers;
 /// Handler for <see cref="DownloadResultCommand"/>
 /// </summary>
 // ReSharper disable once UnusedType.Global
-public class DownloadResultCommandHandler : IRequestHandler<DownloadResultCommand, (FileStream, string, string)>
+public class DownloadResultCommandHandler(BenchmarkingDbContext dbContext)
+    : IRequestHandler<DownloadResultCommand, (FileStream, string, string)>
 {
-    private readonly BenchmarkingDbContext _dbContext;
-    
-    public DownloadResultCommandHandler(BenchmarkingDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-    
     public async Task<(FileStream, string, string)> Handle(DownloadResultCommand request, CancellationToken cancellationToken)
     {
-        var benchmark = await _dbContext.Benchmarks.Where(x => x.ResultPath == request.Path)
-            .Select(b => new BenchmarkHeader(b)).FirstOrDefaultAsync(cancellationToken);
-            
-        if(benchmark == null) throw new ApplicationException(ExceptionMessage<Dal.Entities.Benchmark>.ObjectNotFound);
+        _ = await dbContext.Benchmarks.Where(x => x.ResultPath == request.Path)
+            .Select(b => new BenchmarkHeader(b)).FirstOrDefaultAsync(cancellationToken) 
+                        ?? throw new ArgumentException(ExceptionMessage<Dal.Entities.Benchmark>.ObjectNotFound);
 
         var filePath = request.Path + ".zip";
             
