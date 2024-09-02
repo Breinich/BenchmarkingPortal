@@ -1,4 +1,5 @@
-﻿using BenchmarkingPortal.Bll.Exceptions;
+﻿using System.Security.Authentication;
+using BenchmarkingPortal.Bll.Exceptions;
 using BenchmarkingPortal.Bll.Features.User.Commands;
 using BenchmarkingPortal.Bll.Features.User.Queries;
 using BenchmarkingPortal.Dal.Dtos;
@@ -79,7 +80,7 @@ public class UsersModel : PageModel
                 Subscription = subscribed,
                 Role = role,
                 InvokerName = User.Identity?.Name ??
-                              throw new ApplicationException(ExceptionMessage<User>.NoPrivilege)
+                              throw new AuthenticationException(ExceptionMessage<User>.NoPrivilege)
             });
 
             StatusMessage = $"{updatedUser.UserName} updated";
@@ -101,7 +102,7 @@ public class UsersModel : PageModel
             await _mediator.Send(new DeleteUserCommand
             {
                 UserName = name,
-                InvokerName = User.Identity?.Name ?? throw new ApplicationException("Authenticated user not found")
+                InvokerName = User.Identity?.Name ?? throw new AuthenticationException("Authenticated user not found")
             });
 
             StatusMessage = $"{name} deleted";
