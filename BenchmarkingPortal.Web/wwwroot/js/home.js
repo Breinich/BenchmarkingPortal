@@ -164,8 +164,57 @@ function addConfig(){
     });
 }
 
-//TODO: populate the possible property and set file paths upon selecting a source set via ajax maybe
-//TODO: until then those select inputs should be disabled
+$(function () {
+    $("#CreateInput_SourceSetId").on("change", function() {
+        const sourceSetId = $(this).val();
+        const propertyFilePathList = $("#CreateInput_PropertyFilePath");
+        const setFilePathList = $("#CreateInput_SetFilePath");
+        
+        $.ajax({
+            type: "GET",
+            url: `?handler=SetFiles&sourceSetId=${sourceSetId}`,
+            contentType: "application/json; charset=utf-8",
+            
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            
+            success: function (data) {
+                setFilePathList.empty();
+                setFilePathList.append("<option value='' selected disabled>Select set file</option>");
+                console.log(data);
+                $.each(data, function (i, item) {
+                    setFilePathList.append(`<option value="${item.value}">${item.text}</option>`);
+                });
+                setFilePathList.prop("disabled", false);
+            }
+        });
+        
+        
+        $.ajax({
+            type: "GET",
+            url: `?handler=PropertyFiles&sourceSetId=${sourceSetId}`,
+            contentType: "application/json; charset=utf-8",
+            
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            
+            success: function (data) {
+                propertyFilePathList.empty();
+                propertyFilePathList.append("<option value='' selected disabled>Select property file</option>");
+                console.log(data);
+                $.each(data, function (i, item) {
+                    propertyFilePathList.append(`<option value="${item.value}">${item.text}</option>`);
+                });
+                propertyFilePathList.prop("disabled", false);
+            }
+        });
+        
+    });
+});
 
 function startBenchmark(id) {
     // enable loading animation
