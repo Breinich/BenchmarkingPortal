@@ -99,10 +99,18 @@ public class Home(IMediator mediator) : PageModel
     /// <returns> JSON response </returns>
     public async Task<IActionResult> OnGetPropertyFilesAsync(int sourceSetId)
     {
-        return new JsonResult((await mediator.Send(new GetPropertyFileNamesBySourceSetQuery
+        try
         {
-            SourceSetId = sourceSetId
-        })).Select(p => new SelectListItem(p, p)).ToList());
+            return new JsonResult((await mediator.Send(new GetPropertyFileNamesBySourceSetQuery
+            {
+                SourceSetId = sourceSetId
+            })).Select(p => new {value = p, text = Path.GetFileName(p)}).ToList());
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new JsonResult(new { success = false, responseText = ErrorBeginning + (e.InnerException ?? e).Message });
+        }
     }
 
     /// <summary>
@@ -112,10 +120,18 @@ public class Home(IMediator mediator) : PageModel
     /// <returns> JSON response </returns>
     public async Task<IActionResult> OnGetSetFilesAsync(int sourceSetId)
     {
-        return new JsonResult((await mediator.Send(new GetSetFileNamesBySourceSetIdQuery
+        try
         {
-            SourceSetId = sourceSetId
-        })).Select(s => new SelectListItem(s, s)).ToList());
+            return new JsonResult((await mediator.Send(new GetSetFileNamesBySourceSetIdQuery
+            {
+                SourceSetId = sourceSetId
+            })).Select(p => new {value = p, text = Path.GetFileName(p)}).ToList());
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new JsonResult(new { success = false, responseText = ErrorBeginning + (e.InnerException ?? e).Message });
+        }
     }
 
     /// <summary>
