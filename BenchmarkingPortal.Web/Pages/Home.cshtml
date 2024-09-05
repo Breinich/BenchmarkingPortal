@@ -258,7 +258,9 @@
             <!-- third row -->
             <div class="col-3">
                 <div class="form-floating mb-4">
-                    <select asp-for="CreateInput.SourceSetId" asp-items="Model.SourceSets" class="form-control"></select>
+                    <select asp-for="CreateInput.SourceSetId" asp-items="Model.SourceSets" class="form-control">
+                        <option value="" selected disabled>Choose a source set</option>
+                    </select>
                     <label asp-for="CreateInput.SourceSetId" class="form-label"></label>
                     <span asp-validation-for="CreateInput.SourceSetId" class="text-danger"></span>
                 </div>
